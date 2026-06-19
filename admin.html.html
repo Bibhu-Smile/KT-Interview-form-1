@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - KT Interview Submissions</title>
   <style>
-    /* ===== SCREEN STYLES ===== */
+    /* ===== SCREEN STYLES (unchanged) ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -72,8 +72,13 @@
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
     /* ================================================================
-       PRINT STYLES – HIDE EVERYTHING EXCEPT THE BIODATA
+       PRINT STYLES – PORTRAIT, FIXED TABLES, ALIGNED
        ================================================================ */
+    @page {
+      size: portrait;
+      margin: 0.5in;
+    }
+
     @media print {
       body { background: white !important; padding: 0 !important; margin: 0 !important; font-family: 'Times New Roman', Times, serif !important; }
       body * { display: none !important; }
@@ -84,45 +89,52 @@
       body .print-biodata table tr { display: table-row !important; }
       body .print-biodata table td,
       body .print-biodata table th { display: table-cell !important; }
+
       .print-biodata {
         display: block !important;
         margin: 0 auto !important;
-        padding: 0.8in 0.7in !important;
+        padding: 0 !important; /* page margins handle spacing */
         max-width: 100% !important;
         background: white !important;
         font-family: 'Times New Roman', Times, serif !important;
-        font-size: 12pt !important;
-        line-height: 1.4 !important;
+        font-size: 11pt !important;
+        line-height: 1.3 !important;
         color: #000 !important;
       }
+
+      /* All tables – fixed layout to align columns */
       .print-biodata table {
         border-collapse: collapse !important;
         width: 100% !important;
-        font-size: 11pt !important;
+        font-size: 10pt !important;
         font-family: 'Times New Roman', Times, serif !important;
         margin: 4px 0 6px 0 !important;
+        table-layout: fixed !important;
       }
       .print-biodata table td,
       .print-biodata table th {
         border: 1px solid #000 !important;
-        padding: 4px 6px !important;
+        padding: 3px 5px !important;
         text-align: left !important;
         vertical-align: top !important;
+        word-wrap: break-word !important;
       }
+
+      /* Header table */
       .print-biodata .header-table {
         border: 2px solid #000 !important;
         margin-bottom: 4px !important;
         width: 100% !important;
+        table-layout: fixed !important;
       }
       .print-biodata .header-table td {
         border: 1px solid #000 !important;
-        padding: 6px 10px !important;
+        padding: 4px 6px !important;
         vertical-align: middle !important;
       }
       .print-biodata .logo-cell {
-        width: 90px !important;
+        width: 15% !important;
         text-align: center !important;
-        vertical-align: middle !important;
       }
       .print-biodata .logo-cell img {
         max-width: 70px !important;
@@ -131,42 +143,42 @@
         margin: 0 auto !important;
       }
       .print-biodata .photo-cell {
+        width: 20% !important;
         text-align: center !important;
         vertical-align: middle !important;
-        width: 130px !important;
       }
       .print-biodata .photo-cell img {
-        max-width: 110px !important;
-        max-height: 130px !important;
+        max-width: 100px !important;
+        max-height: 120px !important;
         border: 2px solid #000 !important;
         display: block !important;
         margin: 0 auto !important;
       }
       .print-biodata .photo-cell .photo-placeholder {
-        width: 110px !important;
-        height: 130px !important;
+        width: 100px !important;
+        height: 120px !important;
         border: 2px solid #000 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         margin: 0 auto !important;
-        font-size: 10px !important;
+        font-size: 9px !important;
         color: #999 !important;
         background: #f9f9f9 !important;
       }
       .print-biodata .school-name {
-        font-size: 20pt !important;
+        font-size: 18pt !important;
         font-weight: 700 !important;
         color: #1a5276 !important;
-        letter-spacing: 1px !important;
+        letter-spacing: 0.5px !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .school-details {
-        font-size: 10pt !important;
+        font-size: 9pt !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .form-title {
-        font-size: 16pt !important;
+        font-size: 14pt !important;
         font-weight: 700 !important;
         text-align: center !important;
         background: #eaf2f8 !important;
@@ -177,30 +189,33 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-biodata .post-applied {
-        font-size: 13pt !important;
+        font-size: 12pt !important;
         font-weight: 600 !important;
         margin: 4px 0 4px 0 !important;
         padding: 2px 0 !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .post-applied span { font-weight: 400 !important; }
+
       .print-biodata .section-title {
         font-weight: 700 !important;
-        font-size: 13pt !important;
+        font-size: 12pt !important;
         background: #d4e6f1 !important;
-        padding: 3px 8px !important;
+        padding: 2px 6px !important;
         border: 1px solid #000 !important;
-        margin-top: 8px !important;
+        margin-top: 6px !important;
         font-family: 'Times New Roman', Times, serif !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
+
       .print-biodata .field-row {
         display: flex !important;
         border-bottom: 1px dashed #ccc !important;
         padding: 2px 0 !important;
-        font-size: 11.5pt !important;
+        font-size: 10.5pt !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .field-label {
@@ -212,27 +227,57 @@
         width: 70% !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
+
       .print-biodata .declaration {
-        margin-top: 14px !important;
+        margin-top: 12px !important;
         border-top: 2px solid #000 !important;
-        padding-top: 10px !important;
-        font-size: 11.5pt !important;
+        padding-top: 8px !important;
+        font-size: 10.5pt !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .declaration p { margin: 2px 0 !important; }
       .print-biodata .signature-row {
         display: flex !important;
         justify-content: space-between !important;
-        margin-top: 18px !important;
-        font-size: 11.5pt !important;
+        margin-top: 14px !important;
+        font-size: 10.5pt !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .total-exp {
         margin: 4px 0 0 0 !important;
-        font-size: 11pt !important;
+        font-size: 10pt !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .total-exp strong { font-weight: 700 !important; }
+
+      /* ===== TABLE COLUMN WIDTHS ===== */
+      .print-biodata .edu-table th:nth-child(1), .print-biodata .edu-table td:nth-child(1) { width: 22%; }
+      .print-biodata .edu-table th:nth-child(2), .print-biodata .edu-table td:nth-child(2) { width: 12%; }
+      .print-biodata .edu-table th:nth-child(3), .print-biodata .edu-table td:nth-child(3) { width: 20%; }
+      .print-biodata .edu-table th:nth-child(4), .print-biodata .edu-table td:nth-child(4) { width: 26%; }
+      .print-biodata .edu-table th:nth-child(5), .print-biodata .edu-table td:nth-child(5) { width: 20%; }
+
+      .print-biodata .extra-table th:nth-child(1), .print-biodata .extra-table td:nth-child(1) { width: 18%; }
+      .print-biodata .extra-table th:nth-child(2), .print-biodata .extra-table td:nth-child(2) { width: 18%; }
+      .print-biodata .extra-table th:nth-child(3), .print-biodata .extra-table td:nth-child(3) { width: 16%; }
+      .print-biodata .extra-table th:nth-child(4), .print-biodata .extra-table td:nth-child(4) { width: 20%; }
+      .print-biodata .extra-table th:nth-child(5), .print-biodata .extra-table td:nth-child(5) { width: 14%; }
+      .print-biodata .extra-table th:nth-child(6), .print-biodata .extra-table td:nth-child(6) { width: 14%; }
+
+      .print-biodata .work-table th:nth-child(1), .print-biodata .work-table td:nth-child(1) { width: 20%; }
+      .print-biodata .work-table th:nth-child(2), .print-biodata .work-table td:nth-child(2) { width: 18%; }
+      .print-biodata .work-table th:nth-child(3), .print-biodata .work-table td:nth-child(3) { width: 12%; }
+      .print-biodata .work-table th:nth-child(4), .print-biodata .work-table td:nth-child(4) { width: 12%; }
+      .print-biodata .work-table th:nth-child(5), .print-biodata .work-table td:nth-child(5) { width: 18%; }
+      .print-biodata .work-table th:nth-child(6), .print-biodata .work-table td:nth-child(6) { width: 20%; }
+
+      .print-biodata .achieve-table th:nth-child(1), .print-biodata .achieve-table td:nth-child(1) { width: 8%; }
+      .print-biodata .achieve-table th:nth-child(2), .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
+      .print-biodata .achieve-table th:nth-child(3), .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
+
+      /* Prevent page breaks inside tables */
+      .print-biodata table { page-break-inside: avoid; }
+      .print-biodata .section-title { page-break-after: avoid; }
     }
 
     .print-biodata { display: none; }
@@ -284,10 +329,9 @@
       const response = await fetch(APP_SCRIPT_URL);
       const data = await response.json();
       allData = data;
-      // === DEBUG: Print the keys of the first row to console ===
+      // Debug: show column keys
       if (data.length > 0) {
         console.log('First row keys:', Object.keys(data[0]));
-        console.log('Sample row:', data[0]);
       }
       renderTable(data);
     } catch (e) {
@@ -348,8 +392,7 @@
       } catch(e) { formattedDate = ''; }
     }
 
-    // Use the exact column names from the sheet.
-    // If your sheet uses different names, adjust these keys accordingly.
+    // Extract data with fallbacks
     const name = row['Name'] || '';
     const father = row['Father/Husband'] || '';
     const dob = row['DOB'] || '';
@@ -368,7 +411,6 @@
     const pan = row['PAN'] || '';
     const postApplied = row['Post Applied'] || '';
 
-    // Education
     const secYr = row['Secondary_Yr'] || '';
     const secSub = row['Secondary_Subj'] || '';
     const secBoard = row['Secondary_Board'] || '';
@@ -394,12 +436,10 @@
     const tetBoard = row['TET_Board'] || '';
     const tetMarks = row['TET_Marks'] || '';
 
-    // Extra
     const extra1 = row['Extra_Q1'] || '';
     const extra2 = row['Extra_Q2'] || '';
     const extra3 = row['Extra_Q3'] || '';
 
-    // Work Exp
     const work1 = row['WorkExp1'] || '';
     const work2 = row['WorkExp2'] || '';
     const work3 = row['WorkExp3'] || '';
@@ -458,13 +498,13 @@
       <div class="field-row"><span class="field-label">PAN No.:</span><span class="field-value">${pan}</span></div>
 
       <div class="section-title">2. Educational Qualifications:</div>
-      <table>
+      <table class="edu-table">
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="width:22%;">Qualification</th>
-          <th style="width:12%;">Year of Passing</th>
-          <th style="width:20%;">Subjects Offered</th>
-          <th style="width:26%;">Name of Board or University</th>
-          <th style="width:20%;">Total Mark in Percentage/CGPA</th>
+          <th>Qualification</th>
+          <th>Year of Passing</th>
+          <th>Subjects Offered</th>
+          <th>Name of Board or University</th>
+          <th>Total Mark in Percentage/CGPA</th>
         </tr>
         <tr><td>Secondary</td><td>${secYr}</td><td>${secSub}</td><td>${secBoard}</td><td>${secMarks}</td></tr>
         <tr><td>Senior Secondary</td><td>${srSecYr}</td><td>${srSecSub}</td><td>${srSecBoard}</td><td>${srSecMarks}</td></tr>
@@ -475,14 +515,14 @@
       </table>
 
       <div class="section-title">3. Extra Qualification (if any):</div>
-      <table>
+      <table class="extra-table">
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="width:18%;">Qualification</th>
-          <th style="width:18%;">Specialization Subject</th>
-          <th style="width:16%;">Year of Passing</th>
-          <th style="width:20%;">University</th>
-          <th style="width:14%;">Total Mark in %/CGPA/Grade</th>
-          <th style="width:14%;">Any Other Information</th>
+          <th>Qualification</th>
+          <th>Specialization Subject</th>
+          <th>Year of Passing</th>
+          <th>University</th>
+          <th>Total Mark in %/CGPA/Grade</th>
+          <th>Any Other Information</th>
         </tr>
         <tr>
           <td>${extra1}</td>
@@ -495,14 +535,14 @@
       </table>
 
       <div class="section-title">4. Work Experience:</div>
-      <table>
+      <table class="work-table">
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="width:20%;">Name of School / Institution</th>
-          <th style="width:18%;">Designation &amp; Assignment</th>
-          <th style="width:12%;">From (Month &amp; Year)</th>
-          <th style="width:12%;">To (Month &amp; Year)</th>
-          <th style="width:18%;">Subject / Class Taught</th>
-          <th style="width:20%;">Gross Salary Drawn</th>
+          <th>Name of School / Institution</th>
+          <th>Designation &amp; Assignment</th>
+          <th>From (Month &amp; Year)</th>
+          <th>To (Month &amp; Year)</th>
+          <th>Subject / Class Taught</th>
+          <th>Gross Salary Drawn</th>
         </tr>
         <tr><td>${work1}</td><td>${work2}</td><td></td><td></td><td></td><td></td></tr>
         <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -516,11 +556,11 @@
       </div>
 
       <div class="section-title">5. Achievement if any:</div>
-      <table>
+      <table class="achieve-table">
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="width:8%;">Sl. No.</th>
-          <th style="width:25%;">Particular</th>
-          <th style="width:67%;">Details Attached (Photo copy of certificates: State, National, International)</th>
+          <th>Sl. No.</th>
+          <th>Particular</th>
+          <th>Details Attached (Photo copy of certificates: State, National, International)</th>
         </tr>
         <tr><td>1</td><td>Literary Activity</td><td>${achievements && achievements.toLowerCase().includes('literary') ? '✓' : ''}</td></tr>
         <tr><td>2</td><td>Art &amp; Craft</td><td>${achievements && achievements.toLowerCase().includes('art') ? '✓' : ''}</td></tr>
