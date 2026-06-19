@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - KT Interview Submissions</title>
   <style>
+    /* ===== SCREEN STYLES (Dashboard) ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -32,8 +33,7 @@
       transition: 0.2s;
       font-size: 14px;
     }
-    .actions button:hover { background: #154360; transform: scale(1.02); }
-    .actions button:active { transform: scale(0.97); }
+    .actions button:hover { background: #154360; }
     .actions .export { background: #1e8449; }
     .actions .export:hover { background: #196f3d; }
     .loading { text-align: center; padding: 40px; color: #5d6d7e; }
@@ -70,43 +70,189 @@
     }
     .btn-print:hover { background: #1a2a3a; }
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
-    
-    /* ========== PERFECT PRINT LAYOUT ========== */
+
+    /* ===== PRINT STYLES (EXACTLY LIKE WORD DOCUMENT) ===== */
     @media print {
-      body { background: white; padding: 0.5in; margin: 0; }
+      /* Hide all screen-only elements */
+      body { background: white; padding: 0; margin: 0; }
       .no-print { display: none !important; }
       .dashboard { box-shadow: none; border-radius: 0; padding: 0; max-width: 100%; }
-      .print-biodata { display: block !important; }
-      table { page-break-inside: avoid; }
-      .print-biodata table { border-collapse: collapse; width: 100%; font-size: 12px; }
-      .print-biodata td, .print-biodata th { border: 1px solid #000; padding: 6px 8px; text-align: left; vertical-align: top; }
-      .print-biodata .header-table td { border: none; padding: 4px 8px; }
-      .print-biodata .photo-cell { text-align: center; vertical-align: middle; }
-      .print-biodata .photo-cell img { max-width: 120px; max-height: 140px; border: 2px solid #000; }
+      
+      /* Show the biodata container */
+      .print-biodata {
+        display: block !important;
+        margin: 0 auto;
+        padding: 0.5in;
+        max-width: 100%;
+        background: white;
+        font-family: 'Times New Roman', Times, serif !important;
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #000;
+      }
+      
+      /* Force table borders for print */
+      .print-biodata table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 11pt;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .print-biodata table td,
+      .print-biodata table th {
+        border: 1px solid #000;
+        padding: 4px 6px;
+        text-align: left;
+        vertical-align: top;
+      }
+      .print-biodata .no-border td,
+      .print-biodata .no-border th {
+        border: none !important;
+      }
+      
+      /* Header table - no borders */
+      .print-biodata .header-table {
+        border: 2px solid #000;
+        margin-bottom: 6px;
+      }
+      .print-biodata .header-table td {
+        border: 1px solid #000;
+        padding: 6px 10px;
+        vertical-align: middle;
+      }
+      
+      /* Photo cell */
+      .print-biodata .photo-cell {
+        text-align: center;
+        vertical-align: middle;
+        width: 130px;
+      }
+      .print-biodata .photo-cell img {
+        max-width: 110px;
+        max-height: 130px;
+        border: 2px solid #000;
+        display: block;
+        margin: 0 auto;
+      }
+      .print-biodata .photo-cell .photo-placeholder {
+        width: 110px;
+        height: 130px;
+        border: 2px solid #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-size: 10px;
+        color: #999;
+      }
+      
+      /* Logo */
+      .print-biodata .logo-cell {
+        width: 90px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .print-biodata .logo-cell img {
+        max-width: 70px;
+        max-height: 70px;
+        display: block;
+        margin: 0 auto;
+      }
+      
+      /* School name & details */
+      .print-biodata .school-name {
+        font-size: 20pt;
+        font-weight: 700;
+        color: #1a5276;
+        letter-spacing: 1px;
+      }
+      .print-biodata .school-details {
+        font-size: 10pt;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .print-biodata .form-title {
+        font-size: 16pt;
+        font-weight: 700;
+        text-align: center;
+        background: #eaf2f8;
+        padding: 4px 0;
+        border: 1px solid #000;
+        border-top: none;
+      }
+      
+      /* Post Applied */
+      .print-biodata .post-applied {
+        font-size: 13pt;
+        font-weight: 600;
+        margin: 6px 0 4px 0;
+        padding: 2px 0;
+      }
+      .print-biodata .post-applied span {
+        font-weight: 400;
+      }
+      
+      /* Section titles */
+      .print-biodata .section-title {
+        font-weight: 700;
+        font-size: 13pt;
+        background: #d4e6f1;
+        padding: 3px 8px;
+        border: 1px solid #000;
+        margin-top: 6px;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      
+      /* Field rows for General Information */
+      .print-biodata .field-row {
+        display: flex;
+        border-bottom: 1px dashed #ccc;
+        padding: 2px 0;
+        font-size: 11pt;
+      }
+      .print-biodata .field-label {
+        width: 30%;
+        font-weight: 600;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .print-biodata .field-value {
+        width: 70%;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      
+      /* Declaration */
+      .print-biodata .declaration {
+        margin-top: 12px;
+        border-top: 2px solid #000;
+        padding-top: 10px;
+        font-style: italic;
+        font-size: 11pt;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .print-biodata .signature-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 16px;
+        font-style: normal;
+        font-size: 11pt;
+      }
+      
+      /* Force page breaks */
+      .print-biodata .page-break {
+        page-break-before: always;
+      }
+      
+      /* Achievements table special */
+      .print-biodata .achieve-table td,
+      .print-biodata .achieve-table th {
+        border: 1px solid #000;
+        padding: 4px 6px;
+      }
     }
 
+    /* ===== BIODATA CONTAINER (hidden on screen, shown in print) ===== */
     .print-biodata {
       display: none;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0;
-      font-family: 'Times New Roman', Times, serif;
-      background: white;
-      color: #000;
     }
-    .print-biodata .header-table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
-    .print-biodata .header-table td { border: 1px solid #000; padding: 8px 12px; vertical-align: middle; }
-    .print-biodata .logo-cell { width: 100px; text-align: center; }
-    .print-biodata .logo-cell img { max-width: 80px; max-height: 80px; }
-    .print-biodata .school-name { font-size: 22px; font-weight: 700; color: #1a5276; }
-    .print-biodata .school-details { font-size: 13px; }
-    .print-biodata .title-row { font-size: 18px; font-weight: 700; text-align: center; background: #eaf2f8; }
-    .print-biodata .section-title { font-weight: 700; font-size: 15px; background: #d4e6f1; padding: 4px 8px; border: 1px solid #000; margin-top: 4px; }
-    .print-biodata .field-row { display: flex; border-bottom: 1px dashed #ccc; padding: 3px 0; }
-    .print-biodata .field-label { width: 30%; font-weight: 600; }
-    .print-biodata .field-value { width: 70%; }
-    .print-biodata .declaration { margin-top: 16px; border-top: 2px solid #000; padding-top: 12px; font-style: italic; }
-    .print-biodata .signature-row { display: flex; justify-content: space-between; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -115,22 +261,25 @@
   <div class="actions no-print">
     <button onclick="fetchData()">🔄 Refresh</button>
     <button class="export" onclick="exportCSV()">📥 Export CSV</button>
-    <button onclick="window.print()">🖨️ Print this page</button>
   </div>
   <div id="tableContainer">
     <div class="loading">⏳ Loading submissions...</div>
   </div>
 </div>
 
-<!-- Hidden container for printing single biodata -->
+<!-- ===== PRINT CONTAINER (exact replica of Word document) ===== -->
 <div id="printContainer" class="print-biodata"></div>
 
 <script>
+  // ===== CONFIGURATION =====
   // REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxScQIA8T-RI4i7zC09BStZFEmo7SQVvfxLTb0GK1WqqqsqJusDn_9hPKvLGz9zkQ5QPQ/exec";
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC8e-38tUnd39nqi8rJpdTVrKZjXhveZ7--XLCMrDnjIxhJTY6nYY6M9m_jaa5hRalLw/exec";
+  // REPLACE WITH YOUR LOGO FILENAME (e.g., "KTGS.jpeg" or "logo.png")
+  const LOGO_FILENAME = "kt-logo.webp";
 
   let allData = [];
 
+  // ===== FETCH DATA =====
   async function fetchData() {
     const container = document.getElementById('tableContainer');
     container.innerHTML = '<div class="loading">⏳ Loading...</div>';
@@ -144,6 +293,7 @@
     }
   }
 
+  // ===== RENDER TABLE =====
   function renderTable(data) {
     const container = document.getElementById('tableContainer');
     if (!data || data.length === 0) {
@@ -174,146 +324,184 @@
     container.innerHTML = html;
   }
 
-  // ========== PERFECT PRINT BIODATA ==========
+  // ===== PERFECT PRINT - EXACT MATCH TO WORD DOCUMENT =====
   function printBiodata(index) {
     const row = allData[index];
     if (!row) return;
 
     const container = document.getElementById('printContainer');
-    // Use the school logo from the repo (change filename if needed)
-    const logoHtml = `<img src="kt-logo.png" alt="KTGS Logo" style="max-width:80px;max-height:80px;" onerror="this.outerHTML='<div style=\\'font-size:40px;\\'>🏫</div>'">`;
-    const photoHtml = row['PhotoLink'] ? `<img src="${row['PhotoLink']}" alt="Photo" style="max-width:120px;max-height:140px;border:2px solid #000;">` : '<div style="border:2px solid #000;width:120px;height:140px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999;">No Photo</div>';
+    
+    // Logo with fallback
+    const logoHtml = `<img src="${LOGO_FILENAME}" alt="KTGS Logo" onerror="this.outerHTML='<div style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</div>'">`;
+    
+    // Photo
+    let photoHtml = '';
+    if (row['PhotoLink']) {
+      photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
+    } else {
+      photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
+    }
 
+    // Format date from timestamp
+    let formattedDate = '';
+    if (row['Timestamp']) {
+      try {
+        const d = new Date(row['Timestamp']);
+        formattedDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      } catch(e) { formattedDate = ''; }
+    }
+
+    // Build the exact replica
     container.innerHTML = `
-      <!-- HEADER -->
+      <!-- ===== HEADER TABLE ===== -->
       <table class="header-table">
         <tr>
-          <td class="logo-cell" rowspan="2">${logoHtml}</td>
-          <td style="text-align:center;">
-            <div class="school-name">KT GLOBAL SCHOOL</div>
-            <div class="school-details">📞 +91 90901 11177 &nbsp;|&nbsp; ✉ info@ktglobalschool.org</div>
-            <div class="school-details">Plot No. F/12, IID Centre, Barunei, Khordha, Odisha - 752057</div>
+          <td class="logo-cell" rowspan="2">
+            ${logoHtml}
           </td>
-          <td class="photo-cell" rowspan="2" style="width:130px;text-align:center;vertical-align:middle;">
+          <td style="text-align:center;padding:4px 10px;">
+            <div class="school-name">KT GLOBAL SCHOOL</div>
+            <div class="school-details">
+              Telephone No.: +91 90901 11177 &nbsp;|&nbsp; E-mail ID: info@ktglobalschool.org
+            </div>
+            <div class="school-details">
+              Address: Plot No. F/12, IID Centre, Barunei, Khordha, Odisha - 752057
+            </div>
+          </td>
+          <td class="photo-cell" rowspan="2">
             ${photoHtml}
-            <div style="font-size:10px;margin-top:4px;">Affix Passport Photo</div>
+            <div style="font-size:8pt;margin-top:2px;font-weight:600;">Affix Passport<br>size Photograph</div>
           </td>
         </tr>
         <tr>
-          <td style="text-align:center;font-weight:700;font-size:18px;background:#eaf2f8;">INTERVIEW BIODATA FORM</td>
+          <td class="form-title">INTERVIEW BIODATA FORM</td>
         </tr>
       </table>
 
-      <!-- POST APPLIED -->
-      <div style="margin-top:8px;font-weight:600;font-size:15px;">
-        Post Applied For: <span style="font-weight:400;">${row['Post Applied'] || 'N/A'}</span>
+      <!-- ===== POST APPLIED ===== -->
+      <div class="post-applied">
+        Post applied for: <span>${row['Post Applied'] || '___________'}</span>
       </div>
 
-      <!-- 1. GENERAL INFORMATION -->
-      <div class="section-title">1. General Information (Fill in CAPITAL LETTERS)</div>
-      <div class="field-row"><span class="field-label">Name of Applicant:</span><span class="field-value">${row['Name']||''}</span></div>
-      <div class="field-row"><span class="field-label">Father/Husband Name:</span><span class="field-value">${row['Father/Husband']||''}</span></div>
-      <div class="field-row"><span class="field-label">D.O.B.:</span><span class="field-value">${row['DOB']||''}</span></div>
-      <div class="field-row"><span class="field-label">Age (as on 1st Jan 2026):</span><span class="field-value">${row['Age']||''}</span></div>
-      <div class="field-row"><span class="field-label">Category:</span><span class="field-value">${row['Category']||''}</span></div>
-      <div class="field-row"><span class="field-label">Religion:</span><span class="field-value">${row['Religion']||''}</span></div>
-      <div class="field-row"><span class="field-label">Nationality:</span><span class="field-value">${row['Nationality']||''}</span></div>
-      <div class="field-row"><span class="field-label">Gender:</span><span class="field-value">${row['Gender']||''}</span></div>
-      <div class="field-row"><span class="field-label">Marital Status:</span><span class="field-value">${row['Marital Status']||''}</span></div>
-      <div class="field-row"><span class="field-label">Hobbies:</span><span class="field-value">${row['Hobbies']||''}</span></div>
-      <div class="field-row"><span class="field-label">Permanent Address:</span><span class="field-value">${row['Permanent Address']||''}</span></div>
-      <div class="field-row"><span class="field-label">Communication Address:</span><span class="field-value">${row['Communication Address']||''}</span></div>
-      <div class="field-row"><span class="field-label">Mobile No.:</span><span class="field-value">${row['Mobile']||''}</span></div>
-      <div class="field-row"><span class="field-label">E-mail ID:</span><span class="field-value">${row['Email']||''}</span></div>
-      <div class="field-row"><span class="field-label">Aadhaar No.:</span><span class="field-value">${row['Aadhaar']||''}</span></div>
-      <div class="field-row"><span class="field-label">PAN No.:</span><span class="field-value">${row['PAN']||''}</span></div>
+      <!-- ===== 1. GENERAL INFORMATION ===== -->
+      <div class="section-title">1. General Information: (TO BE FILLED IN CAPITAL LETTERS ONLY)</div>
+      <div class="field-row"><span class="field-label">Name of the Applicant:</span><span class="field-value">${row['Name'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Father or Husband Name:</span><span class="field-value">${row['Father/Husband'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">D.O.B.:</span><span class="field-value">${row['DOB'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Age as on 1st Jan 2026:</span><span class="field-value">${row['Age'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Category:</span><span class="field-value">${row['Category'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Religion:</span><span class="field-value">${row['Religion'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Nationality:</span><span class="field-value">${row['Nationality'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Gender:</span><span class="field-value">${row['Gender'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Marital Status:</span><span class="field-value">${row['Marital Status'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Hobbies:</span><span class="field-value">${row['Hobbies'] || ''}</span></div>
+      
+      <!-- Addresses -->
+      <div class="field-row"><span class="field-label">Permanent Address:</span><span class="field-value">${row['Permanent Address'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Address of Communication:</span><span class="field-value">${row['Communication Address'] || ''}</span></div>
+      
+      <!-- Contact -->
+      <div class="field-row"><span class="field-label">Mobile No.:</span><span class="field-value">${row['Mobile'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">E-mail ID:</span><span class="field-value">${row['Email'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">Aadhaar No.:</span><span class="field-value">${row['Aadhaar'] || ''}</span></div>
+      <div class="field-row"><span class="field-label">PAN No.:</span><span class="field-value">${row['PAN'] || ''}</span></div>
 
-      <!-- 2. EDUCATIONAL QUALIFICATIONS (TABLE) -->
-      <div class="section-title">2. Educational Qualifications</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">
+      <!-- ===== 2. EDUCATIONAL QUALIFICATIONS ===== -->
+      <div class="section-title">2. Educational Qualifications:</div>
+      <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="border:1px solid #000;padding:4px;">Qualification</th>
-          <th style="border:1px solid #000;padding:4px;">Year of Passing</th>
-          <th style="border:1px solid #000;padding:4px;">Subjects Offered</th>
-          <th style="border:1px solid #000;padding:4px;">Board/University</th>
-          <th style="border:1px solid #000;padding:4px;">Marks %/CGPA</th>
+          <th>Qualification</th>
+          <th>Year of Passing</th>
+          <th>Subjects Offered</th>
+          <th>Name of Board or University</th>
+          <th>Total Mark in Percentage/CGPA</th>
         </tr>
-        <tr><td style="border:1px solid #000;padding:4px;">Secondary</td><td style="border:1px solid #000;padding:4px;">${row['Secondary_Yr']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Secondary_Subj']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Secondary_Board']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Secondary_Marks']||''}</td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">Senior Secondary</td><td style="border:1px solid #000;padding:4px;">${row['SrSec_Yr']||''}</td><td style="border:1px solid #000;padding:4px;">${row['SrSec_Subj']||''}</td><td style="border:1px solid #000;padding:4px;">${row['SrSec_Board']||''}</td><td style="border:1px solid #000;padding:4px;">${row['SrSec_Marks']||''}</td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">Graduation (Hons.)</td><td style="border:1px solid #000;padding:4px;">${row['Graduation_Yr']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Graduation_Subj']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Graduation_Board']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Graduation_Marks']||''}</td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">Post Graduation</td><td style="border:1px solid #000;padding:4px;">${row['PostGrad_Yr']||''}</td><td style="border:1px solid #000;padding:4px;">${row['PostGrad_Subj']||''}</td><td style="border:1px solid #000;padding:4px;">${row['PostGrad_Board']||''}</td><td style="border:1px solid #000;padding:4px;">${row['PostGrad_Marks']||''}</td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">B.Ed./CT/NTT/B.P.Ed.</td><td style="border:1px solid #000;padding:4px;">${row['BEd_Yr']||''}</td><td style="border:1px solid #000;padding:4px;">${row['BEd_Subj']||''}</td><td style="border:1px solid #000;padding:4px;">${row['BEd_Board']||''}</td><td style="border:1px solid #000;padding:4px;">${row['BEd_Marks']||''}</td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">OTET/CTET/OSTET</td><td style="border:1px solid #000;padding:4px;">${row['TET_Yr']||''}</td><td style="border:1px solid #000;padding:4px;">${row['TET_Subj']||''}</td><td style="border:1px solid #000;padding:4px;">${row['TET_Board']||''}</td><td style="border:1px solid #000;padding:4px;">${row['TET_Marks']||''}</td></tr>
+        <tr><td>Secondary</td><td>${row['Secondary_Yr'] || ''}</td><td>${row['Secondary_Subj'] || ''}</td><td>${row['Secondary_Board'] || ''}</td><td>${row['Secondary_Marks'] || ''}</td></tr>
+        <tr><td>Senior Secondary</td><td>${row['SrSec_Yr'] || ''}</td><td>${row['SrSec_Subj'] || ''}</td><td>${row['SrSec_Board'] || ''}</td><td>${row['SrSec_Marks'] || ''}</td></tr>
+        <tr><td>Graduation (Mention Hons. Subject)</td><td>${row['Graduation_Yr'] || ''}</td><td>${row['Graduation_Subj'] || ''}</td><td>${row['Graduation_Board'] || ''}</td><td>${row['Graduation_Marks'] || ''}</td></tr>
+        <tr><td>Post Graduation</td><td>${row['PostGrad_Yr'] || ''}</td><td>${row['PostGrad_Subj'] || ''}</td><td>${row['PostGrad_Board'] || ''}</td><td>${row['PostGrad_Marks'] || ''}</td></tr>
+        <tr><td>B.Ed., CT, NTT, B.P.Ed.</td><td>${row['BEd_Yr'] || ''}</td><td>${row['BEd_Subj'] || ''}</td><td>${row['BEd_Board'] || ''}</td><td>${row['BEd_Marks'] || ''}</td></tr>
+        <tr><td>OTET, CTET, OSTET</td><td>${row['TET_Yr'] || ''}</td><td>${row['TET_Subj'] || ''}</td><td>${row['TET_Board'] || ''}</td><td>${row['TET_Marks'] || ''}</td></tr>
       </table>
 
-      <!-- 3. EXTRA QUALIFICATION -->
-      <div class="section-title">3. Extra Qualification (if any)</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">
+      <!-- ===== 3. EXTRA QUALIFICATION ===== -->
+      <div class="section-title">3. Extra Qualification (if any):</div>
+      <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="border:1px solid #000;padding:4px;">Qualification</th>
-          <th style="border:1px solid #000;padding:4px;">Specialization Subject</th>
-          <th style="border:1px solid #000;padding:4px;">Year / University / Grade</th>
+          <th>Qualification</th>
+          <th>Specialization Subject</th>
+          <th>Year of Passing</th>
+          <th>University</th>
+          <th>Total Mark in Percentage/CGPA/Grade</th>
+          <th>Any Other Information</th>
         </tr>
-        <tr><td style="border:1px solid #000;padding:4px;">${row['Extra_Q1']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Extra_Q2']||''}</td><td style="border:1px solid #000;padding:4px;">${row['Extra_Q3']||''}</td></tr>
+        <tr><td>${row['Extra_Q1'] || ''}</td><td>${row['Extra_Q2'] || ''}</td><td colspan="3">${row['Extra_Q3'] || ''}</td><td></td></tr>
       </table>
 
-      <!-- 4. WORK EXPERIENCE -->
-      <div class="section-title">4. Work Experience</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">
+      <!-- ===== 4. WORK EXPERIENCE ===== -->
+      <div class="section-title">4. Work Experience:</div>
+      <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="border:1px solid #000;padding:4px;">School/Institution</th>
-          <th style="border:1px solid #000;padding:4px;">Designation & Assignment</th>
-          <th style="border:1px solid #000;padding:4px;">From</th>
-          <th style="border:1px solid #000;padding:4px;">To</th>
-          <th style="border:1px solid #000;padding:4px;">Subject/Class Taught</th>
-          <th style="border:1px solid #000;padding:4px;">Gross Salary</th>
+          <th>Name of School / Institution</th>
+          <th>Designation & Assignment</th>
+          <th>From (Give Month & Year)</th>
+          <th>To (Give Month & Year)</th>
+          <th>Subject / Class Taught</th>
+          <th>Gross Salary Drawn</th>
         </tr>
-        <tr><td style="border:1px solid #000;padding:4px;">${row['WorkExp1']||''}</td><td style="border:1px solid #000;padding:4px;">${row['WorkExp2']||''}</td><td style="border:1px solid #000;padding:4px;"></td><td style="border:1px solid #000;padding:4px;"></td><td style="border:1px solid #000;padding:4px;"></td><td style="border:1px solid #000;padding:4px;"></td></tr>
+        <tr><td>${row['WorkExp1'] || ''}</td><td>${row['WorkExp2'] || ''}</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>${row['WorkExp1'] || ''}</td><td>${row['WorkExp2'] || ''}</td><td></td><td></td><td></td><td></td></tr>
       </table>
-      <div style="margin-top:6px;">
-        <span style="font-weight:600;">Total Experience (Years):</span> 
-        Teaching: ${row['TotalTeaching']||0} &nbsp;|&nbsp; 
-        Administrative: ${row['TotalAdmin']||0} &nbsp;|&nbsp; 
-        Other: ${row['TotalOther']||0}
+      
+      <div style="margin-top:4px;font-size:11pt;">
+        <span style="font-weight:700;">Total Work Experience in Year:</span><br>
+        Teaching: ${row['TotalTeaching'] || '___'} &nbsp;&nbsp;|&nbsp;&nbsp; 
+        Administrative: ${row['TotalAdmin'] || '___'} &nbsp;&nbsp;|&nbsp;&nbsp; 
+        Any Other: ${row['TotalOther'] || '___'}
       </div>
 
-      <!-- 5. ACHIEVEMENTS -->
-      <div class="section-title">5. Achievements</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;">
+      <!-- ===== 5. ACHIEVEMENTS ===== -->
+      <div class="section-title">5. Achievement if any:</div>
+      <table class="achieve-table">
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="border:1px solid #000;padding:4px;width:60px;">Sl. No.</th>
-          <th style="border:1px solid #000;padding:4px;">Particular</th>
-          <th style="border:1px solid #000;padding:4px;">Details Attached</th>
+          <th style="width:50px;">Sl. No.</th>
+          <th>Particular</th>
+          <th>Details Attached (Photo copy of certificates: State, National, International)</th>
         </tr>
-        <tr><td style="border:1px solid #000;padding:4px;">1</td><td style="border:1px solid #000;padding:4px;">Literary Activity</td><td style="border:1px solid #000;padding:4px;"></td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">2</td><td style="border:1px solid #000;padding:4px;">Art & Craft</td><td style="border:1px solid #000;padding:4px;"></td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">3</td><td style="border:1px solid #000;padding:4px;">Sports</td><td style="border:1px solid #000;padding:4px;"></td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;">4</td><td style="border:1px solid #000;padding:4px;">Cultural/Music/Dance</td><td style="border:1px solid #000;padding:4px;"></td></tr>
-        <tr><td style="border:1px solid #000;padding:4px;" colspan="3"><span style="font-weight:600;">Other Achievements:</span> ${row['Achievements']||''}</td></tr>
+        <tr><td>1</td><td>Literary Activity</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('literary') ? '✓' : ''}</td></tr>
+        <tr><td>2</td><td>Art & Craft</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('art') ? '✓' : ''}</td></tr>
+        <tr><td>3</td><td>Sports</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('sport') ? '✓' : ''}</td></tr>
+        <tr><td>4</td><td>Cultural Activity, Music & Dance</td><td>${row['Achievements'] && (row['Achievements'].toLowerCase().includes('cultural') || row['Achievements'].toLowerCase().includes('music') || row['Achievements'].toLowerCase().includes('dance')) ? '✓' : ''}</td></tr>
+        <tr><td colspan="3" style="font-weight:600;">Details: ${row['Achievements'] || ''}</td></tr>
       </table>
 
-      <!-- 6. OTHER DETAILS -->
+      <!-- ===== 6. OTHER DETAILS ===== -->
       <div class="section-title">6. Other Details</div>
-      <div class="field-row"><span class="field-label">Minimum Salary Expected (Per Month):</span><span class="field-value">${row['ExpectedSalary']||''}</span></div>
-      <div class="field-row"><span class="field-label">Time needed to join:</span><span class="field-value">${row['JoiningTime']||''}</span></div>
-      <div class="field-row"><span class="field-label">Residential Status:</span><span class="field-value">${row['Residential']||''}</span></div>
+      <div class="field-row"><span class="field-label">Minimum Salary Expected Rs.</span><span class="field-value">${row['ExpectedSalary'] || '___________'} (Per Month)</span></div>
+      <div class="field-row"><span class="field-label">If selected how much time would you need to join</span><span class="field-value">${row['JoiningTime'] || '___________'}</span></div>
+      <div class="field-row"><span class="field-label">Residential</span><span class="field-value">${row['Residential'] || '___________'}</span></div>
 
-      <!-- DECLARATION -->
+      <!-- ===== DECLARATION ===== -->
       <div class="declaration">
-        <p><strong>Declaration:</strong> I hereby declare that all the information furnished above is true to the best of my knowledge and belief. I will do all my duties to the best of my ability and follow the code of conduct of the institution maintaining required level of discipline as set by the institution.</p>
+        <p style="margin:0;font-weight:600;">19. Declaration.</p>
+        <p style="margin:4px 0 0 0;">
+          I hereby declare that all the information furnished above is true to the best of my knowledge and belief. 
+          I will do all my duties to the best of my ability and follow the code of conduct of the institution 
+          maintaining required level of discipline as set by the institution.
+        </p>
         <div class="signature-row">
-          <span>Date: ${new Date(row['Timestamp']).toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' })}</span>
+          <span>Date: ${formattedDate || '___________'}</span>
           <span>Place: Khordha</span>
-          <span>Full Signature of the Employee: _________________</span>
+          <span><span style="font-weight:600;">Full Signature of the Employee:</span> _________________</span>
         </div>
       </div>
     `;
 
-    // Open print dialog for this single record
+    // Open print dialog
     window.print();
   }
 
-  // ========== EXPORT CSV ==========
+  // ===== EXPORT CSV =====
   function exportCSV() {
     if (!allData || allData.length === 0) { alert('No data to export.'); return; }
     const headers = Object.keys(allData[0]);
@@ -337,6 +525,7 @@
     URL.revokeObjectURL(link.href);
   }
 
+  // Load data on page load
   window.onload = fetchData;
 </script>
 </body>
