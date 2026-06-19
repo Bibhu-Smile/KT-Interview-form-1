@@ -72,201 +72,214 @@
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
     /* ================================================================
-       PRINT STYLES – EXACT MATCH TO WORD DOCUMENT
+       PRINT STYLES – HIDE EVERYTHING EXCEPT THE BIODATA
        ================================================================ */
     @media print {
-      /* Hide everything except the biodata container */
-      body { 
-        background: white; 
-        padding: 0; 
-        margin: 0; 
+      /* Hide ALL body content by default */
+      body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
         font-family: 'Times New Roman', Times, serif !important;
       }
-      .no-print { display: none !important; }
-      .dashboard { box-shadow: none; border-radius: 0; padding: 0; max-width: 100%; }
       
-      /* Show the print container */
+      /* Hide absolutely everything inside body, except the print container */
+      body * {
+        display: none !important;
+      }
+      
+      /* Show ONLY the print container and its children */
+      body .print-biodata,
+      body .print-biodata * {
+        display: block !important;
+      }
+      
+      /* But tables inside print-biodata should use table display */
+      body .print-biodata table,
+      body .print-biodata table * {
+        display: table !important;
+      }
+      body .print-biodata table tr {
+        display: table-row !important;
+      }
+      body .print-biodata table td,
+      body .print-biodata table th {
+        display: table-cell !important;
+      }
+      
+      /* The actual print container */
       .print-biodata {
         display: block !important;
-        margin: 0 auto;
-        padding: 0.8in 0.7in; /* standard Word margins */
-        max-width: 100%;
-        background: white;
+        margin: 0 auto !important;
+        padding: 0.8in 0.7in !important;
+        max-width: 100% !important;
+        background: white !important;
         font-family: 'Times New Roman', Times, serif !important;
-        font-size: 12pt;
-        line-height: 1.4;
-        color: #000;
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        color: #000 !important;
       }
       
       /* All tables */
       .print-biodata table {
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 11pt;
-        font-family: 'Times New Roman', Times, serif;
-        margin: 4px 0 6px 0;
+        border-collapse: collapse !important;
+        width: 100% !important;
+        font-size: 11pt !important;
+        font-family: 'Times New Roman', Times, serif !important;
+        margin: 4px 0 6px 0 !important;
       }
       .print-biodata table td,
       .print-biodata table th {
-        border: 1px solid #000;
-        padding: 4px 6px;
-        text-align: left;
-        vertical-align: top;
+        border: 1px solid #000 !important;
+        padding: 4px 6px !important;
+        text-align: left !important;
+        vertical-align: top !important;
       }
       
       /* Header table – special borders */
       .print-biodata .header-table {
-        border: 2px solid #000;
-        margin-bottom: 4px;
-        width: 100%;
+        border: 2px solid #000 !important;
+        margin-bottom: 4px !important;
+        width: 100% !important;
       }
       .print-biodata .header-table td {
-        border: 1px solid #000;
-        padding: 6px 10px;
-        vertical-align: middle;
-      }
-      .print-biodata .header-table .no-border td {
-        border: none;
+        border: 1px solid #000 !important;
+        padding: 6px 10px !important;
+        vertical-align: middle !important;
       }
       
       /* Logo cell */
       .print-biodata .logo-cell {
-        width: 90px;
-        text-align: center;
-        vertical-align: middle;
+        width: 90px !important;
+        text-align: center !important;
+        vertical-align: middle !important;
       }
       .print-biodata .logo-cell img {
-        max-width: 70px;
-        max-height: 70px;
-        display: block;
-        margin: 0 auto;
+        max-width: 70px !important;
+        max-height: 70px !important;
+        display: block !important;
+        margin: 0 auto !important;
       }
       
       /* Photo cell – top-right */
       .print-biodata .photo-cell {
-        text-align: center;
-        vertical-align: middle;
-        width: 130px;
+        text-align: center !important;
+        vertical-align: middle !important;
+        width: 130px !important;
       }
       .print-biodata .photo-cell img {
-        max-width: 110px;
-        max-height: 130px;
-        border: 2px solid #000;
-        display: block;
-        margin: 0 auto;
+        max-width: 110px !important;
+        max-height: 130px !important;
+        border: 2px solid #000 !important;
+        display: block !important;
+        margin: 0 auto !important;
       }
       .print-biodata .photo-cell .photo-placeholder {
-        width: 110px;
-        height: 130px;
-        border: 2px solid #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-        font-size: 10px;
-        color: #999;
-        background: #f9f9f9;
+        width: 110px !important;
+        height: 130px !important;
+        border: 2px solid #000 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+        font-size: 10px !important;
+        color: #999 !important;
+        background: #f9f9f9 !important;
       }
       
       /* School name & address */
       .print-biodata .school-name {
-        font-size: 20pt;
-        font-weight: 700;
-        color: #1a5276;
-        letter-spacing: 1px;
-        font-family: 'Times New Roman', Times, serif;
+        font-size: 20pt !important;
+        font-weight: 700 !important;
+        color: #1a5276 !important;
+        letter-spacing: 1px !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .school-details {
-        font-size: 10pt;
-        font-family: 'Times New Roman', Times, serif;
+        font-size: 10pt !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .form-title {
-        font-size: 16pt;
-        font-weight: 700;
-        text-align: center;
-        background: #eaf2f8;
-        padding: 4px 0;
-        border: 1px solid #000;
-        border-top: none;
-        font-family: 'Times New Roman', Times, serif;
+        font-size: 16pt !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+        background: #eaf2f8 !important;
+        padding: 4px 0 !important;
+        border: 1px solid #000 !important;
+        border-top: none !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       
       /* Post Applied */
       .print-biodata .post-applied {
-        font-size: 13pt;
-        font-weight: 600;
-        margin: 4px 0 4px 0;
-        padding: 2px 0;
-        font-family: 'Times New Roman', Times, serif;
+        font-size: 13pt !important;
+        font-weight: 600 !important;
+        margin: 4px 0 4px 0 !important;
+        padding: 2px 0 !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .post-applied span {
-        font-weight: 400;
+        font-weight: 400 !important;
       }
       
-      /* Section titles – bold, with background */
+      /* Section titles */
       .print-biodata .section-title {
-        font-weight: 700;
-        font-size: 13pt;
-        background: #d4e6f1;
-        padding: 3px 8px;
-        border: 1px solid #000;
-        margin-top: 8px;
-        font-family: 'Times New Roman', Times, serif;
+        font-weight: 700 !important;
+        font-size: 13pt !important;
+        background: #d4e6f1 !important;
+        padding: 3px 8px !important;
+        border: 1px solid #000 !important;
+        margin-top: 8px !important;
+        font-family: 'Times New Roman', Times, serif !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       
       /* Field rows for General Information */
       .print-biodata .field-row {
-        display: flex;
-        border-bottom: 1px dashed #ccc;
-        padding: 2px 0;
-        font-size: 11.5pt;
-        font-family: 'Times New Roman', Times, serif;
+        display: flex !important;
+        border-bottom: 1px dashed #ccc !important;
+        padding: 2px 0 !important;
+        font-size: 11.5pt !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .field-label {
-        width: 30%;
-        font-weight: 600;
-        font-family: 'Times New Roman', Times, serif;
+        width: 30% !important;
+        font-weight: 600 !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .field-value {
-        width: 70%;
-        font-family: 'Times New Roman', Times, serif;
+        width: 70% !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       
       /* Declaration */
       .print-biodata .declaration {
-        margin-top: 14px;
-        border-top: 2px solid #000;
-        padding-top: 10px;
-        font-size: 11.5pt;
-        font-family: 'Times New Roman', Times, serif;
+        margin-top: 14px !important;
+        border-top: 2px solid #000 !important;
+        padding-top: 10px !important;
+        font-size: 11.5pt !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .declaration p {
-        margin: 2px 0;
+        margin: 2px 0 !important;
       }
       .print-biodata .signature-row {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 18px;
-        font-size: 11.5pt;
-        font-family: 'Times New Roman', Times, serif;
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-top: 18px !important;
+        font-size: 11.5pt !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       
       /* Total Work Experience line */
       .print-biodata .total-exp {
-        margin: 4px 0 0 0;
-        font-size: 11pt;
-        font-family: 'Times New Roman', Times, serif;
+        margin: 4px 0 0 0 !important;
+        font-size: 11pt !important;
+        font-family: 'Times New Roman', Times, serif !important;
       }
       .print-biodata .total-exp strong {
-        font-weight: 700;
-      }
-      
-      /* Ensure tables don't break across pages badly */
-      .print-biodata table {
-        page-break-inside: avoid;
-      }
-      .print-biodata .section-title {
-        page-break-after: avoid;
+        font-weight: 700 !important;
       }
       
       /* Force background colors to print */
@@ -305,13 +318,13 @@
   // ================================================================
   const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC8e-38tUnd39nqi8rJpdTVrKZjXhveZ7--XLCMrDnjIxhJTY6nYY6M9m_jaa5hRalLw/exec";
   const LOGO_FILENAME = "kt-logo.webp";
-  const LOGO_URL = LOGO_FILENAME; // since it's in the same root
+  const LOGO_URL = LOGO_FILENAME;
 
   let allData = [];
-  let logoBase64 = ""; // will store the logo as base64 for reliable printing
+  let logoBase64 = "";
 
   // ================================================================
-  // LOAD LOGO AS BASE64 (so it always prints)
+  // LOAD LOGO AS BASE64
   // ================================================================
   async function loadLogoAsBase64() {
     try {
@@ -320,7 +333,7 @@
       const blob = await response.blob();
       const reader = new FileReader();
       return new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result); // full data URL
+        reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
@@ -388,11 +401,9 @@
 
     const container = document.getElementById('printContainer');
     
-    // Use the base64 logo if loaded, otherwise fallback to URL
     const logoSrc = logoBase64 || LOGO_URL;
     const logoHtml = `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
     
-    // Photo
     let photoHtml = '';
     if (row['PhotoLink']) {
       photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
@@ -400,7 +411,6 @@
       photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
     }
 
-    // Format date
     let formattedDate = '';
     if (row['Timestamp']) {
       try {
@@ -409,9 +419,7 @@
       } catch(e) { formattedDate = ''; }
     }
 
-    // Build the biodata HTML
     container.innerHTML = `
-      <!-- ===== HEADER ===== -->
       <table class="header-table">
         <tr>
           <td class="logo-cell" rowspan="2">
@@ -436,12 +444,10 @@
         </tr>
       </table>
 
-      <!-- ===== POST APPLIED ===== -->
       <div class="post-applied">
         <strong>Post applied for:</strong> <span>${row['Post Applied'] || '___________'}</span>
       </div>
 
-      <!-- ===== 1. GENERAL INFORMATION ===== -->
       <div class="section-title">1. General Information: (TO BE FILLED IN CAPITAL LETTERS ONLY)</div>
       <div class="field-row"><span class="field-label">Name of the Applicant:</span><span class="field-value">${row['Name'] || ''}</span></div>
       <div class="field-row"><span class="field-label">Father or Husband Name:</span><span class="field-value">${row['Father/Husband'] || ''}</span></div>
@@ -460,7 +466,6 @@
       <div class="field-row"><span class="field-label">Aadhaar No.:</span><span class="field-value">${row['Aadhaar'] || ''}</span></div>
       <div class="field-row"><span class="field-label">PAN No.:</span><span class="field-value">${row['PAN'] || ''}</span></div>
 
-      <!-- ===== 2. EDUCATIONAL QUALIFICATIONS ===== -->
       <div class="section-title">2. Educational Qualifications:</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
@@ -478,7 +483,6 @@
         <tr><td>OTET, CTET, OSTET</td><td>${row['TET_Yr'] || ''}</td><td>${row['TET_Subj'] || ''}</td><td>${row['TET_Board'] || ''}</td><td>${row['TET_Marks'] || ''}</td></tr>
       </table>
 
-      <!-- ===== 3. EXTRA QUALIFICATION ===== -->
       <div class="section-title">3. Extra Qualification (if any):</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
@@ -499,7 +503,6 @@
         </tr>
       </table>
 
-      <!-- ===== 4. WORK EXPERIENCE ===== -->
       <div class="section-title">4. Work Experience:</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
@@ -527,7 +530,6 @@
         Any Other: ${row['TotalOther'] || '___'}
       </div>
 
-      <!-- ===== 5. ACHIEVEMENTS ===== -->
       <div class="section-title">5. Achievement if any:</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
@@ -542,13 +544,11 @@
         <tr><td colspan="3" style="font-weight:600;">Details: ${row['Achievements'] || ''}</td></tr>
       </table>
 
-      <!-- ===== 6. OTHER DETAILS ===== -->
       <div class="section-title">6. Other Details</div>
       <div class="field-row"><span class="field-label">Minimum Salary Expected Rs.</span><span class="field-value">${row['ExpectedSalary'] || '___________'} (Per Month)</span></div>
       <div class="field-row"><span class="field-label">If selected how much time would you need to join</span><span class="field-value">${row['JoiningTime'] || '___________'}</span></div>
       <div class="field-row"><span class="field-label">Residential</span><span class="field-value">${row['Residential'] || '___________'}</span></div>
 
-      <!-- ===== 19. DECLARATION ===== -->
       <div class="declaration">
         <p><strong>19. Declaration.</strong></p>
         <p>
@@ -598,7 +598,6 @@
   // INITIALISE
   // ================================================================
   (async function init() {
-    // Load logo as base64 for reliable printing
     const base64 = await loadLogoAsBase64();
     if (base64) {
       logoBase64 = base64;
@@ -606,7 +605,6 @@
     } else {
       console.warn('⚠️ Using URL fallback for logo');
     }
-    // Fetch data
     fetchData();
   })();
 </script>
