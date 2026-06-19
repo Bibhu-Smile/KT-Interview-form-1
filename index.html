@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>KT Global School - Interview Form</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 16px;
+      color: #1a2a3a;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 3px solid #1a5276;
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+    }
+    .header img {
+      width: 64px;
+      height: auto;
+      border-radius: 10px;
+    }
+    .header h1 {
+      font-size: 20px;
+      color: #1a5276;
+      line-height: 1.2;
+    }
+    .header h1 small {
+      display: block;
+      font-size: 13px;
+      font-weight: normal;
+      color: #2c3e50;
+      margin-top: 2px;
+    }
+    .section-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: #1a5276;
+      background: #eaf2f8;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin: 20px 0 14px 0;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #1a2a3a;
+    }
+    label .req { color: #c0392b; margin-left: 2px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #dce4ec;
+      border-radius: 12px;
+      font-size: 15px;
+      background: #fafcfd;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #1a5276;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(26,82,118,0.15);
+    }
+    textarea { resize: vertical; min-height: 60px; }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .inline-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 12px;
+    }
+    .inline-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      margin: 0;
+      cursor: pointer;
+    }
+    .inline-group input[type="radio"],
+    .inline-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #1a5276;
+      margin: 0;
+    }
+    .photo-upload {
+      border: 2px dashed #b0c4d9;
+      padding: 20px;
+      text-align: center;
+      border-radius: 16px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .photo-upload:hover { background: #eaf2f8; border-color: #1a5276; }
+    .photo-upload input { display: none; }
+    .photo-preview {
+      max-width: 120px;
+      max-height: 120px;
+      border-radius: 12px;
+      margin-top: 10px;
+      border: 2px solid #dce4ec;
+    }
+    .btn-submit {
+      width: 100%;
+      background: #1a5276;
+      color: white;
+      border: none;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 50px;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(26,82,118,0.3);
+    }
+    .btn-submit:active { transform: scale(0.97); background: #154360; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .error-msg { color: #c0392b; font-size: 14px; margin-top: 8px; display: none; }
+    .success-msg {
+      color: #1e8449;
+      background: #d5f5e3;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    .table-mini {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 6px;
+    }
+    .table-mini .row-3 { margin-bottom: 8px; }
+    .helper-text { font-size: 12px; color: #5d6d7e; margin-top: 2px; }
+    hr { margin: 20px 0; border: none; border-top: 1.5px solid #e5eaef; }
+    @media (max-width: 480px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; gap: 8px; }
+      .header h1 { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="app">
+  <div class="header">
+    <img src="https://via.placeholder.com/64x64/1a5276/ffffff?text=KT" alt="KTGS Logo" id="schoolLogo">
+    <h1>KT GLOBAL SCHOOL <small>Interview Biodata Form</small></h1>
+  </div>
+
+  <form id="interviewForm" onsubmit="submitForm(event)">
+    <!-- ========== 1. General Information ========== -->
+    <div class="section-title">1. General Information</div>
+
+    <div class="form-group">
+      <label>Name of Applicant <span class="req">*</span></label>
+      <input type="text" id="name" required placeholder="e.g. ANITA KUMARI">
+    </div>
+    <div class="form-group">
+      <label>Father / Husband Name <span class="req">*</span></label>
+      <input type="text" id="father" required placeholder="e.g. RAMESH KUMAR">
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>D.O.B. (DD/MM/YYYY) <span class="req">*</span></label>
+        <input type="date" id="dob" required>
+      </div>
+      <div class="form-group">
+        <label>Age (as on 1st Jan 2026)</label>
+        <input type="number" id="age" placeholder="e.g. 28" readonly>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>Category <span class="req">*</span></label>
+        <select id="category" required>
+          <option value="">Select</option>
+          <option>ST</option><option>SC</option><option>OBC</option><option>GEN</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Religion</label>
+        <input type="text" id="religion" placeholder="e.g. HINDU">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>Nationality</label>
+        <input type="text" id="nationality" placeholder="e.g. INDIAN" value="INDIAN">
+      </div>
+      <div class="form-group">
+        <label>Gender <span class="req">*</span></label>
+        <select id="gender" required>
+          <option value="">Select</option>
+          <option>Male</option><option>Female</option><option>Others</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>Marital Status</label>
+        <select id="marital">
+          <option value="">Select</option>
+          <option>Unmarried</option><option>Married</option><option>Divorced</option><option>Widowed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Hobbies</label>
+        <input type="text" id="hobbies" placeholder="e.g. Reading, Painting">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Permanent Address</label>
+      <textarea id="permanentAddress" rows="2"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Address for Communication</label>
+      <textarea id="communicationAddress" rows="2"></textarea>
+    </div>
+
+    <div class="row-2">
+      <div class="form-group">
+        <label>Mobile No. <span class="req">*</span></label>
+        <input type="tel" id="mobile" required placeholder="10 digit">
+      </div>
+      <div class="form-group">
+        <label>E-mail ID</label>
+        <input type="email" id="email" placeholder="someone@example.com">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Aadhaar No.</label>
+        <input type="text" id="aadhaar" placeholder="12 digits">
+      </div>
+      <div class="form-group">
+        <label>PAN No.</label>
+        <input type="text" id="pan" placeholder="e.g. ABCDE1234F">
+      </div>
+    </div>
+
+    <!-- ========== 2. Educational Qualifications ========== -->
+    <div class="section-title">2. Educational Qualifications</div>
+
+    <!-- Secondary -->
+    <div class="table-mini">
+      <div style="font-weight:700; margin-bottom:6px;">Secondary (10th)</div>
+      <div class="row-3">
+        <input type="text" id="secYr" placeholder="Year">
+        <input type="text" id="secSub" placeholder="Subjects">
+        <input type="text" id="secBoard" placeholder="Board">
+      </div>
+      <input type="text" id="secMarks" placeholder="Total Mark in % / CGPA" style="margin-top:6px;">
+    </div>
+
+    <!-- Senior Secondary -->
+    <div class="table-mini" style="margin-top:12px;">
+      <div style="font-weight:700; margin-bottom:6px;">Senior Secondary (12th)</div>
+      <div class="row-3">
+        <input type="text" id="srSecYr" placeholder="Year">
+        <input type="text" id="srSecSub" placeholder="Subjects">
+        <input type="text" id="srSecBoard" placeholder="Board">
+      </div>
+      <input type="text" id="srSecMarks" placeholder="Total Mark in % / CGPA" style="margin-top:6px;">
+    </div>
+
+    <!-- Graduation -->
+    <div class="table-mini" style="margin-top:12px;">
+      <div style="font-weight:700; margin-bottom:6px;">Graduation <span style="font-weight:400;">(mention Hons. Subject)</span></div>
+      <div class="row-3">
+        <input type="text" id="gradYr" placeholder="Year">
+        <input type="text" id="gradSub" placeholder="Subject">
+        <input type="text" id="gradBoard" placeholder="University">
+      </div>
+      <input type="text" id="gradMarks" placeholder="Total Mark in % / CGPA" style="margin-top:6px;">
+    </div>
+
+    <!-- Post Graduation -->
+    <div class="table-mini" style="margin-top:12px;">
+      <div style="font-weight:700; margin-bottom:6px;">Post Graduation</div>
+      <div class="row-3">
+        <input type="text" id="pgYr" placeholder="Year">
+        <input type="text" id="pgSub" placeholder="Subject">
+        <input type="text" id="pgBoard" placeholder="University">
+      </div>
+      <input type="text" id="pgMarks" placeholder="Total Mark in % / CGPA" style="margin-top:6px;">
+    </div>
+
+    <!-- B.Ed / CT / NTT / B.P.Ed -->
+    <div class="table-mini" style="margin-top:12px;">
+      <div style="font-weight:700; margin-bottom:6px;">B.Ed., CT, NTT, B.P.Ed.</div>
+      <div class="row-3">
+        <input type="text" id="bedYr" placeholder="Year">
+        <input type="text" id="bedSub" placeholder="Subject">
+        <input type="text" id="bedBoard" placeholder="University">
+      </div>
+      <input type="text" id="bedMarks" placeholder="Total Mark in % / CGPA" style="margin-top:6px;">
+    </div>
+
+    <!-- TET -->
+    <div class="table-mini" style="margin-top:12px;">
+      <div style="font-weight:700; margin-bottom:6px;">OTET / CTET / OSTET</div>
+      <div class="row-3">
+        <input type="text" id="tetYr" placeholder="Year">
+        <input type="text" id="tetSub" placeholder="Subject">
+        <input type="text" id="tetBoard" placeholder="Exam Name">
+      </div>
+      <input type="text" id="tetMarks" placeholder="Marks / Grade" style="margin-top:6px;">
+    </div>
+
+    <!-- ========== 3. Extra Qualification ========== -->
+    <div class="section-title">3. Extra Qualification (if any)</div>
+    <div class="table-mini">
+      <div class="row-3">
+        <input type="text" id="extraQ1" placeholder="Qualification">
+        <input type="text" id="extraQ2" placeholder="Specialization">
+        <input type="text" id="extraQ3" placeholder="Year / University / Grade">
+      </div>
+      <div class="helper-text">You may combine details (e.g. "MCA, 2020, Utkal Univ, 78%")</div>
+    </div>
+
+    <!-- ========== 4. Work Experience ========== -->
+    <div class="section-title">4. Work Experience</div>
+    <div class="table-mini">
+      <div style="font-weight:700; margin-bottom:4px;">Experience 1</div>
+      <div class="row-3">
+        <input type="text" id="workExp1" placeholder="School / Institution">
+        <input type="text" id="workExp2" placeholder="Designation">
+        <input type="text" id="workExp3" placeholder="From-To / Subject / Salary">
+      </div>
+      <div class="helper-text">e.g. "DPS, TGT Maths, 2018-2022, ₹45,000"</div>
+    </div>
+    <div style="margin-top:12px;">
+      <div class="row-3">
+        <input type="text" id="totalTeaching" placeholder="Teaching (years)">
+        <input type="text" id="totalAdmin" placeholder="Admin (years)">
+        <input type="text" id="totalOther" placeholder="Other (years)">
+      </div>
+    </div>
+
+    <!-- ========== 5. Achievements ========== -->
+    <div class="section-title">5. Achievements</div>
+    <div class="form-group">
+      <textarea id="achievements" rows="3" placeholder="Literary, Art & Craft, Sports, Cultural, Music, Dance, etc. (mention details)"></textarea>
+    </div>
+
+    <!-- ========== 6. Other Details ========== -->
+    <div class="section-title">6. Other Details</div>
+    <div class="form-group">
+      <label>Minimum Salary Expected (per month) <span class="req">*</span></label>
+      <input type="text" id="expectedSalary" required placeholder="e.g. ₹50,000">
+    </div>
+    <div class="form-group">
+      <label>Time needed to join (if selected)</label>
+      <input type="text" id="joiningTime" placeholder="e.g. 15 days / Immediate">
+    </div>
+    <div class="form-group">
+      <label>Residential Status</label>
+      <select id="residential">
+        <option value="">Select</option>
+        <option>Residential</option><option>Non-Residential</option>
+      </select>
+    </div>
+
+    <!-- ========== PHOTO UPLOAD ========== -->
+    <div class="section-title">Passport Photograph</div>
+    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+      <div>📸 Tap to upload / take photo</div>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="previewPhoto(event)">
+      <img id="photoPreview" class="photo-preview" style="display:none;">
+    </div>
+
+    <!-- ========== DECLARATION ========== -->
+    <hr>
+    <div style="font-size:14px; background:#f8fafc; padding:14px; border-radius:12px;">
+      <p><strong>Declaration:</strong> I hereby declare that all the information furnished above is true to the best of my knowledge and belief. I will do all my duties to the best of my ability and follow the code of conduct of the institution.</p>
+      <div style="margin-top:10px; display:flex; justify-content:space-between; font-size:13px; color:#2c3e50;">
+        <span>Date: <span id="todayDate"></span></span>
+        <span>Place: Khordha</span>
+      </div>
+    </div>
+
+    <!-- ========== SUBMIT ========== -->
+    <button type="submit" class="btn-submit" id="submitBtn">📩 Submit Application</button>
+    <div id="errorMsg" class="error-msg"></div>
+    <div id="successMsg" class="success-msg">✅ Form submitted successfully! We will contact you soon.</div>
+  </form>
+</div>
+
+<script>
+  // Auto-fill today's date
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' });
+
+  // Calculate age from DOB
+  document.getElementById('dob').addEventListener('change', function() {
+    const dob = new Date(this.value);
+    const today = new Date(2026, 0, 1); // as on 1st Jan 2026
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    document.getElementById('age').value = age > 0 ? age : '';
+  });
+
+  // Photo preview
+  function previewPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const preview = document.getElementById('photoPreview');
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ---------- SUBMIT HANDLER ----------
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynEbqngvoPn48XQSVt95HHbMNti-WPtR2kIKPoHO12FvMbyf3bSGuNjtilaLm7WoBjnQ/exec"; // <-- PASTE YOUR WEB APP URL HERE
+
+  async function submitForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const errDiv = document.getElementById('errorMsg');
+    const successDiv = document.getElementById('successMsg');
+    errDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      // --- Collect all data ---
+      const formData = {
+        name: document.getElementById('name').value.trim(),
+        father: document.getElementById('father').value.trim(),
+        dob: document.getElementById('dob').value,
+        age: document.getElementById('age').value,
+        category: document.getElementById('category').value,
+        religion: document.getElementById('religion').value.trim(),
+        nationality: document.getElementById('nationality').value.trim(),
+        gender: document.getElementById('gender').value,
+        marital: document.getElementById('marital').value,
+        hobbies: document.getElementById('hobbies').value.trim(),
+        permanentAddress: document.getElementById('permanentAddress').value.trim(),
+        communicationAddress: document.getElementById('communicationAddress').value.trim(),
+        mobile: document.getElementById('mobile').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        aadhaar: document.getElementById('aadhaar').value.trim(),
+        pan: document.getElementById('pan').value.trim(),
+        secYr: document.getElementById('secYr').value.trim(),
+        secSub: document.getElementById('secSub').value.trim(),
+        secBoard: document.getElementById('secBoard').value.trim(),
+        secMarks: document.getElementById('secMarks').value.trim(),
+        srSecYr: document.getElementById('srSecYr').value.trim(),
+        srSecSub: document.getElementById('srSecSub').value.trim(),
+        srSecBoard: document.getElementById('srSecBoard').value.trim(),
+        srSecMarks: document.getElementById('srSecMarks').value.trim(),
+        gradYr: document.getElementById('gradYr').value.trim(),
+        gradSub: document.getElementById('gradSub').value.trim(),
+        gradBoard: document.getElementById('gradBoard').value.trim(),
+        gradMarks: document.getElementById('gradMarks').value.trim(),
+        pgYr: document.getElementById('pgYr').value.trim(),
+        pgSub: document.getElementById('pgSub').value.trim(),
+        pgBoard: document.getElementById('pgBoard').value.trim(),
+        pgMarks: document.getElementById('pgMarks').value.trim(),
+        bedYr: document.getElementById('bedYr').value.trim(),
+        bedSub: document.getElementById('bedSub').value.trim(),
+        bedBoard: document.getElementById('bedBoard').value.trim(),
+        bedMarks: document.getElementById('bedMarks').value.trim(),
+        tetYr: document.getElementById('tetYr').value.trim(),
+        tetSub: document.getElementById('tetSub').value.trim(),
+        tetBoard: document.getElementById('tetBoard').value.trim(),
+        tetMarks: document.getElementById('tetMarks').value.trim(),
+        extraQ1: document.getElementById('extraQ1').value.trim(),
+        extraQ2: document.getElementById('extraQ2').value.trim(),
+        extraQ3: document.getElementById('extraQ3').value.trim(),
+        workExp1: document.getElementById('workExp1').value.trim(),
+        workExp2: document.getElementById('workExp2').value.trim(),
+        workExp3: document.getElementById('workExp3').value.trim(),
+        totalTeaching: document.getElementById('totalTeaching').value.trim(),
+        totalAdmin: document.getElementById('totalAdmin').value.trim(),
+        totalOther: document.getElementById('totalOther').value.trim(),
+        achievements: document.getElementById('achievements').value.trim(),
+        expectedSalary: document.getElementById('expectedSalary').value.trim(),
+        joiningTime: document.getElementById('joiningTime').value.trim(),
+        residential: document.getElementById('residential').value,
+        photoBase64: '' // will set below if photo exists
+      };
+
+      // --- Validate required ---
+      if (!formData.name || !formData.father || !formData.dob || !formData.category || !formData.gender || !formData.mobile || !formData.expectedSalary) {
+        throw new Error('Please fill all required fields (marked with *).');
+      }
+
+      // --- Photo to Base64 ---
+      const photoFile = document.getElementById('photoInput').files[0];
+      if (photoFile) {
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result.split(',')[1]); // strip data:image/...
+          reader.readAsDataURL(photoFile);
+        });
+        formData.photoBase64 = base64;
+      }
+
+      // --- Send to Apps Script ---
+      const response = await fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // necessary for Apps Script Web App
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      // Because of no-cors, we can't read response. We assume success if no network error.
+      // But Apps Script returns JSON; we can't read it. We'll treat as success.
+      // To be safe, we'll show success.
+      successDiv.style.display = 'block';
+      document.getElementById('interviewForm').reset();
+      document.getElementById('photoPreview').style.display = 'none';
+      document.getElementById('age').value = '';
+      // Optionally scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      errDiv.textContent = err.message || 'Submission failed. Please try again.';
+      errDiv.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '📩 Submit Application';
+    }
+  }
+</script>
+</body>
+</html>

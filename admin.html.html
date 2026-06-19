@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - KT Interview Submissions</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #eef2f7;
+      padding: 24px;
+    }
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+    }
+    h1 { display: flex; align-items: center; gap: 12px; color: #1a5276; font-size: 26px; margin-bottom: 20px; }
+    .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .actions button {
+      background: #1a5276;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 14px;
+    }
+    .actions button:hover { background: #154360; transform: scale(1.02); }
+    .actions button:active { transform: scale(0.97); }
+    .actions .export { background: #1e8449; }
+    .actions .export:hover { background: #196f3d; }
+    .loading { text-align: center; padding: 40px; color: #5d6d7e; }
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 900px;
+    }
+    th {
+      background: #1a5276;
+      color: white;
+      padding: 12px 10px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e5eaef;
+      vertical-align: top;
+    }
+    tr:hover { background: #f4f8fc; }
+    .badge {
+      background: #eaf2f8;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #1a5276;
+    }
+    .btn-print {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 30px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-print:hover { background: #1a2a3a; }
+    .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
+    /* ---------- PRINT STYLES (for PDF) ---------- */
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+      .dashboard { box-shadow: none; border-radius: 0; padding: 20px; }
+      table { font-size: 11px; }
+      th { background: #1a5276 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .print-biodata { display: block !important; }
+    }
+    /* Hidden by default, shown only when printing a single record */
+    .print-biodata {
+      display: none;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: 'Times New Roman', serif;
+      background: white;
+    }
+    .print-biodata .header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #1a5276; padding-bottom: 10px; }
+    .print-biodata .header h1 { font-size: 22px; color: #1a5276; margin: 0; }
+    .print-biodata .header h1 small { font-size: 14px; font-weight: normal; }
+    .print-biodata .field-row { display: flex; padding: 4px 0; border-bottom: 1px dashed #ddd; }
+    .print-biodata .field-label { width: 30%; font-weight: 600; }
+    .print-biodata .field-value { width: 70%; }
+    .print-biodata .section { margin-top: 16px; font-weight: 700; font-size: 16px; border-bottom: 1px solid #1a5276; }
+    .print-biodata .photo-box { float: right; width: 120px; height: 140px; border: 2px solid #1a5276; padding: 4px; margin-left: 16px; text-align: center; }
+    .print-biodata .photo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .print-biodata .clear { clear: both; }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+  <h1>📋 KT Global School – Interview Submissions</h1>
+  <div class="actions no-print">
+    <button onclick="fetchData()">🔄 Refresh</button>
+    <button class="export" onclick="exportCSV()">📥 Export CSV</button>
+    <button onclick="window.print()">🖨️ Print this page</button>
+  </div>
+  <div id="tableContainer">
+    <div class="loading">⏳ Loading submissions...</div>
+  </div>
+</div>
+
+<!-- Hidden container for printing single biodata -->
+<div id="printContainer" class="print-biodata"></div>
+
+<script>
+  const APP_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL"; // <-- PASTE YOUR WEB APP URL HERE
+
+  let allData = [];
+
+  async function fetchData() {
+    const container = document.getElementById('tableContainer');
+    container.innerHTML = '<div class="loading">⏳ Loading...</div>';
+    try {
+      const response = await fetch(APP_SCRIPT_URL);
+      const data = await response.json();
+      allData = data;
+      renderTable(data);
+    } catch (e) {
+      container.innerHTML = `<div style="color:#c0392b;padding:20px;">❌ Failed to fetch data. Check your Apps Script URL and deployment settings.<br>${e.message}</div>`;
+    }
+  }
+
+  function renderTable(data) {
+    const container = document.getElementById('tableContainer');
+    if (!data || data.length === 0) {
+      container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
+      return;
+    }
+
+    let html = '<div class="table-wrap"><table><thead><tr>';
+    // Show selected columns (all except huge text)
+    const headers = Object.keys(data[0]);
+    const displayHeaders = headers.filter(h => !['Permanent Address','Communication Address','Achievements','PhotoLink'].includes(h));
+    displayHeaders.forEach(h => html += `<th>${h}</th>`);
+    html += `<th>Photo</th><th>Action</th></tr></thead><tbody>`;
+
+    data.forEach((row, idx) => {
+      html += `<tr>`;
+      displayHeaders.forEach(h => {
+        let val = row[h] || '';
+        if (val.length > 30) val = val.substring(0, 30) + '…';
+        html += `<td>${val}</td>`;
+      });
+      // Photo
+      const photoUrl = row['PhotoLink'] || '';
+      html += `<td>${photoUrl ? `<img src="${photoUrl}" class="photo-thumb" alt="photo">` : '—'}</td>`;
+      // Action
+      html += `<td><button class="btn-print" onclick="printBiodata(${idx})">🖨️ Print PDF</button></td>`;
+      html += `</tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
+
+  // ---------- PRINT SINGLE BIODATA (styled like original form) ----------
+  function printBiodata(index) {
+    const row = allData[index];
+    if (!row) return;
+
+    const container = document.getElementById('printContainer');
+    // Build a formatted biodata
+    const photoHtml = row['PhotoLink'] ? `<img src="${row['PhotoLink']}" alt="Photo">` : '📷 No Photo';
+
+    container.innerHTML = `
+      <div class="header">
+        <div style="flex:1;">
+          <h1>KT GLOBAL SCHOOL <small>Plot No. F/12, IID Centre, Barunei, Khordha, Odisha - 752057</small></h1>
+          <p style="margin:4px 0;font-size:14px;">📞 +91 90901 11177 &nbsp;|&nbsp; ✉ info@ktglobalschool.org</p>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="photo-box">${photoHtml}</div>
+        <div style="font-weight:700;font-size:20px;text-align:center;margin-bottom:16px;">INTERVIEW BIODATA FORM</div>
+        <div class="section">1. General Information</div>
+        <div class="field-row"><span class="field-label">Name:</span><span class="field-value">${row['Name']||''}</span></div>
+        <div class="field-row"><span class="field-label">Father/Husband:</span><span class="field-value">${row['Father/Husband']||''}</span></div>
+        <div class="field-row"><span class="field-label">DOB:</span><span class="field-value">${row['DOB']||''}</span></div>
+        <div class="field-row"><span class="field-label">Age:</span><span class="field-value">${row['Age']||''}</span></div>
+        <div class="field-row"><span class="field-label">Category:</span><span class="field-value">${row['Category']||''}</span></div>
+        <div class="field-row"><span class="field-label">Religion:</span><span class="field-value">${row['Religion']||''}</span></div>
+        <div class="field-row"><span class="field-label">Nationality:</span><span class="field-value">${row['Nationality']||''}</span></div>
+        <div class="field-row"><span class="field-label">Gender:</span><span class="field-value">${row['Gender']||''}</span></div>
+        <div class="field-row"><span class="field-label">Marital Status:</span><span class="field-value">${row['Marital Status']||''}</span></div>
+        <div class="field-row"><span class="field-label">Hobbies:</span><span class="field-value">${row['Hobbies']||''}</span></div>
+        <div class="field-row"><span class="field-label">Permanent Address:</span><span class="field-value">${row['Permanent Address']||''}</span></div>
+        <div class="field-row"><span class="field-label">Communication Address:</span><span class="field-value">${row['Communication Address']||''}</span></div>
+        <div class="field-row"><span class="field-label">Mobile:</span><span class="field-value">${row['Mobile']||''}</span></div>
+        <div class="field-row"><span class="field-label">Email:</span><span class="field-value">${row['Email']||''}</span></div>
+        <div class="field-row"><span class="field-label">Aadhaar:</span><span class="field-value">${row['Aadhaar']||''}</span></div>
+        <div class="field-row"><span class="field-label">PAN:</span><span class="field-value">${row['PAN']||''}</span></div>
+
+        <div class="section">2. Educational Qualifications</div>
+        <div class="field-row"><span class="field-label">Secondary:</span><span class="field-value">${row['Secondary_Yr']||''} ${row['Secondary_Subj']||''} ${row['Secondary_Board']||''} (${row['Secondary_Marks']||''})</span></div>
+        <div class="field-row"><span class="field-label">Sr. Secondary:</span><span class="field-value">${row['SrSec_Yr']||''} ${row['SrSec_Subj']||''} ${row['SrSec_Board']||''} (${row['SrSec_Marks']||''})</span></div>
+        <div class="field-row"><span class="field-label">Graduation:</span><span class="field-value">${row['Graduation_Yr']||''} ${row['Graduation_Subj']||''} ${row['Graduation_Board']||''} (${row['Graduation_Marks']||''})</span></div>
+        <div class="field-row"><span class="field-label">Post Graduation:</span><span class="field-value">${row['PostGrad_Yr']||''} ${row['PostGrad_Subj']||''} ${row['PostGrad_Board']||''} (${row['PostGrad_Marks']||''})</span></div>
+        <div class="field-row"><span class="field-label">B.Ed./CT/NTT:</span><span class="field-value">${row['BEd_Yr']||''} ${row['BEd_Subj']||''} ${row['BEd_Board']||''} (${row['BEd_Marks']||''})</span></div>
+        <div class="field-row"><span class="field-label">TET:</span><span class="field-value">${row['TET_Yr']||''} ${row['TET_Subj']||''} ${row['TET_Board']||''} (${row['TET_Marks']||''})</span></div>
+
+        <div class="section">3. Extra Qualifications</div>
+        <div class="field-row"><span class="field-label">Extra:</span><span class="field-value">${row['Extra_Q1']||''} ${row['Extra_Q2']||''} ${row['Extra_Q3']||''}</span></div>
+
+        <div class="section">4. Work Experience</div>
+        <div class="field-row"><span class="field-label">Experience:</span><span class="field-value">${row['WorkExp1']||''} ${row['WorkExp2']||''} ${row['WorkExp3']||''}</span></div>
+        <div class="field-row"><span class="field-label">Teaching (yrs):</span><span class="field-value">${row['TotalTeaching']||''}</span></div>
+        <div class="field-row"><span class="field-label">Admin (yrs):</span><span class="field-value">${row['TotalAdmin']||''}</span></div>
+        <div class="field-row"><span class="field-label">Other (yrs):</span><span class="field-value">${row['TotalOther']||''}</span></div>
+
+        <div class="section">5. Achievements</div>
+        <div class="field-row"><span class="field-label">Achievements:</span><span class="field-value">${row['Achievements']||''}</span></div>
+
+        <div class="section">6. Other Details</div>
+        <div class="field-row"><span class="field-label">Expected Salary:</span><span class="field-value">${row['ExpectedSalary']||''}</span></div>
+        <div class="field-row"><span class="field-label">Joining Time:</span><span class="field-value">${row['JoiningTime']||''}</span></div>
+        <div class="field-row"><span class="field-label">Residential:</span><span class="field-value">${row['Residential']||''}</span></div>
+
+        <div style="margin-top:20px;border-top:2px solid #1a5276;padding-top:12px;font-style:italic;font-size:14px;">
+          <p>Declaration: I hereby declare that all the information furnished above is true to the best of my knowledge and belief.</p>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;">
+            <span>Date: ${new Date(row['Timestamp']).toLocaleDateString('en-IN')}</span>
+            <span>Place: Khordha</span>
+            <span>Signature: _________________</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Open print dialog for this single record
+    window.print();
+  }
+
+  // ---------- EXPORT CSV ----------
+  function exportCSV() {
+    if (!allData || allData.length === 0) { alert('No data to export.'); return; }
+    const headers = Object.keys(allData[0]);
+    let csv = headers.join(',') + '\n';
+    allData.forEach(row => {
+      const values = headers.map(h => {
+        let val = (row[h] || '').toString();
+        // Escape quotes and commas
+        if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+          val = '"' + val.replace(/"/g, '""') + '"';
+        }
+        return val;
+      });
+      csv += values.join(',') + '\n';
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `KT_Submissions_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  // Load data on page load
+  window.onload = fetchData;
+</script>
+</body>
+</html>
