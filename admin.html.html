@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - KT Interview Submissions</title>
   <style>
-    /* ===== SCREEN STYLES (unchanged) ===== */
+    /* ===== SCREEN STYLES ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -72,16 +72,19 @@
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
     /* ================================================================
-       PRINT STYLES – PORTRAIT, FIXED TABLES, ALIGNED
+       PRINT STYLES
        ================================================================ */
     @page {
-      size: portrait;
-      margin: 0.5in;
+      size: A4 portrait;
+      margin: 0.7in 0.6in;
     }
 
     @media print {
-      body { background: white !important; padding: 0 !important; margin: 0 !important; font-family: 'Times New Roman', Times, serif !important; }
+      /* Hide all screen elements */
+      body { background: white !important; padding: 0 !important; margin: 0 !important; }
       body * { display: none !important; }
+      
+      /* Show ONLY the print container */
       body .print-biodata,
       body .print-biodata * { display: block !important; }
       body .print-biodata table,
@@ -93,7 +96,7 @@
       .print-biodata {
         display: block !important;
         margin: 0 auto !important;
-        padding: 0 !important; /* page margins handle spacing */
+        padding: 0 !important;
         max-width: 100% !important;
         background: white !important;
         font-family: 'Times New Roman', Times, serif !important;
@@ -102,13 +105,13 @@
         color: #000 !important;
       }
 
-      /* All tables – fixed layout to align columns */
+      /* All tables */
       .print-biodata table {
         border-collapse: collapse !important;
         width: 100% !important;
         font-size: 10pt !important;
         font-family: 'Times New Roman', Times, serif !important;
-        margin: 4px 0 6px 0 !important;
+        margin: 3px 0 5px 0 !important;
         table-layout: fixed !important;
       }
       .print-biodata table td,
@@ -129,7 +132,7 @@
       }
       .print-biodata .header-table td {
         border: 1px solid #000 !important;
-        padding: 4px 6px !important;
+        padding: 4px 8px !important;
         vertical-align: middle !important;
       }
       .print-biodata .logo-cell {
@@ -250,32 +253,52 @@
       }
       .print-biodata .total-exp strong { font-weight: 700 !important; }
 
-      /* ===== TABLE COLUMN WIDTHS ===== */
-      .print-biodata .edu-table th:nth-child(1), .print-biodata .edu-table td:nth-child(1) { width: 22%; }
-      .print-biodata .edu-table th:nth-child(2), .print-biodata .edu-table td:nth-child(2) { width: 12%; }
-      .print-biodata .edu-table th:nth-child(3), .print-biodata .edu-table td:nth-child(3) { width: 20%; }
-      .print-biodata .edu-table th:nth-child(4), .print-biodata .edu-table td:nth-child(4) { width: 26%; }
-      .print-biodata .edu-table th:nth-child(5), .print-biodata .edu-table td:nth-child(5) { width: 20%; }
+      /* Table column widths */
+      .print-biodata .edu-table th:nth-child(1),
+      .print-biodata .edu-table td:nth-child(1) { width: 22%; }
+      .print-biodata .edu-table th:nth-child(2),
+      .print-biodata .edu-table td:nth-child(2) { width: 12%; }
+      .print-biodata .edu-table th:nth-child(3),
+      .print-biodata .edu-table td:nth-child(3) { width: 20%; }
+      .print-biodata .edu-table th:nth-child(4),
+      .print-biodata .edu-table td:nth-child(4) { width: 26%; }
+      .print-biodata .edu-table th:nth-child(5),
+      .print-biodata .edu-table td:nth-child(5) { width: 20%; }
 
-      .print-biodata .extra-table th:nth-child(1), .print-biodata .extra-table td:nth-child(1) { width: 18%; }
-      .print-biodata .extra-table th:nth-child(2), .print-biodata .extra-table td:nth-child(2) { width: 18%; }
-      .print-biodata .extra-table th:nth-child(3), .print-biodata .extra-table td:nth-child(3) { width: 16%; }
-      .print-biodata .extra-table th:nth-child(4), .print-biodata .extra-table td:nth-child(4) { width: 20%; }
-      .print-biodata .extra-table th:nth-child(5), .print-biodata .extra-table td:nth-child(5) { width: 14%; }
-      .print-biodata .extra-table th:nth-child(6), .print-biodata .extra-table td:nth-child(6) { width: 14%; }
+      .print-biodata .extra-table th:nth-child(1),
+      .print-biodata .extra-table td:nth-child(1) { width: 18%; }
+      .print-biodata .extra-table th:nth-child(2),
+      .print-biodata .extra-table td:nth-child(2) { width: 18%; }
+      .print-biodata .extra-table th:nth-child(3),
+      .print-biodata .extra-table td:nth-child(3) { width: 16%; }
+      .print-biodata .extra-table th:nth-child(4),
+      .print-biodata .extra-table td:nth-child(4) { width: 20%; }
+      .print-biodata .extra-table th:nth-child(5),
+      .print-biodata .extra-table td:nth-child(5) { width: 14%; }
+      .print-biodata .extra-table th:nth-child(6),
+      .print-biodata .extra-table td:nth-child(6) { width: 14%; }
 
-      .print-biodata .work-table th:nth-child(1), .print-biodata .work-table td:nth-child(1) { width: 20%; }
-      .print-biodata .work-table th:nth-child(2), .print-biodata .work-table td:nth-child(2) { width: 18%; }
-      .print-biodata .work-table th:nth-child(3), .print-biodata .work-table td:nth-child(3) { width: 12%; }
-      .print-biodata .work-table th:nth-child(4), .print-biodata .work-table td:nth-child(4) { width: 12%; }
-      .print-biodata .work-table th:nth-child(5), .print-biodata .work-table td:nth-child(5) { width: 18%; }
-      .print-biodata .work-table th:nth-child(6), .print-biodata .work-table td:nth-child(6) { width: 20%; }
+      .print-biodata .work-table th:nth-child(1),
+      .print-biodata .work-table td:nth-child(1) { width: 20%; }
+      .print-biodata .work-table th:nth-child(2),
+      .print-biodata .work-table td:nth-child(2) { width: 18%; }
+      .print-biodata .work-table th:nth-child(3),
+      .print-biodata .work-table td:nth-child(3) { width: 12%; }
+      .print-biodata .work-table th:nth-child(4),
+      .print-biodata .work-table td:nth-child(4) { width: 12%; }
+      .print-biodata .work-table th:nth-child(5),
+      .print-biodata .work-table td:nth-child(5) { width: 18%; }
+      .print-biodata .work-table th:nth-child(6),
+      .print-biodata .work-table td:nth-child(6) { width: 20%; }
 
-      .print-biodata .achieve-table th:nth-child(1), .print-biodata .achieve-table td:nth-child(1) { width: 8%; }
-      .print-biodata .achieve-table th:nth-child(2), .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
-      .print-biodata .achieve-table th:nth-child(3), .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
+      .print-biodata .achieve-table th:nth-child(1),
+      .print-biodata .achieve-table td:nth-child(1) { width: 8%; }
+      .print-biodata .achieve-table th:nth-child(2),
+      .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
+      .print-biodata .achieve-table th:nth-child(3),
+      .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
 
-      /* Prevent page breaks inside tables */
+      /* Prevent page breaks */
       .print-biodata table { page-break-inside: avoid; }
       .print-biodata .section-title { page-break-after: avoid; }
     }
@@ -317,7 +340,7 @@
         reader.readAsDataURL(blob);
       });
     } catch (e) {
-      console.warn('Logo not loaded, using fallback:', e.message);
+      console.warn('Logo not loaded:', e.message);
       return null;
     }
   }
@@ -329,13 +352,12 @@
       const response = await fetch(APP_SCRIPT_URL);
       const data = await response.json();
       allData = data;
-      // Debug: show column keys
       if (data.length > 0) {
-        console.log('First row keys:', Object.keys(data[0]));
+        console.log('✅ Data loaded. Columns:', Object.keys(data[0]));
       }
       renderTable(data);
     } catch (e) {
-      container.innerHTML = `<div style="color:#c0392b;padding:20px;">❌ Failed to fetch data. Check your Apps Script URL.<br>${e.message}</div>`;
+      container.innerHTML = `<div style="color:#c0392b;padding:20px;">❌ Error: ${e.message}</div>`;
     }
   }
 
@@ -374,9 +396,12 @@
     if (!row) return;
 
     const container = document.getElementById('printContainer');
+    
+    // Logo
     const logoSrc = logoBase64 || LOGO_URL;
     const logoHtml = `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
     
+    // Photo
     let photoHtml = '';
     if (row['PhotoLink']) {
       photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
@@ -384,6 +409,7 @@
       photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
     }
 
+    // Format date
     let formattedDate = '';
     if (row['Timestamp']) {
       try {
@@ -392,67 +418,70 @@
       } catch(e) { formattedDate = ''; }
     }
 
-    // Extract data with fallbacks
-    const name = row['Name'] || '';
-    const father = row['Father/Husband'] || '';
-    const dob = row['DOB'] || '';
-    const age = row['Age'] || '';
-    const category = row['Category'] || '';
-    const religion = row['Religion'] || '';
-    const nationality = row['Nationality'] || '';
-    const gender = row['Gender'] || '';
-    const marital = row['Marital Status'] || '';
-    const hobbies = row['Hobbies'] || '';
-    const permAddr = row['Permanent Address'] || '';
-    const commAddr = row['Communication Address'] || '';
-    const mobile = row['Mobile'] || '';
-    const email = row['Email'] || '';
-    const aadhaar = row['Aadhaar'] || '';
-    const pan = row['PAN'] || '';
-    const postApplied = row['Post Applied'] || '';
+    // Extract data with safe fallbacks
+    const safe = (val) => val || '';
 
-    const secYr = row['Secondary_Yr'] || '';
-    const secSub = row['Secondary_Subj'] || '';
-    const secBoard = row['Secondary_Board'] || '';
-    const secMarks = row['Secondary_Marks'] || '';
-    const srSecYr = row['SrSec_Yr'] || '';
-    const srSecSub = row['SrSec_Subj'] || '';
-    const srSecBoard = row['SrSec_Board'] || '';
-    const srSecMarks = row['SrSec_Marks'] || '';
-    const gradYr = row['Graduation_Yr'] || '';
-    const gradSub = row['Graduation_Subj'] || '';
-    const gradBoard = row['Graduation_Board'] || '';
-    const gradMarks = row['Graduation_Marks'] || '';
-    const pgYr = row['PostGrad_Yr'] || '';
-    const pgSub = row['PostGrad_Subj'] || '';
-    const pgBoard = row['PostGrad_Board'] || '';
-    const pgMarks = row['PostGrad_Marks'] || '';
-    const bedYr = row['BEd_Yr'] || '';
-    const bedSub = row['BEd_Subj'] || '';
-    const bedBoard = row['BEd_Board'] || '';
-    const bedMarks = row['BEd_Marks'] || '';
-    const tetYr = row['TET_Yr'] || '';
-    const tetSub = row['TET_Subj'] || '';
-    const tetBoard = row['TET_Board'] || '';
-    const tetMarks = row['TET_Marks'] || '';
+    const name = safe(row['Name']);
+    const father = safe(row['Father/Husband']);
+    const dob = safe(row['DOB']);
+    const age = safe(row['Age']);
+    const category = safe(row['Category']);
+    const religion = safe(row['Religion']);
+    const nationality = safe(row['Nationality']);
+    const gender = safe(row['Gender']);
+    const marital = safe(row['Marital Status']);
+    const hobbies = safe(row['Hobbies']);
+    const permAddr = safe(row['Permanent Address']);
+    const commAddr = safe(row['Communication Address']);
+    const mobile = safe(row['Mobile']);
+    const email = safe(row['Email']);
+    const aadhaar = safe(row['Aadhaar']);
+    const pan = safe(row['PAN']);
+    const postApplied = safe(row['Post Applied']);
 
-    const extra1 = row['Extra_Q1'] || '';
-    const extra2 = row['Extra_Q2'] || '';
-    const extra3 = row['Extra_Q3'] || '';
+    const secYr = safe(row['Secondary_Yr']);
+    const secSub = safe(row['Secondary_Subj']);
+    const secBoard = safe(row['Secondary_Board']);
+    const secMarks = safe(row['Secondary_Marks']);
+    const srSecYr = safe(row['SrSec_Yr']);
+    const srSecSub = safe(row['SrSec_Subj']);
+    const srSecBoard = safe(row['SrSec_Board']);
+    const srSecMarks = safe(row['SrSec_Marks']);
+    const gradYr = safe(row['Graduation_Yr']);
+    const gradSub = safe(row['Graduation_Subj']);
+    const gradBoard = safe(row['Graduation_Board']);
+    const gradMarks = safe(row['Graduation_Marks']);
+    const pgYr = safe(row['PostGrad_Yr']);
+    const pgSub = safe(row['PostGrad_Subj']);
+    const pgBoard = safe(row['PostGrad_Board']);
+    const pgMarks = safe(row['PostGrad_Marks']);
+    const bedYr = safe(row['BEd_Yr']);
+    const bedSub = safe(row['BEd_Subj']);
+    const bedBoard = safe(row['BEd_Board']);
+    const bedMarks = safe(row['BEd_Marks']);
+    const tetYr = safe(row['TET_Yr']);
+    const tetSub = safe(row['TET_Subj']);
+    const tetBoard = safe(row['TET_Board']);
+    const tetMarks = safe(row['TET_Marks']);
 
-    const work1 = row['WorkExp1'] || '';
-    const work2 = row['WorkExp2'] || '';
-    const work3 = row['WorkExp3'] || '';
-    const teach = row['TotalTeaching'] || '';
-    const admin = row['TotalAdmin'] || '';
-    const other = row['TotalOther'] || '';
+    const extra1 = safe(row['Extra_Q1']);
+    const extra2 = safe(row['Extra_Q2']);
+    const extra3 = safe(row['Extra_Q3']);
 
-    const achievements = row['Achievements'] || '';
-    const salary = row['ExpectedSalary'] || '';
-    const joining = row['JoiningTime'] || '';
-    const residential = row['Residential'] || '';
+    const work1 = safe(row['WorkExp1']);
+    const work2 = safe(row['WorkExp2']);
+    const work3 = safe(row['WorkExp3']);
+    const teach = safe(row['TotalTeaching']);
+    const admin = safe(row['TotalAdmin']);
+    const other = safe(row['TotalOther']);
 
-    container.innerHTML = `
+    const achievements = safe(row['Achievements']);
+    const salary = safe(row['ExpectedSalary']);
+    const joining = safe(row['JoiningTime']);
+    const residential = safe(row['Residential']);
+
+    // Build the HTML as a single string
+    const html = `
       <table class="header-table">
         <tr>
           <td class="logo-cell" rowspan="2">${logoHtml}</td>
@@ -589,7 +618,13 @@
       </div>
     `;
 
-    window.print();
+    // Insert the HTML into the container
+    container.innerHTML = html;
+
+    // Open print dialog after a small delay to ensure rendering
+    setTimeout(function() {
+      window.print();
+    }, 300);
   }
 
   function exportCSV() {
@@ -619,9 +654,9 @@
     const base64 = await loadLogoAsBase64();
     if (base64) {
       logoBase64 = base64;
-      console.log('✅ Logo loaded as base64');
+      console.log('✅ Logo loaded');
     } else {
-      console.warn('⚠️ Using URL fallback for logo');
+      console.warn('⚠️ Logo not loaded, using URL fallback');
     }
     fetchData();
   })();
