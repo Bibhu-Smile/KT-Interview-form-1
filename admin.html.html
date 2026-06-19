@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - KT Interview Submissions</title>
   <style>
-    /* ===== SCREEN STYLES (Dashboard) ===== */
+    /* ===== SCREEN STYLES ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -71,18 +71,25 @@
     .btn-print:hover { background: #1a2a3a; }
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
-    /* ===== PRINT STYLES (EXACTLY LIKE WORD DOCUMENT) ===== */
+    /* ================================================================
+       PRINT STYLES – EXACT MATCH TO WORD DOCUMENT
+       ================================================================ */
     @media print {
-      /* Hide all screen-only elements */
-      body { background: white; padding: 0; margin: 0; }
+      /* Hide everything except the biodata container */
+      body { 
+        background: white; 
+        padding: 0; 
+        margin: 0; 
+        font-family: 'Times New Roman', Times, serif !important;
+      }
       .no-print { display: none !important; }
       .dashboard { box-shadow: none; border-radius: 0; padding: 0; max-width: 100%; }
       
-      /* Show the biodata container */
+      /* Show the print container */
       .print-biodata {
         display: block !important;
         margin: 0 auto;
-        padding: 0.5in;
+        padding: 0.8in 0.7in; /* standard Word margins */
         max-width: 100%;
         background: white;
         font-family: 'Times New Roman', Times, serif !important;
@@ -91,12 +98,13 @@
         color: #000;
       }
       
-      /* Force table borders for print */
+      /* All tables */
       .print-biodata table {
         border-collapse: collapse;
         width: 100%;
         font-size: 11pt;
         font-family: 'Times New Roman', Times, serif;
+        margin: 4px 0 6px 0;
       }
       .print-biodata table td,
       .print-biodata table th {
@@ -105,23 +113,36 @@
         text-align: left;
         vertical-align: top;
       }
-      .print-biodata .no-border td,
-      .print-biodata .no-border th {
-        border: none !important;
-      }
       
-      /* Header table - no borders */
+      /* Header table – special borders */
       .print-biodata .header-table {
         border: 2px solid #000;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
+        width: 100%;
       }
       .print-biodata .header-table td {
         border: 1px solid #000;
         padding: 6px 10px;
         vertical-align: middle;
       }
+      .print-biodata .header-table .no-border td {
+        border: none;
+      }
       
-      /* Photo cell */
+      /* Logo cell */
+      .print-biodata .logo-cell {
+        width: 90px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .print-biodata .logo-cell img {
+        max-width: 70px;
+        max-height: 70px;
+        display: block;
+        margin: 0 auto;
+      }
+      
+      /* Photo cell – top-right */
       .print-biodata .photo-cell {
         text-align: center;
         vertical-align: middle;
@@ -144,27 +165,16 @@
         margin: 0 auto;
         font-size: 10px;
         color: #999;
+        background: #f9f9f9;
       }
       
-      /* Logo */
-      .print-biodata .logo-cell {
-        width: 90px;
-        text-align: center;
-        vertical-align: middle;
-      }
-      .print-biodata .logo-cell img {
-        max-width: 70px;
-        max-height: 70px;
-        display: block;
-        margin: 0 auto;
-      }
-      
-      /* School name & details */
+      /* School name & address */
       .print-biodata .school-name {
         font-size: 20pt;
         font-weight: 700;
         color: #1a5276;
         letter-spacing: 1px;
+        font-family: 'Times New Roman', Times, serif;
       }
       .print-biodata .school-details {
         font-size: 10pt;
@@ -178,27 +188,29 @@
         padding: 4px 0;
         border: 1px solid #000;
         border-top: none;
+        font-family: 'Times New Roman', Times, serif;
       }
       
       /* Post Applied */
       .print-biodata .post-applied {
         font-size: 13pt;
         font-weight: 600;
-        margin: 6px 0 4px 0;
+        margin: 4px 0 4px 0;
         padding: 2px 0;
+        font-family: 'Times New Roman', Times, serif;
       }
       .print-biodata .post-applied span {
         font-weight: 400;
       }
       
-      /* Section titles */
+      /* Section titles – bold, with background */
       .print-biodata .section-title {
         font-weight: 700;
         font-size: 13pt;
         background: #d4e6f1;
         padding: 3px 8px;
         border: 1px solid #000;
-        margin-top: 6px;
+        margin-top: 8px;
         font-family: 'Times New Roman', Times, serif;
       }
       
@@ -207,7 +219,8 @@
         display: flex;
         border-bottom: 1px dashed #ccc;
         padding: 2px 0;
-        font-size: 11pt;
+        font-size: 11.5pt;
+        font-family: 'Times New Roman', Times, serif;
       }
       .print-biodata .field-label {
         width: 30%;
@@ -221,35 +234,51 @@
       
       /* Declaration */
       .print-biodata .declaration {
-        margin-top: 12px;
+        margin-top: 14px;
         border-top: 2px solid #000;
         padding-top: 10px;
-        font-style: italic;
-        font-size: 11pt;
+        font-size: 11.5pt;
         font-family: 'Times New Roman', Times, serif;
+      }
+      .print-biodata .declaration p {
+        margin: 2px 0;
       }
       .print-biodata .signature-row {
         display: flex;
         justify-content: space-between;
-        margin-top: 16px;
-        font-style: normal;
+        margin-top: 18px;
+        font-size: 11.5pt;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      
+      /* Total Work Experience line */
+      .print-biodata .total-exp {
+        margin: 4px 0 0 0;
         font-size: 11pt;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .print-biodata .total-exp strong {
+        font-weight: 700;
       }
       
-      /* Force page breaks */
-      .print-biodata .page-break {
-        page-break-before: always;
+      /* Ensure tables don't break across pages badly */
+      .print-biodata table {
+        page-break-inside: avoid;
+      }
+      .print-biodata .section-title {
+        page-break-after: avoid;
       }
       
-      /* Achievements table special */
-      .print-biodata .achieve-table td,
-      .print-biodata .achieve-table th {
-        border: 1px solid #000;
-        padding: 4px 6px;
+      /* Force background colors to print */
+      .print-biodata .section-title,
+      .print-biodata .form-title,
+      .print-biodata .header-table td {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
     }
 
-    /* ===== BIODATA CONTAINER (hidden on screen, shown in print) ===== */
+    /* ===== BIODATA CONTAINER (hidden on screen) ===== */
     .print-biodata {
       display: none;
     }
@@ -267,19 +296,43 @@
   </div>
 </div>
 
-<!-- ===== PRINT CONTAINER (exact replica of Word document) ===== -->
+<!-- ===== PRINT CONTAINER ===== -->
 <div id="printContainer" class="print-biodata"></div>
 
 <script>
-  // ===== CONFIGURATION =====
-  // REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxoacGaXUXjsjey4FID-M9roYwwA2cReD3H2UdP-_OWxo3OU0sUnVLpjB1NU-e4kOuiJQ/exec";
-  // REPLACE WITH YOUR LOGO FILENAME (e.g., "KTGS.jpeg" or "logo.png")
+  // ================================================================
+  // CONFIGURATION
+  // ================================================================
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC8e-38tUnd39nqi8rJpdTVrKZjXhveZ7--XLCMrDnjIxhJTY6nYY6M9m_jaa5hRalLw/exec";
   const LOGO_FILENAME = "kt-logo.webp";
+  const LOGO_URL = LOGO_FILENAME; // since it's in the same root
 
   let allData = [];
+  let logoBase64 = ""; // will store the logo as base64 for reliable printing
 
-  // ===== FETCH DATA =====
+  // ================================================================
+  // LOAD LOGO AS BASE64 (so it always prints)
+  // ================================================================
+  async function loadLogoAsBase64() {
+    try {
+      const response = await fetch(LOGO_URL);
+      if (!response.ok) throw new Error('Logo not found');
+      const blob = await response.blob();
+      const reader = new FileReader();
+      return new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result); // full data URL
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (e) {
+      console.warn('Logo not loaded, using fallback:', e.message);
+      return null;
+    }
+  }
+
+  // ================================================================
+  // FETCH DATA
+  // ================================================================
   async function fetchData() {
     const container = document.getElementById('tableContainer');
     container.innerHTML = '<div class="loading">⏳ Loading...</div>';
@@ -293,7 +346,9 @@
     }
   }
 
-  // ===== RENDER TABLE =====
+  // ================================================================
+  // RENDER TABLE
+  // ================================================================
   function renderTable(data) {
     const container = document.getElementById('tableContainer');
     if (!data || data.length === 0) {
@@ -324,15 +379,18 @@
     container.innerHTML = html;
   }
 
-  // ===== PERFECT PRINT - EXACT MATCH TO WORD DOCUMENT =====
+  // ================================================================
+  // PERFECT PRINT – EXACT MATCH TO WORD DOCUMENT
+  // ================================================================
   function printBiodata(index) {
     const row = allData[index];
     if (!row) return;
 
     const container = document.getElementById('printContainer');
     
-    // Logo with fallback
-    const logoHtml = `<img src="${LOGO_FILENAME}" alt="KTGS Logo" onerror="this.outerHTML='<div style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</div>'">`;
+    // Use the base64 logo if loaded, otherwise fallback to URL
+    const logoSrc = logoBase64 || LOGO_URL;
+    const logoHtml = `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
     
     // Photo
     let photoHtml = '';
@@ -342,7 +400,7 @@
       photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
     }
 
-    // Format date from timestamp
+    // Format date
     let formattedDate = '';
     if (row['Timestamp']) {
       try {
@@ -351,9 +409,9 @@
       } catch(e) { formattedDate = ''; }
     }
 
-    // Build the exact replica
+    // Build the biodata HTML
     container.innerHTML = `
-      <!-- ===== HEADER TABLE ===== -->
+      <!-- ===== HEADER ===== -->
       <table class="header-table">
         <tr>
           <td class="logo-cell" rowspan="2">
@@ -380,7 +438,7 @@
 
       <!-- ===== POST APPLIED ===== -->
       <div class="post-applied">
-        Post applied for: <span>${row['Post Applied'] || '___________'}</span>
+        <strong>Post applied for:</strong> <span>${row['Post Applied'] || '___________'}</span>
       </div>
 
       <!-- ===== 1. GENERAL INFORMATION ===== -->
@@ -395,12 +453,8 @@
       <div class="field-row"><span class="field-label">Gender:</span><span class="field-value">${row['Gender'] || ''}</span></div>
       <div class="field-row"><span class="field-label">Marital Status:</span><span class="field-value">${row['Marital Status'] || ''}</span></div>
       <div class="field-row"><span class="field-label">Hobbies:</span><span class="field-value">${row['Hobbies'] || ''}</span></div>
-      
-      <!-- Addresses -->
       <div class="field-row"><span class="field-label">Permanent Address:</span><span class="field-value">${row['Permanent Address'] || ''}</span></div>
       <div class="field-row"><span class="field-label">Address of Communication:</span><span class="field-value">${row['Communication Address'] || ''}</span></div>
-      
-      <!-- Contact -->
       <div class="field-row"><span class="field-label">Mobile No.:</span><span class="field-value">${row['Mobile'] || ''}</span></div>
       <div class="field-row"><span class="field-label">E-mail ID:</span><span class="field-value">${row['Email'] || ''}</span></div>
       <div class="field-row"><span class="field-label">Aadhaar No.:</span><span class="field-value">${row['Aadhaar'] || ''}</span></div>
@@ -410,11 +464,11 @@
       <div class="section-title">2. Educational Qualifications:</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Qualification</th>
-          <th>Year of Passing</th>
-          <th>Subjects Offered</th>
-          <th>Name of Board or University</th>
-          <th>Total Mark in Percentage/CGPA</th>
+          <th style="width:22%;">Qualification</th>
+          <th style="width:12%;">Year of Passing</th>
+          <th style="width:20%;">Subjects Offered</th>
+          <th style="width:26%;">Name of Board or University</th>
+          <th style="width:20%;">Total Mark in Percentage/CGPA</th>
         </tr>
         <tr><td>Secondary</td><td>${row['Secondary_Yr'] || ''}</td><td>${row['Secondary_Subj'] || ''}</td><td>${row['Secondary_Board'] || ''}</td><td>${row['Secondary_Marks'] || ''}</td></tr>
         <tr><td>Senior Secondary</td><td>${row['SrSec_Yr'] || ''}</td><td>${row['SrSec_Subj'] || ''}</td><td>${row['SrSec_Board'] || ''}</td><td>${row['SrSec_Marks'] || ''}</td></tr>
@@ -428,33 +482,46 @@
       <div class="section-title">3. Extra Qualification (if any):</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Qualification</th>
-          <th>Specialization Subject</th>
-          <th>Year of Passing</th>
-          <th>University</th>
-          <th>Total Mark in Percentage/CGPA/Grade</th>
-          <th>Any Other Information</th>
+          <th style="width:18%;">Qualification</th>
+          <th style="width:18%;">Specialization Subject</th>
+          <th style="width:16%;">Year of Passing</th>
+          <th style="width:20%;">University</th>
+          <th style="width:14%;">Total Mark in %/CGPA/Grade</th>
+          <th style="width:14%;">Any Other Information</th>
         </tr>
-        <tr><td>${row['Extra_Q1'] || ''}</td><td>${row['Extra_Q2'] || ''}</td><td colspan="3">${row['Extra_Q3'] || ''}</td><td></td></tr>
+        <tr>
+          <td>${row['Extra_Q1'] || ''}</td>
+          <td>${row['Extra_Q2'] || ''}</td>
+          <td>${row['Extra_Q3'] ? row['Extra_Q3'].split(',').length >= 1 ? row['Extra_Q3'].split(',')[0].trim() : '' : ''}</td>
+          <td>${row['Extra_Q3'] ? (row['Extra_Q3'].split(',').length >= 2 ? row['Extra_Q3'].split(',')[1].trim() : '') : ''}</td>
+          <td>${row['Extra_Q3'] ? (row['Extra_Q3'].split(',').length >= 3 ? row['Extra_Q3'].split(',')[2].trim() : '') : ''}</td>
+          <td></td>
+        </tr>
       </table>
 
       <!-- ===== 4. WORK EXPERIENCE ===== -->
       <div class="section-title">4. Work Experience:</div>
       <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Name of School / Institution</th>
-          <th>Designation & Assignment</th>
-          <th>From (Give Month & Year)</th>
-          <th>To (Give Month & Year)</th>
-          <th>Subject / Class Taught</th>
-          <th>Gross Salary Drawn</th>
+          <th style="width:20%;">Name of School / Institution</th>
+          <th style="width:18%;">Designation &amp; Assignment</th>
+          <th style="width:12%;">From (Month &amp; Year)</th>
+          <th style="width:12%;">To (Month &amp; Year)</th>
+          <th style="width:18%;">Subject / Class Taught</th>
+          <th style="width:20%;">Gross Salary Drawn</th>
         </tr>
-        <tr><td>${row['WorkExp1'] || ''}</td><td>${row['WorkExp2'] || ''}</td><td></td><td></td><td></td><td></td></tr>
-        <tr><td>${row['WorkExp1'] || ''}</td><td>${row['WorkExp2'] || ''}</td><td></td><td></td><td></td><td></td></tr>
+        <tr>
+          <td>${row['WorkExp1'] || ''}</td>
+          <td>${row['WorkExp2'] || ''}</td>
+          <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
       </table>
       
-      <div style="margin-top:4px;font-size:11pt;">
-        <span style="font-weight:700;">Total Work Experience in Year:</span><br>
+      <div class="total-exp">
+        <strong>Total Work Experience in Year:</strong><br>
         Teaching: ${row['TotalTeaching'] || '___'} &nbsp;&nbsp;|&nbsp;&nbsp; 
         Administrative: ${row['TotalAdmin'] || '___'} &nbsp;&nbsp;|&nbsp;&nbsp; 
         Any Other: ${row['TotalOther'] || '___'}
@@ -462,16 +529,16 @@
 
       <!-- ===== 5. ACHIEVEMENTS ===== -->
       <div class="section-title">5. Achievement if any:</div>
-      <table class="achieve-table">
+      <table>
         <tr style="background:#d4e6f1;font-weight:700;">
-          <th style="width:50px;">Sl. No.</th>
-          <th>Particular</th>
-          <th>Details Attached (Photo copy of certificates: State, National, International)</th>
+          <th style="width:8%;">Sl. No.</th>
+          <th style="width:25%;">Particular</th>
+          <th style="width:67%;">Details Attached (Photo copy of certificates: State, National, International)</th>
         </tr>
         <tr><td>1</td><td>Literary Activity</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('literary') ? '✓' : ''}</td></tr>
-        <tr><td>2</td><td>Art & Craft</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('art') ? '✓' : ''}</td></tr>
+        <tr><td>2</td><td>Art &amp; Craft</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('art') ? '✓' : ''}</td></tr>
         <tr><td>3</td><td>Sports</td><td>${row['Achievements'] && row['Achievements'].toLowerCase().includes('sport') ? '✓' : ''}</td></tr>
-        <tr><td>4</td><td>Cultural Activity, Music & Dance</td><td>${row['Achievements'] && (row['Achievements'].toLowerCase().includes('cultural') || row['Achievements'].toLowerCase().includes('music') || row['Achievements'].toLowerCase().includes('dance')) ? '✓' : ''}</td></tr>
+        <tr><td>4</td><td>Cultural Activity, Music &amp; Dance</td><td>${row['Achievements'] && (row['Achievements'].toLowerCase().includes('cultural') || row['Achievements'].toLowerCase().includes('music') || row['Achievements'].toLowerCase().includes('dance')) ? '✓' : ''}</td></tr>
         <tr><td colspan="3" style="font-weight:600;">Details: ${row['Achievements'] || ''}</td></tr>
       </table>
 
@@ -481,27 +548,29 @@
       <div class="field-row"><span class="field-label">If selected how much time would you need to join</span><span class="field-value">${row['JoiningTime'] || '___________'}</span></div>
       <div class="field-row"><span class="field-label">Residential</span><span class="field-value">${row['Residential'] || '___________'}</span></div>
 
-      <!-- ===== DECLARATION ===== -->
+      <!-- ===== 19. DECLARATION ===== -->
       <div class="declaration">
-        <p style="margin:0;font-weight:600;">19. Declaration.</p>
-        <p style="margin:4px 0 0 0;">
+        <p><strong>19. Declaration.</strong></p>
+        <p>
           I hereby declare that all the information furnished above is true to the best of my knowledge and belief. 
           I will do all my duties to the best of my ability and follow the code of conduct of the institution 
           maintaining required level of discipline as set by the institution.
         </p>
         <div class="signature-row">
-          <span>Date: ${formattedDate || '___________'}</span>
-          <span>Place: Khordha</span>
-          <span><span style="font-weight:600;">Full Signature of the Employee:</span> _________________</span>
+          <span><strong>Date:</strong> ${formattedDate || '___________'}</span>
+          <span><strong>Place:</strong> Khordha</span>
+          <span><strong>Full Signature of the Employee:</strong> _________________</span>
         </div>
       </div>
     `;
 
-    // Open print dialog
+    // Open the print dialog
     window.print();
   }
 
-  // ===== EXPORT CSV =====
+  // ================================================================
+  // EXPORT CSV
+  // ================================================================
   function exportCSV() {
     if (!allData || allData.length === 0) { alert('No data to export.'); return; }
     const headers = Object.keys(allData[0]);
@@ -525,8 +594,21 @@
     URL.revokeObjectURL(link.href);
   }
 
-  // Load data on page load
-  window.onload = fetchData;
+  // ================================================================
+  // INITIALISE
+  // ================================================================
+  (async function init() {
+    // Load logo as base64 for reliable printing
+    const base64 = await loadLogoAsBase64();
+    if (base64) {
+      logoBase64 = base64;
+      console.log('✅ Logo loaded as base64');
+    } else {
+      console.warn('⚠️ Using URL fallback for logo');
+    }
+    // Fetch data
+    fetchData();
+  })();
 </script>
 </body>
 </html>
