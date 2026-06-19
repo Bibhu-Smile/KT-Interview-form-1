@@ -32,6 +32,7 @@
       width: 64px;
       height: auto;
       border-radius: 10px;
+      object-fit: contain;
     }
     .header h1 {
       font-size: 20px;
@@ -179,13 +180,30 @@
 <body>
 <div class="container" id="app">
   <div class="header">
-    <img src="https://via.placeholder.com/64x64/1a5276/ffffff?text=KT" alt="KTGS Logo" id="schoolLogo">
+    <!-- CHANGE THE SRC TO YOUR ACTUAL LOGO URL -->
+    <img src="kt-logo.png" alt="KTGS Logo" id="schoolLogo" onerror="this.style.display='none'">
     <h1>KT GLOBAL SCHOOL <small>Interview Biodata Form</small></h1>
   </div>
 
   <form id="interviewForm" onsubmit="submitForm(event)">
     <!-- ========== 1. General Information ========== -->
-    <div class="section-title">1. General Information</div>
+    <div class="section-title">1. General Information <span style="font-weight:400;font-size:14px;">(Fill in CAPITAL LETTERS)</span></div>
+
+    <!-- POST APPLIED FOR (NEW) -->
+    <div class="form-group">
+      <label>Post Applied For <span class="req">*</span></label>
+      <select id="postApplied" required>
+        <option value="">Select Post</option>
+        <option>PPT</option>
+        <option>PRT</option>
+        <option>TGT</option>
+        <option>PGT</option>
+        <option>Entrance Faculty</option>
+        <option>Principal</option>
+        <option>Vice-Principal</option>
+        <option>Academic-Coordinator</option>
+      </select>
+    </div>
 
     <div class="form-group">
       <label>Name of Applicant <span class="req">*</span></label>
@@ -434,7 +452,7 @@
   // Calculate age from DOB
   document.getElementById('dob').addEventListener('change', function() {
     const dob = new Date(this.value);
-    const today = new Date(2026, 0, 1); // as on 1st Jan 2026
+    const today = new Date(2026, 0, 1);
     let age = today.getFullYear() - dob.getFullYear();
     const m = today.getMonth() - dob.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
@@ -455,7 +473,8 @@
   }
 
   // ---------- SUBMIT HANDLER ----------
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynEbqngvoPn48XQSVt95HHbMNti-WPtR2kIKPoHO12FvMbyf3bSGuNjtilaLm7WoBjnQ/exec"; // <-- PASTE YOUR WEB APP URL HERE
+  // REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7aRfVpfY90RwrszA_VbNk3Yf3WWS9lP3wmRvXi7Jf8KBGIFe0BQGyAAcIgdPc3xwNSg/exec"; 
 
   async function submitForm(e) {
     e.preventDefault();
@@ -468,8 +487,8 @@
     btn.textContent = 'Submitting...';
 
     try {
-      // --- Collect all data ---
       const formData = {
+        postApplied: document.getElementById('postApplied').value,
         name: document.getElementById('name').value.trim(),
         father: document.getElementById('father').value.trim(),
         dob: document.getElementById('dob').value,
@@ -523,41 +542,34 @@
         expectedSalary: document.getElementById('expectedSalary').value.trim(),
         joiningTime: document.getElementById('joiningTime').value.trim(),
         residential: document.getElementById('residential').value,
-        photoBase64: '' // will set below if photo exists
+        photoBase64: ''
       };
 
-      // --- Validate required ---
-      if (!formData.name || !formData.father || !formData.dob || !formData.category || !formData.gender || !formData.mobile || !formData.expectedSalary) {
+      if (!formData.postApplied || !formData.name || !formData.father || !formData.dob || !formData.category || !formData.gender || !formData.mobile || !formData.expectedSalary) {
         throw new Error('Please fill all required fields (marked with *).');
       }
 
-      // --- Photo to Base64 ---
       const photoFile = document.getElementById('photoInput').files[0];
       if (photoFile) {
         const base64 = await new Promise((resolve) => {
           const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result.split(',')[1]); // strip data:image/...
+          reader.onload = (e) => resolve(e.target.result.split(',')[1]);
           reader.readAsDataURL(photoFile);
         });
         formData.photoBase64 = base64;
       }
 
-      // --- Send to Apps Script ---
-      const response = await fetch(APP_SCRIPT_URL, {
+      await fetch(APP_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // necessary for Apps Script Web App
+        mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      // Because of no-cors, we can't read response. We assume success if no network error.
-      // But Apps Script returns JSON; we can't read it. We'll treat as success.
-      // To be safe, we'll show success.
       successDiv.style.display = 'block';
       document.getElementById('interviewForm').reset();
       document.getElementById('photoPreview').style.display = 'none';
       document.getElementById('age').value = '';
-      // Optionally scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (err) {
