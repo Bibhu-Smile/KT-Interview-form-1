@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - KT Interview Submissions</title>
   <style>
-    /* ===== SCREEN STYLES ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -42,7 +41,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      min-width: 1000px;
+      min-width: 1200px;
     }
     th {
       background: #1a5276;
@@ -71,20 +70,14 @@
     .btn-print:hover { background: #1a2a3a; }
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
-    /* ================================================================
-       PRINT STYLES
-       ================================================================ */
     @page {
       size: A4 portrait;
       margin: 0.7in 0.6in;
     }
 
     @media print {
-      /* Hide all screen elements */
       body { background: white !important; padding: 0 !important; margin: 0 !important; }
       body * { display: none !important; }
-      
-      /* Show ONLY the print container */
       body .print-biodata,
       body .print-biodata * { display: block !important; }
       body .print-biodata table,
@@ -105,7 +98,6 @@
         color: #000 !important;
       }
 
-      /* All tables */
       .print-biodata table {
         border-collapse: collapse !important;
         width: 100% !important;
@@ -123,7 +115,6 @@
         word-wrap: break-word !important;
       }
 
-      /* Header table */
       .print-biodata .header-table {
         border: 2px solid #000 !important;
         margin-bottom: 4px !important;
@@ -253,7 +244,6 @@
       }
       .print-biodata .total-exp strong { font-weight: 700 !important; }
 
-      /* Table column widths */
       .print-biodata .edu-table th:nth-child(1),
       .print-biodata .edu-table td:nth-child(1) { width: 22%; }
       .print-biodata .edu-table th:nth-child(2),
@@ -298,7 +288,6 @@
       .print-biodata .achieve-table th:nth-child(3),
       .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
 
-      /* Prevent page breaks */
       .print-biodata table { page-break-inside: avoid; }
       .print-biodata .section-title { page-break-after: avoid; }
     }
@@ -321,16 +310,15 @@
 <div id="printContainer" class="print-biodata"></div>
 
 <script>
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzC8e-38tUnd39nqi8rJpdTVrKZjXhveZ7--XLCMrDnjIxhJTY6nYY6M9m_jaa5hRalLw/exec";
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-SRSHkPgIuTLtoYZP1oZrbPmx4afwjh18TmXRMMmTofceS7p9EOyLXk4WaHXVSS8/exec";
   const LOGO_FILENAME = "kt-logo.webp";
-  const LOGO_URL = LOGO_FILENAME;
 
   let allData = [];
   let logoBase64 = "";
 
   async function loadLogoAsBase64() {
     try {
-      const response = await fetch(LOGO_URL);
+      const response = await fetch(LOGO_FILENAME);
       if (!response.ok) throw new Error('Logo not found');
       const blob = await response.blob();
       const reader = new FileReader();
@@ -397,11 +385,9 @@
 
     const container = document.getElementById('printContainer');
     
-    // Logo
-    const logoSrc = logoBase64 || LOGO_URL;
+    const logoSrc = logoBase64 || LOGO_FILENAME;
     const logoHtml = `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
     
-    // Photo
     let photoHtml = '';
     if (row['PhotoLink']) {
       photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
@@ -409,7 +395,6 @@
       photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
     }
 
-    // Format date
     let formattedDate = '';
     if (row['Timestamp']) {
       try {
@@ -418,13 +403,15 @@
       } catch(e) { formattedDate = ''; }
     }
 
-    // Extract data with safe fallbacks
     const safe = (val) => val || '';
 
+    const postCategory = safe(row['Post Category']);
+    const postApplied = safe(row['Post Applied']);
     const name = safe(row['Name']);
     const father = safe(row['Father/Husband']);
     const dob = safe(row['DOB']);
     const age = safe(row['Age']);
+    const bloodGroup = safe(row['Blood Group']);
     const category = safe(row['Category']);
     const religion = safe(row['Religion']);
     const nationality = safe(row['Nationality']);
@@ -437,7 +424,6 @@
     const email = safe(row['Email']);
     const aadhaar = safe(row['Aadhaar']);
     const pan = safe(row['PAN']);
-    const postApplied = safe(row['Post Applied']);
 
     const secYr = safe(row['Secondary_Yr']);
     const secSub = safe(row['Secondary_Subj']);
@@ -468,19 +454,43 @@
     const extra2 = safe(row['Extra_Q2']);
     const extra3 = safe(row['Extra_Q3']);
 
-    const work1 = safe(row['WorkExp1']);
-    const work2 = safe(row['WorkExp2']);
-    const work3 = safe(row['WorkExp3']);
+    // Split work experience into arrays for 3 rows
+    const schools = (safe(row['WorkExp1']) || '').split(' || ');
+    const desigs = (safe(row['WorkExp2']) || '').split(' || ');
+    const detailsArr = (safe(row['WorkExp3']) || '').split(' || ');
+
+    // Ensure we have at least 3 rows (pad empty)
+    const maxExp = 3;
+    const expRows = [];
+    for (let i = 0; i < maxExp; i++) {
+      expRows.push({
+        school: schools[i] || '',
+        desig: desigs[i] || '',
+        details: detailsArr[i] || ''
+      });
+    }
+
     const teach = safe(row['TotalTeaching']);
     const admin = safe(row['TotalAdmin']);
     const other = safe(row['TotalOther']);
 
     const achievements = safe(row['Achievements']);
+    const currentSalary = safe(row['CurrentSalary']);
     const salary = safe(row['ExpectedSalary']);
     const joining = safe(row['JoiningTime']);
-    const residential = safe(row['Residential']);
+    const transportation = safe(row['Transportation']);
 
-    // Build the HTML as a single string
+    let displayPost = postApplied;
+    if (postCategory) {
+      displayPost = postApplied + ' (' + postCategory + ')';
+    }
+
+    // Build work experience table rows dynamically
+    let workRowsHtml = '';
+    expRows.forEach(exp => {
+      workRowsHtml += `<tr><td>${exp.school}</td><td>${exp.desig}</td><td></td><td></td><td></td><td></td></tr>`;
+    });
+
     const html = `
       <table class="header-table">
         <tr>
@@ -505,7 +515,7 @@
       </table>
 
       <div class="post-applied">
-        <strong>Post applied for:</strong> <span>${postApplied || '___________'}</span>
+        <strong>Post applied for:</strong> <span>${displayPost || '___________'}</span>
       </div>
 
       <div class="section-title">1. General Information: (TO BE FILLED IN CAPITAL LETTERS ONLY)</div>
@@ -513,6 +523,7 @@
       <div class="field-row"><span class="field-label">Father or Husband Name:</span><span class="field-value">${father}</span></div>
       <div class="field-row"><span class="field-label">D.O.B.:</span><span class="field-value">${dob}</span></div>
       <div class="field-row"><span class="field-label">Age as on 1st Jan 2026:</span><span class="field-value">${age}</span></div>
+      <div class="field-row"><span class="field-label">Blood Group:</span><span class="field-value">${bloodGroup}</span></div>
       <div class="field-row"><span class="field-label">Category:</span><span class="field-value">${category}</span></div>
       <div class="field-row"><span class="field-label">Religion:</span><span class="field-value">${religion}</span></div>
       <div class="field-row"><span class="field-label">Nationality:</span><span class="field-value">${nationality}</span></div>
@@ -573,8 +584,7 @@
           <th>Subject / Class Taught</th>
           <th>Gross Salary Drawn</th>
         </tr>
-        <tr><td>${work1}</td><td>${work2}</td><td></td><td></td><td></td><td></td></tr>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        ${workRowsHtml}
       </table>
       
       <div class="total-exp">
@@ -598,10 +608,11 @@
         <tr><td colspan="3" style="font-weight:600;">Details: ${achievements}</td></tr>
       </table>
 
-      <div class="section-title">6. Other Details</div>
+      <div class="section-title">6. Salary & Other Details</div>
+      <div class="field-row"><span class="field-label">Current Salary (Rs. per month):</span><span class="field-value">${currentSalary || '___________'}</span></div>
       <div class="field-row"><span class="field-label">Minimum Salary Expected Rs.</span><span class="field-value">${salary || '___________'} (Per Month)</span></div>
       <div class="field-row"><span class="field-label">If selected how much time would you need to join</span><span class="field-value">${joining || '___________'}</span></div>
-      <div class="field-row"><span class="field-label">Residential</span><span class="field-value">${residential || '___________'}</span></div>
+      <div class="field-row"><span class="field-label">Transportation or Own Arrangement:</span><span class="field-value">${transportation || '___________'}</span></div>
 
       <div class="declaration">
         <p><strong>19. Declaration.</strong></p>
@@ -618,10 +629,8 @@
       </div>
     `;
 
-    // Insert the HTML into the container
     container.innerHTML = html;
 
-    // Open print dialog after a small delay to ensure rendering
     setTimeout(function() {
       window.print();
     }, 300);
