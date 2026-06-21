@@ -128,15 +128,17 @@
     }
     .btn-submit:active { transform: scale(0.97); background: #154360; }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    .error-msg { 
-      color: #c0392b; 
-      font-size: 14px; 
-      margin-top: 8px; 
-      display: none; 
+    .error-msg {
+      color: #c0392b;
+      font-size: 14px;
+      margin-top: 8px;
+      display: none;
       background: #fde8e8;
       padding: 12px;
       border-radius: 8px;
       border-left: 4px solid #c0392b;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
     .success-msg {
       color: #1e8449;
@@ -186,6 +188,16 @@
     }
     optgroup { font-weight: 700; color: #1a5276; }
     optgroup option { font-weight: 400; color: #1a2a3a; }
+    .debug-info {
+      background: #f0f0f0;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: monospace;
+      margin-top: 8px;
+      display: none;
+      overflow-wrap: break-word;
+    }
     @media (max-width: 480px) {
       .row-2, .row-3 { grid-template-columns: 1fr; gap: 8px; }
       .header h1 { font-size: 17px; }
@@ -456,12 +468,12 @@
 
     <!-- ========== 6. Salary & Other Details ========== -->
     <div class="section-title">6. Salary & Other Details</div>
-    
+
     <div class="form-group">
       <label>Current Salary (Rs. ______ per month)</label>
       <input type="text" id="currentSalary" placeholder="e.g. ₹45,000">
     </div>
-    
+
     <div class="form-group">
       <label>Minimum Salary Expected (per month) <span class="req">*</span></label>
       <input type="text" id="expectedSalary" required placeholder="e.g. ₹50,000">
@@ -505,6 +517,7 @@
     <button type="submit" class="btn-submit" id="submitBtn">📩 Submit Application</button>
     <div id="errorMsg" class="error-msg"></div>
     <div id="successMsg" class="success-msg">✅ Form submitted successfully! We will contact you soon.</div>
+    <div id="debugInfo" class="debug-info"></div>
   </form>
 </div>
 
@@ -578,18 +591,23 @@
   }
 
   // ================================================================
-  // SUBMIT HANDLER
+  // SUBMIT HANDLER - WITH PROPER CORS AND ERROR LOGGING
   // ================================================================
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwidrfEnHT6BSMLctOyZZm9KQ8KWFoSkIwP4p7-FZ6_-AcHsWCV3uJOijzDa7QnlbQd/exec"; // REPLACE WITH YOUR URL
+  // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT URL
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwidrfEnHT6BSMLctOyZZm9KQ8KWFoSkIwP4p7-FZ6_-AcHsWCV3uJOijzDa7QnlbQd/exec";
 
   async function submitForm(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     const errDiv = document.getElementById('errorMsg');
     const successDiv = document.getElementById('successMsg');
-    
+    const debugDiv = document.getElementById('debugInfo');
+
     errDiv.style.display = 'none';
     successDiv.style.display = 'none';
+    debugDiv.style.display = 'none';
+    debugDiv.textContent = '';
+
     btn.disabled = true;
     btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
 
@@ -703,15 +721,29 @@
       }
       formData.photoBase64 = photoBase64;
 
-      // Send to Apps Script (CORS enabled)
+      // ============================================================
+      // SEND TO APPS SCRIPT - Using cors mode to get proper response
+      // ============================================================
+      debugDiv.textContent = '⏳ Sending to: ' + APP_SCRIPT_URL;
+      debugDiv.style.display = 'block';
+
       const response = await fetch(APP_SCRIPT_URL, {
         method: 'POST',
-        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
+      debugDiv.textContent = '📥 Response status: ' + response.status;
+      debugDiv.style.display = 'block';
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error('HTTP ' + response.status + ': ' + errorText);
+      }
+
       const result = await response.json();
+      debugDiv.textContent = '📦 Response: ' + JSON.stringify(result, null, 2);
+      debugDiv.style.display = 'block';
 
       if (result.success) {
         successDiv.style.display = 'block';
@@ -728,6 +760,10 @@
       errDiv.textContent = '❌ ' + err.message;
       errDiv.style.display = 'block';
       console.error('Submission error:', err);
+      
+      // Show debug info
+      debugDiv.textContent = '❌ Error: ' + err.message;
+      debugDiv.style.display = 'block';
     } finally {
       btn.disabled = false;
       btn.innerHTML = '📩 Submit Application';
