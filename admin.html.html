@@ -330,37 +330,52 @@
   }
 
   async function fetchData() {
-    const container = document.getElementById('tableContainer');
-    container.innerHTML = '<div class="loading">⏳ Loading...</div>';
-    try {
-      const response = await fetch(APP_SCRIPT_URL);
-      
-      // Check if response is OK
-      if (!response.ok) {
-        throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+  const container = document.getElementById('tableContainer');
+  container.innerHTML = '<div class="loading">⏳ Loading...</div>';
+  try {
+    // Use no-cors mode to avoid CORS preflight
+    const response = await fetch(APP_SCRIPT_URL, {
+      method: 'GET',
+      mode: 'no-cors', // This bypasses CORS but gives an opaque response
+      headers: {
+        'Accept': 'application/json'
       }
-      
-      const data = await response.json();
-      allData = data;
-      if (data.length > 0) {
-        console.log('✅ Data loaded. Columns:', Object.keys(data[0]));
-      } else {
-        console.log('✅ Data loaded: Empty array (no submissions yet)');
-      }
-      renderTable(data);
-    } catch (e) {
-      console.error('Fetch error:', e);
-      container.innerHTML = `<div style="color:#c0392b;padding:20px;background:#fde8e8;border-radius:8px;border-left:4px solid #c0392b;">
-        ❌ Error: ${e.message}<br><br>
-        <strong>Please check:</strong><br>
-        1. The Apps Script URL is correct and ends with <code>?action=getData</code><br>
-        2. Apps Script is deployed with "Anyone" access<br>
-        3. Try opening this URL directly in your browser: <br>
-        <code style="font-size:11px;word-break:break-all;">${APP_SCRIPT_URL}</code>
-      </div>`;
-    }
+    });
+    
+    // With no-cors, we can't read the response directly.
+    // We need to use a different approach - either use a <script> tag (JSONP)
+    // or use the Google Sheets JSON feed directly.
+    // Let's use the Google Sheets feed as a fallback.
+    const sheetId = "YOUR_SHEET_ID"; // Replace with your actual Sheet ID
+    const jsonUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+    
+    const jsonResponse = await fetch(jsonUrl);
+    const rawText = await jsonResponse.text();
+    const jsonText = rawText.substring(rawText.indexOf('(') + 1, rawText.lastIndexOf(')'));
+    const parsed = JSON.parse(jsonText);
+    const table = parsed.table;
+    const headers = table.cols.map(col => col.label);
+    const rows = table.rows.map(row => {
+      const obj = {};
+      headers.forEach((h, i) => {
+        obj[h] = row.c[i] ? row.c[i].v : '';
+      });
+      return obj;
+    });
+    allData = rows;
+    renderTable(rows);
+  } catch (e) {
+    console.error('Fetch error:', e);
+    container.innerHTML = `<div style="color:#c0392b;padding:20px;background:#fde8e8;border-radius:8px;border-left:4px solid #c0392b;">
+      ❌ Error: ${e.message}<br><br>
+      <strong>Please check:</strong><br>
+      1. The Apps Script URL is correct and ends with <code>?action=getData</code><br>
+      2. Apps Script is deployed with "Anyone" access<br>
+      3. Try opening this URL directly in your browser: <br>
+      <code style="font-size:11px;word-break:break-all;">${APP_SCRIPT_URL}</code>
+    </div>`;
   }
-
+}
   function renderTable(data) {
     const container = document.getElementById('tableContainer');
     if (!data || data.length === 0) {
