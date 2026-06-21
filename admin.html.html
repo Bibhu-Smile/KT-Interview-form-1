@@ -70,11 +70,6 @@
     .btn-print:hover { background: #1a2a3a; }
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
-    @page {
-      size: A4 portrait;
-      margin: 0.7in 0.6in;
-    }
-
     @media print {
       body { background: white !important; padding: 0 !important; margin: 0 !important; }
       body * { display: none !important; }
@@ -310,8 +305,8 @@
 <div id="printContainer" class="print-biodata"></div>
 
 <script>
-  // ⚠️ REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdvgb67ddLMyTKFUzpkLk2a99mPmCQIS3iACe36mumAMZrlToPBBcwzPYuwf8rToSS/exec";
+  // ⚠️ REPLACE WITH YOUR ACTUAL APPS SCRIPT URL (WITH action=getData)
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwidrfEnHT6BSMLctOyZZm9KQ8KWFoSkIwP4p7-FZ6_-AcHsWCV3uJOijzDa7QnlbQd/exec?action=getData";
   const LOGO_FILENAME = "kt-logo.webp";
 
   let allData = [];
@@ -339,14 +334,30 @@
     container.innerHTML = '<div class="loading">⏳ Loading...</div>';
     try {
       const response = await fetch(APP_SCRIPT_URL);
+      
+      // Check if response is OK
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+      }
+      
       const data = await response.json();
       allData = data;
       if (data.length > 0) {
         console.log('✅ Data loaded. Columns:', Object.keys(data[0]));
+      } else {
+        console.log('✅ Data loaded: Empty array (no submissions yet)');
       }
       renderTable(data);
     } catch (e) {
-      container.innerHTML = `<div style="color:#c0392b;padding:20px;">❌ Error: ${e.message}</div>`;
+      console.error('Fetch error:', e);
+      container.innerHTML = `<div style="color:#c0392b;padding:20px;background:#fde8e8;border-radius:8px;border-left:4px solid #c0392b;">
+        ❌ Error: ${e.message}<br><br>
+        <strong>Please check:</strong><br>
+        1. The Apps Script URL is correct and ends with <code>?action=getData</code><br>
+        2. Apps Script is deployed with "Anyone" access<br>
+        3. Try opening this URL directly in your browser: <br>
+        <code style="font-size:11px;word-break:break-all;">${APP_SCRIPT_URL}</code>
+      </div>`;
     }
   }
 
@@ -385,10 +396,8 @@
     if (!row) return;
 
     const container = document.getElementById('printContainer');
-    
     const logoSrc = logoBase64 || LOGO_FILENAME;
     const logoHtml = `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
-    
     let photoHtml = '';
     if (row['PhotoLink']) {
       photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
@@ -472,7 +481,6 @@
     const teach = safe(row['TotalTeaching']);
     const admin = safe(row['TotalAdmin']);
     const other = safe(row['TotalOther']);
-
     const achievements = safe(row['Achievements']);
     const currentSalary = safe(row['CurrentSalary']);
     const salary = safe(row['ExpectedSalary']);
@@ -628,10 +636,7 @@
     `;
 
     container.innerHTML = html;
-
-    setTimeout(function() {
-      window.print();
-    }, 300);
+    setTimeout(function() { window.print(); }, 300);
   }
 
   function exportCSV() {
@@ -648,7 +653,6 @@
       });
       csv += values.join(',') + '\n';
     });
-
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
