@@ -310,7 +310,7 @@
 <div id="printContainer" class="print-biodata"></div>
 
 <script>
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbyL2Tn_zIo5FeVwpyXKtAZiLOQPauzaPUBWsPRtUzG5GFtPo0LnvRWr0LjilWN8oB/exec";
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmf47Ra75qZATybuGbZupxBMhSZHEfzVDtSs8X1QyOP8bDx4u0PnGbMEMDWAO1GMpU/exec";
   const LOGO_FILENAME = "kt-logo.webp";
 
   let allData = [];
@@ -454,12 +454,10 @@
     const extra2 = safe(row['Extra_Q2']);
     const extra3 = safe(row['Extra_Q3']);
 
-    // Split work experience into arrays for 3 rows
     const schools = (safe(row['WorkExp1']) || '').split(' || ');
     const desigs = (safe(row['WorkExp2']) || '').split(' || ');
     const detailsArr = (safe(row['WorkExp3']) || '').split(' || ');
 
-    // Ensure we have at least 3 rows (pad empty)
     const maxExp = 3;
     const expRows = [];
     for (let i = 0; i < maxExp; i++) {
@@ -485,7 +483,6 @@
       displayPost = postApplied + ' (' + postCategory + ')';
     }
 
-    // Build work experience table rows dynamically
     let workRowsHtml = '';
     expRows.forEach(exp => {
       workRowsHtml += `<tr><td>${exp.school}</td><td>${exp.desig}</td><td></td><td></td><td></td><td></td></tr>`;
