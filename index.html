@@ -110,6 +110,7 @@
       border-radius: 12px;
       margin-top: 10px;
       border: 2px solid #dce4ec;
+      object-fit: cover;
     }
     .btn-submit {
       width: 100%;
@@ -127,7 +128,16 @@
     }
     .btn-submit:active { transform: scale(0.97); background: #154360; }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    .error-msg { color: #c0392b; font-size: 14px; margin-top: 8px; display: none; }
+    .error-msg { 
+      color: #c0392b; 
+      font-size: 14px; 
+      margin-top: 8px; 
+      display: none; 
+      background: #fde8e8;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #c0392b;
+    }
     .success-msg {
       color: #1e8449;
       background: #d5f5e3;
@@ -146,15 +156,6 @@
     .table-mini .row-3 { margin-bottom: 8px; }
     .helper-text { font-size: 12px; color: #5d6d7e; margin-top: 2px; }
     hr { margin: 20px 0; border: none; border-top: 1.5px solid #e5eaef; }
-    .category-label {
-      font-weight: 600;
-      font-size: 13px;
-      color: #1a5276;
-      margin: 6px 0 2px 0;
-      padding: 4px 8px;
-      background: #eaf2f8;
-      border-radius: 6px;
-    }
     .exp-block {
       background: #f8fafc;
       border-radius: 12px;
@@ -168,6 +169,23 @@
       color: #1a5276;
       margin-bottom: 6px;
     }
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #1a5276;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    optgroup { font-weight: 700; color: #1a5276; }
+    optgroup option { font-weight: 400; color: #1a2a3a; }
     @media (max-width: 480px) {
       .row-2, .row-3 { grid-template-columns: 1fr; gap: 8px; }
       .header h1 { font-size: 17px; }
@@ -185,35 +203,34 @@
     <!-- ========== 1. General Information ========== -->
     <div class="section-title">1. General Information <span style="font-weight:400;font-size:14px;">(Fill in CAPITAL LETTERS)</span></div>
 
-    <!-- POST APPLIED FOR - WITH CATEGORIES -->
+    <!-- POST APPLIED FOR - SINGLE DROPDOWN WITH OPTGROUPS -->
     <div class="form-group">
       <label>Post Applied For <span class="req">*</span></label>
-      <div class="category-label">📚 Academic</div>
-      <select id="postApplied" required style="margin-bottom:6px;">
-        <option value="">Select Academic Post</option>
-        <option value="PPT">PPT</option>
-        <option value="PRT">PRT</option>
-        <option value="TGT">TGT</option>
-        <option value="PGT">PGT</option>
-        <option value="Entrance Faculty">Entrance Faculty</option>
-        <option value="Principal">Principal</option>
-        <option value="Vice-Principal">Vice-Principal</option>
-        <option value="Academic-Coordinator">Academic-Coordinator</option>
-        <option value="Academic Others">Others</option>
+      <select id="postApplied" required>
+        <option value="">— Select a Post —</option>
+        <optgroup label="📚 Academic">
+          <option value="PPT" data-category="Academic">PPT</option>
+          <option value="PRT" data-category="Academic">PRT</option>
+          <option value="TGT" data-category="Academic">TGT</option>
+          <option value="PGT" data-category="Academic">PGT</option>
+          <option value="Entrance Faculty" data-category="Academic">Entrance Faculty</option>
+          <option value="Principal" data-category="Academic">Principal</option>
+          <option value="Vice-Principal" data-category="Academic">Vice-Principal</option>
+          <option value="Academic-Coordinator" data-category="Academic">Academic-Coordinator</option>
+          <option value="Academic Others" data-category="Academic">Others (Academic)</option>
+        </optgroup>
+        <optgroup label="💼 Non-Academic">
+          <option value="Telecaller" data-category="Non-Academic">Telecaller</option>
+          <option value="Counsellor" data-category="Non-Academic">Counsellor</option>
+          <option value="PRE" data-category="Non-Academic">PRE</option>
+          <option value="PRM" data-category="Non-Academic">PRM</option>
+          <option value="HR" data-category="Non-Academic">HR</option>
+          <option value="Business" data-category="Non-Academic">Business</option>
+          <option value="Administrative" data-category="Non-Academic">Administrative</option>
+          <option value="Non-Academic Others" data-category="Non-Academic">Others (Non-Academic)</option>
+        </optgroup>
       </select>
-      <div class="category-label" style="margin-top:6px;">💼 Non-Academic</div>
-      <select id="postAppliedNonAcademic" style="margin-top:4px;">
-        <option value="">Select Non-Academic Post</option>
-        <option value="Telecaller">Telecaller</option>
-        <option value="Counsellor">Counsellor</option>
-        <option value="PRE">PRE</option>
-        <option value="PRM">PRM</option>
-        <option value="HR">HR</option>
-        <option value="Business">Business</option>
-        <option value="Administrative">Administrative</option>
-        <option value="Non-Academic Others">Others</option>
-      </select>
-      <div class="helper-text">Select Academic OR Non-Academic post above</div>
+      <div class="helper-text">Select the post you are applying for</div>
     </div>
 
     <div class="form-group">
@@ -393,10 +410,9 @@
       <div class="helper-text">You may combine details (e.g. "MCA, 2020, Utkal Univ, 78%")</div>
     </div>
 
-    <!-- ========== 4. Work Experience (NEW: 3 Blocks) ========== -->
+    <!-- ========== 4. Work Experience ========== -->
     <div class="section-title">4. Work Experience</div>
 
-    <!-- Experience 1 -->
     <div class="exp-block">
       <div class="exp-title">📌 Experience 1</div>
       <div class="row-3">
@@ -406,7 +422,6 @@
       </div>
     </div>
 
-    <!-- Experience 2 -->
     <div class="exp-block">
       <div class="exp-title">📌 Experience 2</div>
       <div class="row-3">
@@ -416,7 +431,6 @@
       </div>
     </div>
 
-    <!-- Experience 3 -->
     <div class="exp-block">
       <div class="exp-title">📌 Experience 3</div>
       <div class="row-3">
@@ -457,7 +471,6 @@
       <input type="text" id="joiningTime" placeholder="e.g. 15 days / Immediate">
     </div>
 
-    <!-- NEW: Transportation (Replaced Residential) -->
     <div class="form-group">
       <label>Transportation or Own Arrangement <span class="req">*</span></label>
       <select id="transportation" required>
@@ -474,6 +487,9 @@
       <div>📸 Tap to upload / take photo</div>
       <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="previewPhoto(event)">
       <img id="photoPreview" class="photo-preview" style="display:none;">
+      <div id="photoSizeWarning" style="font-size:12px;color:#e67e22;display:none;margin-top:4px;">
+        ⚠️ Photo compressed to fit (max 800px)
+      </div>
     </div>
 
     <!-- ========== DECLARATION ========== -->
@@ -504,48 +520,91 @@
     document.getElementById('age').value = age > 0 ? age : '';
   });
 
-  function previewPhoto(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      const preview = document.getElementById('photoPreview');
-      preview.src = ev.target.result;
-      preview.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+  // ================================================================
+  // PHOTO COMPRESSION
+  // ================================================================
+  function compressPhoto(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
-  // ---------- SUBMIT HANDLER ----------
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbyL2Tn_zIo5FeVwpyXKtAZiLOQPauzaPUBWsPRtUzG5GFtPo0LnvRWr0LjilWN8oB/exec"; // REPLACE WITH YOUR URL
+  let compressedPhotoDataUrl = null;
+
+  async function previewPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const preview = document.getElementById('photoPreview');
+    const warning = document.getElementById('photoSizeWarning');
+    try {
+      const dataUrl = await compressPhoto(file);
+      compressedPhotoDataUrl = dataUrl;
+      preview.src = dataUrl;
+      preview.style.display = 'block';
+      if (file.size > 200 * 1024) warning.style.display = 'block';
+      else warning.style.display = 'none';
+    } catch (err) {
+      console.error('Photo compression failed:', err);
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        preview.src = ev.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // ================================================================
+  // SUBMIT HANDLER
+  // ================================================================
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmf47Ra75qZATybuGbZupxBMhSZHEfzVDtSs8X1QyOP8bDx4u0PnGbMEMDWAO1GMpU/exec"; // REPLACE WITH YOUR URL
 
   async function submitForm(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     const errDiv = document.getElementById('errorMsg');
     const successDiv = document.getElementById('successMsg');
+    
     errDiv.style.display = 'none';
     successDiv.style.display = 'none';
     btn.disabled = true;
-    btn.textContent = 'Submitting...';
+    btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
 
     try {
-      // Get post applied
-      let postApplied = document.getElementById('postApplied').value;
-      const postNonAcademic = document.getElementById('postAppliedNonAcademic').value;
-      let postCategory = '';
-      if (postApplied) {
-        postCategory = 'Academic';
-        if (postApplied === 'Academic Others') postApplied = 'Others (Academic)';
-      } else if (postNonAcademic) {
-        postCategory = 'Non-Academic';
-        postApplied = postNonAcademic;
-        if (postNonAcademic === 'Non-Academic Others') postApplied = 'Others (Non-Academic)';
-      } else {
-        throw new Error('Please select a Post (Academic or Non-Academic).');
+      // --- Get Post and Category from single dropdown ---
+      const postSelect = document.getElementById('postApplied');
+      const selectedOption = postSelect.options[postSelect.selectedIndex];
+      const postValue = postSelect.value;
+      const postCategory = selectedOption.getAttribute('data-category') || '';
+
+      if (!postValue || !postCategory) {
+        throw new Error('Please select a valid Post (Academic or Non-Academic).');
       }
 
-      // Get Experience data and combine into 3 columns (separated by " || ")
+      // Get Experience data
       const exp1_school = document.getElementById('exp1_school').value.trim();
       const exp1_desig = document.getElementById('exp1_desig').value.trim();
       const exp1_details = document.getElementById('exp1_details').value.trim();
@@ -556,13 +615,13 @@
       const exp3_desig = document.getElementById('exp3_desig').value.trim();
       const exp3_details = document.getElementById('exp3_details').value.trim();
 
-      // Combine non-empty values
       const schools = [exp1_school, exp2_school, exp3_school].filter(s => s);
       const desigs = [exp1_desig, exp2_desig, exp3_desig].filter(s => s);
-      const details = [exp1_details, exp2_details, exp3_details].filter(s => s);
+      const detailsArr = [exp1_details, exp2_details, exp3_details].filter(s => s);
 
+      // Prepare form data
       const formData = {
-        postApplied: postApplied,
+        postApplied: postValue,
         postCategory: postCategory,
         name: document.getElementById('name').value.trim(),
         father: document.getElementById('father').value.trim(),
@@ -610,7 +669,7 @@
         extraQ3: document.getElementById('extraQ3').value.trim(),
         workExp1: schools.join(' || '),
         workExp2: desigs.join(' || '),
-        workExp3: details.join(' || '),
+        workExp3: detailsArr.join(' || '),
         totalTeaching: document.getElementById('totalTeaching').value.trim(),
         totalAdmin: document.getElementById('totalAdmin').value.trim(),
         totalOther: document.getElementById('totalOther').value.trim(),
@@ -618,45 +677,60 @@
         currentSalary: document.getElementById('currentSalary').value.trim(),
         expectedSalary: document.getElementById('expectedSalary').value.trim(),
         joiningTime: document.getElementById('joiningTime').value.trim(),
-        transportation: document.getElementById('transportation').value, // NEW
+        transportation: document.getElementById('transportation').value,
         photoBase64: ''
       };
 
-      // Validate required fields (including Email and Aadhaar)
+      // Validate required
       if (!formData.postApplied || !formData.name || !formData.father || !formData.dob || !formData.bloodGroup || !formData.category || !formData.gender || !formData.mobile || !formData.email || !formData.aadhaar || !formData.expectedSalary || !formData.transportation) {
         throw new Error('Please fill all required fields (marked with *).');
       }
 
-      // Photo to Base64
-      const photoFile = document.getElementById('photoInput').files[0];
-      if (photoFile) {
-        const base64 = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-          reader.readAsDataURL(photoFile);
-        });
-        formData.photoBase64 = base64;
+      // Handle Photo
+      let photoBase64 = '';
+      if (compressedPhotoDataUrl) {
+        photoBase64 = compressedPhotoDataUrl.split(',')[1];
+      } else {
+        const photoFile = document.getElementById('photoInput').files[0];
+        if (photoFile) {
+          const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+            reader.readAsDataURL(photoFile);
+          });
+          photoBase64 = base64;
+        }
       }
+      formData.photoBase64 = photoBase64;
 
-      await fetch(APP_SCRIPT_URL, {
+      // Send to Apps Script (CORS enabled)
+      const response = await fetch(APP_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      successDiv.style.display = 'block';
-      document.getElementById('interviewForm').reset();
-      document.getElementById('photoPreview').style.display = 'none';
-      document.getElementById('age').value = '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const result = await response.json();
+
+      if (result.success) {
+        successDiv.style.display = 'block';
+        document.getElementById('interviewForm').reset();
+        document.getElementById('photoPreview').style.display = 'none';
+        document.getElementById('age').value = '';
+        compressedPhotoDataUrl = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        throw new Error(result.error || 'Submission failed. Please try again.');
+      }
 
     } catch (err) {
-      errDiv.textContent = err.message || 'Submission failed. Please try again.';
+      errDiv.textContent = '❌ ' + err.message;
       errDiv.style.display = 'block';
+      console.error('Submission error:', err);
     } finally {
       btn.disabled = false;
-      btn.textContent = '📩 Submit Application';
+      btn.innerHTML = '📩 Submit Application';
     }
   }
 </script>
