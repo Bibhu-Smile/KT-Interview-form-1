@@ -1,728 +1,918 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - KT Interview Submissions</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-      background: #eef2f7;
-      padding: 24px;
-    }
-    .dashboard {
-      max-width: 1400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 28px;
-      padding: 28px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.06);
-    }
-    h1 { display: flex; align-items: center; gap: 12px; color: #1a5276; font-size: 26px; margin-bottom: 20px; }
-    .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-    .actions button {
-      background: #1a5276;
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 50px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 14px;
-    }
-    .actions button:hover { background: #154360; }
-    .actions .export { background: #1e8449; }
-    .actions .export:hover { background: #196f3d; }
-    .loading { text-align: center; padding: 40px; color: #5d6d7e; }
-    .table-wrap { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      min-width: 1200px;
-    }
-    th {
-      background: #1a5276;
-      color: white;
-      padding: 12px 10px;
-      text-align: left;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #e5eaef;
-      vertical-align: top;
-    }
-    tr:hover { background: #f4f8fc; }
-    .btn-print {
-      background: #2c3e50;
-      color: white;
-      border: none;
-      padding: 5px 14px;
-      border-radius: 30px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .btn-print:hover { background: #1a2a3a; }
-    .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard – KT Interview Submissions</title>
 
-    @page {
-      size: A4 portrait;
-      margin: 0.7in 0.6in;
-    }
+    <!-- Papa Parse CDN for reliable CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/3.1.4/papaparse.min.js">
+    </script>
 
-    @media print {
-      body { background: white !important; padding: 0 !important; margin: 0 !important; }
-      body * { display: none !important; }
-      body .print-biodata,
-      body .print-biodata * { display: block !important; }
-      body .print-biodata table,
-      body .print-biodata table * { display: table !important; }
-      body .print-biodata table tr { display: table-row !important; }
-      body .print-biodata table td,
-      body .print-biodata table th { display: table-cell !important; }
+    <style>
+        /* ── reset & base ── */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-      .print-biodata {
-        display: block !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        max-width: 100% !important;
-        background: white !important;
-        font-family: 'Times New Roman', Times, serif !important;
-        font-size: 11pt !important;
-        line-height: 1.3 !important;
-        color: #000 !important;
-      }
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #eef2f7;
+            padding: 24px;
+        }
 
-      .print-biodata table {
-        border-collapse: collapse !important;
-        width: 100% !important;
-        font-size: 10pt !important;
-        font-family: 'Times New Roman', Times, serif !important;
-        margin: 3px 0 5px 0 !important;
-        table-layout: fixed !important;
-      }
-      .print-biodata table td,
-      .print-biodata table th {
-        border: 1px solid #000 !important;
-        padding: 3px 5px !important;
-        text-align: left !important;
-        vertical-align: top !important;
-        word-wrap: break-word !important;
-      }
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        }
 
-      .print-biodata .header-table {
-        border: 2px solid #000 !important;
-        margin-bottom: 4px !important;
-        width: 100% !important;
-        table-layout: fixed !important;
-      }
-      .print-biodata .header-table td {
-        border: 1px solid #000 !important;
-        padding: 4px 8px !important;
-        vertical-align: middle !important;
-      }
-      .print-biodata .logo-cell {
-        width: 15% !important;
-        text-align: center !important;
-      }
-      .print-biodata .logo-cell img {
-        max-width: 70px !important;
-        max-height: 70px !important;
-        display: block !important;
-        margin: 0 auto !important;
-      }
-      .print-biodata .photo-cell {
-        width: 20% !important;
-        text-align: center !important;
-        vertical-align: middle !important;
-      }
-      .print-biodata .photo-cell img {
-        max-width: 100px !important;
-        max-height: 120px !important;
-        border: 2px solid #000 !important;
-        display: block !important;
-        margin: 0 auto !important;
-      }
-      .print-biodata .photo-cell .photo-placeholder {
-        width: 100px !important;
-        height: 120px !important;
-        border: 2px solid #000 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 auto !important;
-        font-size: 9px !important;
-        color: #999 !important;
-        background: #f9f9f9 !important;
-      }
-      .print-biodata .school-name {
-        font-size: 18pt !important;
-        font-weight: 700 !important;
-        color: #1a5276 !important;
-        letter-spacing: 0.5px !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .school-details {
-        font-size: 9pt !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .form-title {
-        font-size: 14pt !important;
-        font-weight: 700 !important;
-        text-align: center !important;
-        background: #eaf2f8 !important;
-        padding: 4px 0 !important;
-        border: 1px solid #000 !important;
-        border-top: none !important;
-        font-family: 'Times New Roman', Times, serif !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1a5276;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
 
-      .print-biodata .post-applied {
-        font-size: 12pt !important;
-        font-weight: 600 !important;
-        margin: 4px 0 4px 0 !important;
-        padding: 2px 0 !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .post-applied span { font-weight: 400 !important; }
+        .actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
 
-      .print-biodata .section-title {
-        font-weight: 700 !important;
-        font-size: 12pt !important;
-        background: #d4e6f1 !important;
-        padding: 2px 6px !important;
-        border: 1px solid #000 !important;
-        margin-top: 6px !important;
-        font-family: 'Times New Roman', Times, serif !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+        .actions button {
+            background: #1a5276;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
 
-      .print-biodata .field-row {
-        display: flex !important;
-        border-bottom: 1px dashed #ccc !important;
-        padding: 2px 0 !important;
-        font-size: 10.5pt !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .field-label {
-        width: 30% !important;
-        font-weight: 600 !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .field-value {
-        width: 70% !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
+        .actions button:hover {
+            background: #154360;
+        }
 
-      .print-biodata .declaration {
-        margin-top: 12px !important;
-        border-top: 2px solid #000 !important;
-        padding-top: 8px !important;
-        font-size: 10.5pt !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .declaration p { margin: 2px 0 !important; }
-      .print-biodata .signature-row {
-        display: flex !important;
-        justify-content: space-between !important;
-        margin-top: 14px !important;
-        font-size: 10.5pt !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .total-exp {
-        margin: 4px 0 0 0 !important;
-        font-size: 10pt !important;
-        font-family: 'Times New Roman', Times, serif !important;
-      }
-      .print-biodata .total-exp strong { font-weight: 700 !important; }
+        .actions .export {
+            background: #1e8449;
+        }
 
-      .print-biodata .edu-table th:nth-child(1),
-      .print-biodata .edu-table td:nth-child(1) { width: 22%; }
-      .print-biodata .edu-table th:nth-child(2),
-      .print-biodata .edu-table td:nth-child(2) { width: 12%; }
-      .print-biodata .edu-table th:nth-child(3),
-      .print-biodata .edu-table td:nth-child(3) { width: 20%; }
-      .print-biodata .edu-table th:nth-child(4),
-      .print-biodata .edu-table td:nth-child(4) { width: 26%; }
-      .print-biodata .edu-table th:nth-child(5),
-      .print-biodata .edu-table td:nth-child(5) { width: 20%; }
+        .actions .export:hover {
+            background: #196f3d;
+        }
 
-      .print-biodata .extra-table th:nth-child(1),
-      .print-biodata .extra-table td:nth-child(1) { width: 18%; }
-      .print-biodata .extra-table th:nth-child(2),
-      .print-biodata .extra-table td:nth-child(2) { width: 18%; }
-      .print-biodata .extra-table th:nth-child(3),
-      .print-biodata .extra-table td:nth-child(3) { width: 16%; }
-      .print-biodata .extra-table th:nth-child(4),
-      .print-biodata .extra-table td:nth-child(4) { width: 20%; }
-      .print-biodata .extra-table th:nth-child(5),
-      .print-biodata .extra-table td:nth-child(5) { width: 14%; }
-      .print-biodata .extra-table th:nth-child(6),
-      .print-biodata .extra-table td:nth-child(6) { width: 14%; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #5d6d7e;
+        }
 
-      .print-biodata .work-table th:nth-child(1),
-      .print-biodata .work-table td:nth-child(1) { width: 20%; }
-      .print-biodata .work-table th:nth-child(2),
-      .print-biodata .work-table td:nth-child(2) { width: 18%; }
-      .print-biodata .work-table th:nth-child(3),
-      .print-biodata .work-table td:nth-child(3) { width: 12%; }
-      .print-biodata .work-table th:nth-child(4),
-      .print-biodata .work-table td:nth-child(4) { width: 12%; }
-      .print-biodata .work-table th:nth-child(5),
-      .print-biodata .work-table td:nth-child(5) { width: 18%; }
-      .print-biodata .work-table th:nth-child(6),
-      .print-biodata .work-table td:nth-child(6) { width: 20%; }
+        .table-wrap {
+            overflow-x: auto;
+        }
 
-      .print-biodata .achieve-table th:nth-child(1),
-      .print-biodata .achieve-table td:nth-child(1) { width: 8%; }
-      .print-biodata .achieve-table th:nth-child(2),
-      .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
-      .print-biodata .achieve-table th:nth-child(3),
-      .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 1000px;
+        }
 
-      .print-biodata table { page-break-inside: avoid; }
-      .print-biodata .section-title { page-break-after: avoid; }
-    }
+        th {
+            background: #1a5276;
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
 
-    .print-biodata { display: none; }
-  </style>
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e5eaef;
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: #f4f8fc;
+        }
+
+        .btn-print {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-print:hover {
+            background: #1a2a3a;
+        }
+
+        .photo-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #dce4ec;
+        }
+
+        /* ── print styles (biodata) ── */
+        @page {
+            size: A4 portrait;
+            margin: 0.7in 0.6in;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            body * {
+                display: none !important;
+            }
+
+            body .print-biodata,
+            body .print-biodata * {
+                display: block !important;
+            }
+
+            body .print-biodata table,
+            body .print-biodata table * {
+                display: table !important;
+            }
+
+            body .print-biodata table tr {
+                display: table-row !important;
+            }
+
+            body .print-biodata table td,
+            body .print-biodata table th {
+                display: table-cell !important;
+            }
+
+            .print-biodata {
+                display: block !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+                background: white !important;
+                font-family: 'Times New Roman', Times, serif !important;
+                font-size: 11pt !important;
+                line-height: 1.3 !important;
+                color: #000 !important;
+            }
+
+            .print-biodata table {
+                border-collapse: collapse !important;
+                width: 100% !important;
+                font-size: 10pt !important;
+                font-family: 'Times New Roman', Times, serif !important;
+                margin: 3px 0 5px 0 !important;
+                table-layout: fixed !important;
+            }
+
+            .print-biodata table td,
+            .print-biodata table th {
+                border: 1px solid #000 !important;
+                padding: 3px 5px !important;
+                text-align: left !important;
+                vertical-align: top !important;
+                word-wrap: break-word !important;
+            }
+
+            .print-biodata .header-table {
+                border: 2px solid #000 !important;
+                margin-bottom: 4px !important;
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            .print-biodata .header-table td {
+                border: 1px solid #000 !important;
+                padding: 4px 8px !important;
+                vertical-align: middle !important;
+            }
+
+            .print-biodata .logo-cell {
+                width: 15% !important;
+                text-align: center !important;
+            }
+
+            .print-biodata .logo-cell img {
+                max-width: 70px !important;
+                max-height: 70px !important;
+                display: block !important;
+                margin: 0 auto !important;
+            }
+
+            .print-biodata .photo-cell {
+                width: 20% !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+            }
+
+            .print-biodata .photo-cell img {
+                max-width: 100px !important;
+                max-height: 120px !important;
+                border: 2px solid #000 !important;
+                display: block !important;
+                margin: 0 auto !important;
+            }
+
+            .print-biodata .photo-cell .photo-placeholder {
+                width: 100px !important;
+                height: 120px !important;
+                border: 2px solid #000 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                margin: 0 auto !important;
+                font-size: 9px !important;
+                color: #999 !important;
+                background: #f9f9f9 !important;
+            }
+
+            .print-biodata .school-name {
+                font-size: 18pt !important;
+                font-weight: 700 !important;
+                color: #1a5276 !important;
+                letter-spacing: 0.5px !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .school-details {
+                font-size: 9pt !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .form-title {
+                font-size: 14pt !important;
+                font-weight: 700 !important;
+                text-align: center !important;
+                background: #eaf2f8 !important;
+                padding: 4px 0 !important;
+                border: 1px solid #000 !important;
+                border-top: none !important;
+                font-family: 'Times New Roman', Times, serif !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .print-biodata .post-applied {
+                font-size: 12pt !important;
+                font-weight: 600 !important;
+                margin: 4px 0 4px 0 !important;
+                padding: 2px 0 !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .post-applied span {
+                font-weight: 400 !important;
+            }
+
+            .print-biodata .section-title {
+                font-weight: 700 !important;
+                font-size: 12pt !important;
+                background: #d4e6f1 !important;
+                padding: 2px 6px !important;
+                border: 1px solid #000 !important;
+                margin-top: 6px !important;
+                font-family: 'Times New Roman', Times, serif !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .print-biodata .field-row {
+                display: flex !important;
+                border-bottom: 1px dashed #ccc !important;
+                padding: 2px 0 !important;
+                font-size: 10.5pt !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .field-label {
+                width: 30% !important;
+                font-weight: 600 !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .field-value {
+                width: 70% !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .declaration {
+                margin-top: 12px !important;
+                border-top: 2px solid #000 !important;
+                padding-top: 8px !important;
+                font-size: 10.5pt !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .declaration p {
+                margin: 2px 0 !important;
+            }
+
+            .print-biodata .signature-row {
+                display: flex !important;
+                justify-content: space-between !important;
+                margin-top: 14px !important;
+                font-size: 10.5pt !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .total-exp {
+                margin: 4px 0 0 0 !important;
+                font-size: 10pt !important;
+                font-family: 'Times New Roman', Times, serif !important;
+            }
+
+            .print-biodata .total-exp strong {
+                font-weight: 700 !important;
+            }
+
+            .print-biodata .edu-table th:nth-child(1),
+            .print-biodata .edu-table td:nth-child(1) {
+                width: 22%;
+            }
+            .print-biodata .edu-table th:nth-child(2),
+            .print-biodata .edu-table td:nth-child(2) {
+                width: 12%;
+            }
+            .print-biodata .edu-table th:nth-child(3),
+            .print-biodata .edu-table td:nth-child(3) {
+                width: 20%;
+            }
+            .print-biodata .edu-table th:nth-child(4),
+            .print-biodata .edu-table td:nth-child(4) {
+                width: 26%;
+            }
+            .print-biodata .edu-table th:nth-child(5),
+            .print-biodata .edu-table td:nth-child(5) {
+                width: 20%;
+            }
+
+            .print-biodata .extra-table th:nth-child(1),
+            .print-biodata .extra-table td:nth-child(1) {
+                width: 18%;
+            }
+            .print-biodata .extra-table th:nth-child(2),
+            .print-biodata .extra-table td:nth-child(2) {
+                width: 18%;
+            }
+            .print-biodata .extra-table th:nth-child(3),
+            .print-biodata .extra-table td:nth-child(3) {
+                width: 16%;
+            }
+            .print-biodata .extra-table th:nth-child(4),
+            .print-biodata .extra-table td:nth-child(4) {
+                width: 20%;
+            }
+            .print-biodata .extra-table th:nth-child(5),
+            .print-biodata .extra-table td:nth-child(5) {
+                width: 14%;
+            }
+            .print-biodata .extra-table th:nth-child(6),
+            .print-biodata .extra-table td:nth-child(6) {
+                width: 14%;
+            }
+
+            .print-biodata .work-table th:nth-child(1),
+            .print-biodata .work-table td:nth-child(1) {
+                width: 20%;
+            }
+            .print-biodata .work-table th:nth-child(2),
+            .print-biodata .work-table td:nth-child(2) {
+                width: 18%;
+            }
+            .print-biodata .work-table th:nth-child(3),
+            .print-biodata .work-table td:nth-child(3) {
+                width: 12%;
+            }
+            .print-biodata .work-table th:nth-child(4),
+            .print-biodata .work-table td:nth-child(4) {
+                width: 12%;
+            }
+            .print-biodata .work-table th:nth-child(5),
+            .print-biodata .work-table td:nth-child(5) {
+                width: 18%;
+            }
+            .print-biodata .work-table th:nth-child(6),
+            .print-biodata .work-table td:nth-child(6) {
+                width: 20%;
+            }
+
+            .print-biodata .achieve-table th:nth-child(1),
+            .print-biodata .achieve-table td:nth-child(1) {
+                width: 8%;
+            }
+            .print-biodata .achieve-table th:nth-child(2),
+            .print-biodata .achieve-table td:nth-child(2) {
+                width: 25%;
+            }
+            .print-biodata .achieve-table th:nth-child(3),
+            .print-biodata .achieve-table td:nth-child(3) {
+                width: 67%;
+            }
+
+            .print-biodata table {
+                page-break-inside: avoid;
+            }
+            .print-biodata .section-title {
+                page-break-after: avoid;
+            }
+        }
+
+        .print-biodata {
+            display: none;
+        }
+
+        /* ── error / status ── */
+        .error-box {
+            color: #c0392b;
+            padding: 20px;
+            background: #fde8e8;
+            border-radius: 8px;
+            border-left: 4px solid #c0392b;
+            word-break: break-word;
+        }
+
+        .error-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
-<div class="dashboard">
-  <h1>📋 KT Global School – Interview Submissions</h1>
-  <div class="actions no-print">
-    <button onclick="fetchData()">🔄 Refresh</button>
-    <button class="export" onclick="exportCSV()">📥 Export CSV</button>
-  </div>
-  <div id="tableContainer">
-    <div class="loading">⏳ Loading submissions...</div>
-  </div>
-</div>
 
-<div id="printContainer" class="print-biodata"></div>
+    <div class="dashboard">
+        <h1>📋 KT Global School – Interview Submissions</h1>
 
-<script>
-  // ================================================================
-  // CONFIGURATION - REPLACE WITH YOUR ACTUAL SHEET ID
-  // ================================================================
-  // Your Google Sheet ID is the long string in the URL:
-  // https://docs.google.com/spreadsheets/d/1P_jztf1XStqxQRY5y0zv4ul8JDWxYQQB9QSdViJZPpE/edit
-  const SHEET_ID = "1P_jztf1XStqxQRY5y0zv4ul8JDWxYQQB9QSdViJZPpE"; // <-- REPLACE THIS!
-  
-  // The Google Sheets JSON feed URL (works with CORS)
-  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/YOUR_PUBLISHED_ID/pub?output=csv";
-
-  const LOGO_FILENAME = "kt-logo.webp";
-
-  let allData = [];
-  let logoBase64 = "";
-
-  async function loadLogoAsBase64() {
-    try {
-      const response = await fetch(LOGO_FILENAME);
-      if (!response.ok) throw new Error('Logo not found');
-      const blob = await response.blob();
-      const reader = new FileReader();
-      return new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (e) {
-      console.warn('Logo not loaded:', e.message);
-      return null;
-    }
-  }
-
-  // ================================================================
-  // FETCH DATA FROM GOOGLE SHEETS JSON FEED
-  // ================================================================
-  async function fetchData() {
-    const container = document.getElementById('tableContainer');
-    container.innerHTML = '<div class="loading">⏳ Loading submissions...</div>';
-    
-    try {
-      console.log('Fetching data from:', SHEET_JSON_URL);
-      
-      const response = await fetch(SHEET_JSON_URL);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const rawText = await response.text();
-      console.log('Raw response length:', rawText.length);
-      
-      // Extract the JSON from the Google Visualization wrapper
-      // The response looks like: /*O_o*/ google.visualization.Query.setResponse({...})
-      const jsonStart = rawText.indexOf('(');
-      const jsonEnd = rawText.lastIndexOf(')');
-      
-      if (jsonStart === -1 || jsonEnd === -1) {
-        throw new Error('Could not parse Google Sheets response');
-      }
-      
-      const jsonText = rawText.substring(jsonStart + 1, jsonEnd);
-      const parsed = JSON.parse(jsonText);
-      
-      if (!parsed.table || !parsed.table.rows) {
-        throw new Error('No data found in the sheet');
-      }
-      
-      const table = parsed.table;
-      const headers = table.cols.map(col => col.label);
-      const rows = table.rows.map(row => {
-        const obj = {};
-        headers.forEach((h, i) => {
-          obj[h] = row.c[i] ? row.c[i].v : '';
-        });
-        return obj;
-      });
-      
-      allData = rows;
-      
-      if (rows.length === 0) {
-        container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
-        return;
-      }
-      
-      console.log('✅ Data loaded. Rows:', rows.length);
-      renderTable(rows);
-      
-    } catch (e) {
-      console.error('Fetch error:', e);
-      container.innerHTML = `
-        <div style="color:#c0392b;padding:20px;background:#fde8e8;border-radius:8px;border-left:4px solid #c0392b;word-break:break-word;">
-          <strong>❌ Error: ${e.message}</strong><br><br>
-          <strong>Please fix:</strong><br>
-          1. <strong>Update the SHEET_ID</strong> in this file with your actual Google Sheet ID.<br>
-          2. <strong>Publish your sheet</strong>: File → Share → Publish to web → Click "Publish".<br>
-          3. The URL should be: <code style="font-size:11px;">https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:json</code><br><br>
-          <strong>Your Sheet ID:</strong> <code style="font-size:11px;background:#fff;padding:2px 6px;border-radius:4px;">${SHEET_ID}</code>
-          ${SHEET_ID === 'YOUR_SHEET_ID_HERE' ? ' ⚠️ (This is still the placeholder!)' : ''}
+        <div class="actions no-print">
+            <button onclick="fetchData()">🔄 Refresh</button>
+            <button class="export" onclick="exportCSV()">📥 Export CSV</button>
         </div>
-      `;
-    }
-  }
 
-  function renderTable(data) {
-    const container = document.getElementById('tableContainer');
-    if (!data || data.length === 0) {
-      container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
-      return;
-    }
-
-    let html = '<div class="table-wrap"><table><thead><tr>';
-    const headers = Object.keys(data[0]);
-    const displayHeaders = headers.filter(h => !['Permanent Address','Communication Address','Achievements','PhotoLink'].includes(h));
-    displayHeaders.forEach(h => html += `<th>${h}</th>`);
-    html += `<th>Photo</th><th>Action</th></tr></thead><tbody>`;
-
-    data.forEach((row, idx) => {
-      html += `<tr>`;
-      displayHeaders.forEach(h => {
-        let val = row[h] || '';
-        if (val.length > 30) val = val.substring(0, 30) + '…';
-        html += `<td>${val}</td>`;
-      });
-      const photoUrl = row['PhotoLink'] || '';
-      html += `<td>${photoUrl ? `<img src="${photoUrl}" class="photo-thumb" alt="photo">` : '—'}</td>`;
-      html += `<td><button class="btn-print" onclick="printBiodata(${idx})">🖨️ Print PDF</button></td>`;
-      html += `</tr>`;
-    });
-
-    html += '</tbody></table></div>';
-    container.innerHTML = html;
-  }
-
-  function printBiodata(index) {
-    const row = allData[index];
-    if (!row) return;
-
-    const container = document.getElementById('printContainer');
-    const logoSrc = logoBase64 || LOGO_FILENAME;
-    const logoHtml = `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
-    let photoHtml = '';
-    if (row['PhotoLink']) {
-      photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
-    } else {
-      photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
-    }
-
-    let formattedDate = '';
-    if (row['Timestamp']) {
-      try {
-        const d = new Date(row['Timestamp']);
-        formattedDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      } catch(e) { formattedDate = ''; }
-    }
-
-    const safe = (val) => val || '';
-
-    const postCategory = safe(row['Post Category']);
-    const postApplied = safe(row['Post Applied']);
-    const name = safe(row['Name']);
-    const father = safe(row['Father/Husband']);
-    const dob = safe(row['DOB']);
-    const age = safe(row['Age']);
-    const bloodGroup = safe(row['Blood Group']);
-    const category = safe(row['Category']);
-    const religion = safe(row['Religion']);
-    const nationality = safe(row['Nationality']);
-    const gender = safe(row['Gender']);
-    const marital = safe(row['Marital Status']);
-    const hobbies = safe(row['Hobbies']);
-    const permAddr = safe(row['Permanent Address']);
-    const commAddr = safe(row['Communication Address']);
-    const mobile = safe(row['Mobile']);
-    const email = safe(row['Email']);
-    const aadhaar = safe(row['Aadhaar']);
-    const pan = safe(row['PAN']);
-
-    const secYr = safe(row['Secondary_Yr']);
-    const secSub = safe(row['Secondary_Subj']);
-    const secBoard = safe(row['Secondary_Board']);
-    const secMarks = safe(row['Secondary_Marks']);
-    const srSecYr = safe(row['SrSec_Yr']);
-    const srSecSub = safe(row['SrSec_Subj']);
-    const srSecBoard = safe(row['SrSec_Board']);
-    const srSecMarks = safe(row['SrSec_Marks']);
-    const gradYr = safe(row['Graduation_Yr']);
-    const gradSub = safe(row['Graduation_Subj']);
-    const gradBoard = safe(row['Graduation_Board']);
-    const gradMarks = safe(row['Graduation_Marks']);
-    const pgYr = safe(row['PostGrad_Yr']);
-    const pgSub = safe(row['PostGrad_Subj']);
-    const pgBoard = safe(row['PostGrad_Board']);
-    const pgMarks = safe(row['PostGrad_Marks']);
-    const bedYr = safe(row['BEd_Yr']);
-    const bedSub = safe(row['BEd_Subj']);
-    const bedBoard = safe(row['BEd_Board']);
-    const bedMarks = safe(row['BEd_Marks']);
-    const tetYr = safe(row['TET_Yr']);
-    const tetSub = safe(row['TET_Subj']);
-    const tetBoard = safe(row['TET_Board']);
-    const tetMarks = safe(row['TET_Marks']);
-
-    const extra1 = safe(row['Extra_Q1']);
-    const extra2 = safe(row['Extra_Q2']);
-    const extra3 = safe(row['Extra_Q3']);
-
-    const schools = (safe(row['WorkExp1']) || '').split(' || ');
-    const desigs = (safe(row['WorkExp2']) || '').split(' || ');
-    const detailsArr = (safe(row['WorkExp3']) || '').split(' || ');
-
-    const maxExp = 3;
-    const expRows = [];
-    for (let i = 0; i < maxExp; i++) {
-      expRows.push({
-        school: schools[i] || '',
-        desig: desigs[i] || '',
-        details: detailsArr[i] || ''
-      });
-    }
-
-    const teach = safe(row['TotalTeaching']);
-    const admin = safe(row['TotalAdmin']);
-    const other = safe(row['TotalOther']);
-    const achievements = safe(row['Achievements']);
-    const currentSalary = safe(row['CurrentSalary']);
-    const salary = safe(row['ExpectedSalary']);
-    const joining = safe(row['JoiningTime']);
-    const transportation = safe(row['Transportation']);
-
-    let displayPost = postApplied;
-    if (postCategory) {
-      displayPost = postApplied + ' (' + postCategory + ')';
-    }
-
-    let workRowsHtml = '';
-    expRows.forEach(exp => {
-      workRowsHtml += `<tr><td>${exp.school}</td><td>${exp.desig}</td><td></td><td></td><td></td><td></td></tr>`;
-    });
-
-    const html = `
-      <table class="header-table">
-        <tr>
-          <td class="logo-cell" rowspan="2">${logoHtml}</td>
-          <td style="text-align:center;padding:4px 10px;">
-            <div class="school-name">KT GLOBAL SCHOOL</div>
-            <div class="school-details">
-              Telephone No.: +91 90901 11177 &nbsp;|&nbsp; E-mail ID: info@ktglobalschool.org
-            </div>
-            <div class="school-details">
-              Address: Plot No. F/12, IID Centre, Barunei, Khordha, Odisha - 752057
-            </div>
-          </td>
-          <td class="photo-cell" rowspan="2">
-            ${photoHtml}
-            <div style="font-size:8pt;margin-top:2px;font-weight:600;">Affix Passport<br>size Photograph</div>
-          </td>
-        </tr>
-        <tr>
-          <td class="form-title">INTERVIEW BIODATA FORM</td>
-        </tr>
-      </table>
-
-      <div class="post-applied">
-        <strong>Post applied for:</strong> <span>${displayPost || '___________'}</span>
-      </div>
-
-      <div class="section-title">1. General Information: (TO BE FILLED IN CAPITAL LETTERS ONLY)</div>
-      <div class="field-row"><span class="field-label">Name of the Applicant:</span><span class="field-value">${name}</span></div>
-      <div class="field-row"><span class="field-label">Father or Husband Name:</span><span class="field-value">${father}</span></div>
-      <div class="field-row"><span class="field-label">D.O.B.:</span><span class="field-value">${dob}</span></div>
-      <div class="field-row"><span class="field-label">Age as on 1st Jan 2026:</span><span class="field-value">${age}</span></div>
-      <div class="field-row"><span class="field-label">Blood Group:</span><span class="field-value">${bloodGroup}</span></div>
-      <div class="field-row"><span class="field-label">Category:</span><span class="field-value">${category}</span></div>
-      <div class="field-row"><span class="field-label">Religion:</span><span class="field-value">${religion}</span></div>
-      <div class="field-row"><span class="field-label">Nationality:</span><span class="field-value">${nationality}</span></div>
-      <div class="field-row"><span class="field-label">Gender:</span><span class="field-value">${gender}</span></div>
-      <div class="field-row"><span class="field-label">Marital Status:</span><span class="field-value">${marital}</span></div>
-      <div class="field-row"><span class="field-label">Hobbies:</span><span class="field-value">${hobbies}</span></div>
-      <div class="field-row"><span class="field-label">Permanent Address:</span><span class="field-value">${permAddr}</span></div>
-      <div class="field-row"><span class="field-label">Address of Communication:</span><span class="field-value">${commAddr}</span></div>
-      <div class="field-row"><span class="field-label">Mobile No.:</span><span class="field-value">${mobile}</span></div>
-      <div class="field-row"><span class="field-label">E-mail ID:</span><span class="field-value">${email}</span></div>
-      <div class="field-row"><span class="field-label">Aadhaar No.:</span><span class="field-value">${aadhaar}</span></div>
-      <div class="field-row"><span class="field-label">PAN No.:</span><span class="field-value">${pan}</span></div>
-
-      <div class="section-title">2. Educational Qualifications:</div>
-      <table class="edu-table">
-        <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Qualification</th>
-          <th>Year of Passing</th>
-          <th>Subjects Offered</th>
-          <th>Name of Board or University</th>
-          <th>Total Mark in Percentage/CGPA</th>
-        </tr>
-        <tr><td>Secondary</td><td>${secYr}</td><td>${secSub}</td><td>${secBoard}</td><td>${secMarks}</td></tr>
-        <tr><td>Senior Secondary</td><td>${srSecYr}</td><td>${srSecSub}</td><td>${srSecBoard}</td><td>${srSecMarks}</td></tr>
-        <tr><td>Graduation (Mention Hons. Subject)</td><td>${gradYr}</td><td>${gradSub}</td><td>${gradBoard}</td><td>${gradMarks}</td></tr>
-        <tr><td>Post Graduation</td><td>${pgYr}</td><td>${pgSub}</td><td>${pgBoard}</td><td>${pgMarks}</td></tr>
-        <tr><td>B.Ed., CT, NTT, B.P.Ed.</td><td>${bedYr}</td><td>${bedSub}</td><td>${bedBoard}</td><td>${bedMarks}</td></tr>
-        <tr><td>OTET, CTET, OSTET</td><td>${tetYr}</td><td>${tetSub}</td><td>${tetBoard}</td><td>${tetMarks}</td></tr>
-      </table>
-
-      <div class="section-title">3. Extra Qualification (if any):</div>
-      <table class="extra-table">
-        <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Qualification</th>
-          <th>Specialization Subject</th>
-          <th>Year of Passing</th>
-          <th>University</th>
-          <th>Total Mark in %/CGPA/Grade</th>
-          <th>Any Other Information</th>
-        </tr>
-        <tr>
-          <td>${extra1}</td>
-          <td>${extra2}</td>
-          <td>${extra3 ? extra3.split(',')[0]?.trim() || '' : ''}</td>
-          <td>${extra3 ? extra3.split(',')[1]?.trim() || '' : ''}</td>
-          <td>${extra3 ? extra3.split(',')[2]?.trim() || '' : ''}</td>
-          <td></td>
-        </tr>
-      </table>
-
-      <div class="section-title">4. Work Experience:</div>
-      <table class="work-table">
-        <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Name of School / Institution</th>
-          <th>Designation &amp; Assignment</th>
-          <th>From (Month &amp; Year)</th>
-          <th>To (Month &amp; Year)</th>
-          <th>Subject / Class Taught</th>
-          <th>Gross Salary Drawn</th>
-        </tr>
-        ${workRowsHtml}
-      </table>
-      
-      <div class="total-exp">
-        <strong>Total Work Experience in Year:</strong><br>
-        Teaching: ${teach || '___'} &nbsp;&nbsp;|&nbsp;&nbsp; 
-        Administrative: ${admin || '___'} &nbsp;&nbsp;|&nbsp;&nbsp; 
-        Any Other: ${other || '___'}
-      </div>
-
-      <div class="section-title">5. Achievement if any:</div>
-      <table class="achieve-table">
-        <tr style="background:#d4e6f1;font-weight:700;">
-          <th>Sl. No.</th>
-          <th>Particular</th>
-          <th>Details Attached (Photo copy of certificates: State, National, International)</th>
-        </tr>
-        <tr><td>1</td><td>Literary Activity</td><td>${achievements && achievements.toLowerCase().includes('literary') ? '✓' : ''}</td></tr>
-        <tr><td>2</td><td>Art &amp; Craft</td><td>${achievements && achievements.toLowerCase().includes('art') ? '✓' : ''}</td></tr>
-        <tr><td>3</td><td>Sports</td><td>${achievements && achievements.toLowerCase().includes('sport') ? '✓' : ''}</td></tr>
-        <tr><td>4</td><td>Cultural Activity, Music &amp; Dance</td><td>${achievements && (achievements.toLowerCase().includes('cultural') || achievements.toLowerCase().includes('music') || achievements.toLowerCase().includes('dance')) ? '✓' : ''}</td></tr>
-        <tr><td colspan="3" style="font-weight:600;">Details: ${achievements}</td></tr>
-      </table>
-
-      <div class="section-title">6. Salary & Other Details</div>
-      <div class="field-row"><span class="field-label">Current Salary (Rs. per month):</span><span class="field-value">${currentSalary || '___________'}</span></div>
-      <div class="field-row"><span class="field-label">Minimum Salary Expected Rs.</span><span class="field-value">${salary || '___________'} (Per Month)</span></div>
-      <div class="field-row"><span class="field-label">If selected how much time would you need to join</span><span class="field-value">${joining || '___________'}</span></div>
-      <div class="field-row"><span class="field-label">Transportation or Own Arrangement:</span><span class="field-value">${transportation || '___________'}</span></div>
-
-      <div class="declaration">
-        <p><strong>19. Declaration.</strong></p>
-        <p>
-          I hereby declare that all the information furnished above is true to the best of my knowledge and belief. 
-          I will do all my duties to the best of my ability and follow the code of conduct of the institution 
-          maintaining required level of discipline as set by the institution.
-        </p>
-        <div class="signature-row">
-          <span><strong>Date:</strong> ${formattedDate || '___________'}</span>
-          <span><strong>Place:</strong> Khordha</span>
-          <span><strong>Full Signature of the Employee:</strong> _________________</span>
+        <div id="tableContainer">
+            <div class="loading">⏳ Loading submissions...</div>
         </div>
-      </div>
-    `;
+    </div>
 
-    container.innerHTML = html;
-    setTimeout(function() { window.print(); }, 300);
-  }
+    <!-- hidden container used for printing a single biodata -->
+    <div id="printContainer" class="print-biodata"></div>
 
-  function exportCSV() {
-    if (!allData || allData.length === 0) { alert('No data to export.'); return; }
-    const headers = Object.keys(allData[0]);
-    let csv = headers.join(',') + '\n';
-    allData.forEach(row => {
-      const values = headers.map(h => {
-        let val = (row[h] || '').toString();
-        if (val.includes(',') || val.includes('"') || val.includes('\n')) {
-          val = '"' + val.replace(/"/g, '""') + '"';
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  CONFIGURATION – replace with your own CSV URL if needed
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const CSV_URL =
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
+
+        const LOGO_FILENAME = 'kt-logo.webp'; // logo in the same folder
+
+        let allData = [];
+        let logoBase64 = '';
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  load logo as base64 (so it prints reliably)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        async function loadLogoAsBase64() {
+            try {
+                const resp = await fetch(LOGO_FILENAME);
+                if (!resp.ok) throw new Error('Logo not found');
+                const blob = await resp.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (_) {
+                console.warn('⚠️ Logo not loaded, using fallback');
+                return null;
+            }
         }
-        return val;
-      });
-      csv += values.join(',') + '\n';
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `KT_Submissions_${new Date().toISOString().slice(0,10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-  }
 
-  (async function init() {
-    const base64 = await loadLogoAsBase64();
-    if (base64) {
-      logoBase64 = base64;
-      console.log('✅ Logo loaded');
-    } else {
-      console.warn('⚠️ Logo not loaded, using URL fallback');
-    }
-    fetchData();
-  })();
-</script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  fetch + parse CSV with Papa Parse
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        async function fetchData() {
+            const container = document.getElementById('tableContainer');
+            container.innerHTML = '<div class="loading">⏳ Loading...</div>';
+
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const csvText = await response.text();
+
+                // Papa Parse: convert CSV → array of objects (first row = headers)
+                const result = Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    trimHeaders: true,
+                    transformHeader: (h) => h.trim(),
+                });
+
+                if (result.errors && result.errors.length) {
+                    console.warn('Parsing errors:', result.errors);
+                }
+
+                const rows = result.data.filter(row => {
+                    // remove completely empty rows
+                    return Object.values(row).some(val => val && val.trim() !== '');
+                });
+
+                allData = rows;
+
+                if (rows.length === 0) {
+                    container.innerHTML =
+                        '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
+                    return;
+                }
+
+                console.log('✅ Data loaded. Rows:', rows.length);
+                renderTable(rows);
+
+            } catch (err) {
+                console.error('Fetch error:', err);
+                container.innerHTML = `
+                    <div class="error-box">
+                        <strong>❌ Error: ${err.message}</strong><br><br>
+                        <strong>Please check:</strong><br>
+                        1. The CSV URL is correct and accessible.<br>
+                        2. Your sheet is published: <strong>File → Share → Publish to web</strong>.<br>
+                        3. Try opening the URL directly in your browser:<br>
+                        <code style="font-size:11px;word-break:break-all;">${CSV_URL}</code>
+                    </div>
+                `;
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  render table (dashboard view)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function renderTable(data) {
+            const container = document.getElementById('tableContainer');
+
+            if (!data || data.length === 0) {
+                container.innerHTML =
+                    '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
+                return;
+            }
+
+            // build column list from the first row
+            const headers = Object.keys(data[0]);
+            // hide very long/irrelevant columns from the dashboard table
+            const hideCols = ['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink'];
+            const displayHeaders = headers.filter(h => !hideCols.includes(h));
+
+            let html = '<div class="table-wrap"><table><thead><tr>';
+            displayHeaders.forEach(h => html += `<th>${h}</th>`);
+            html += `<th>Photo</th><th>Action</th></tr></thead><tbody>`;
+
+            data.forEach((row, idx) => {
+                html += `<tr>`;
+                displayHeaders.forEach(h => {
+                    let val = row[h] || '';
+                    if (val.length > 30) val = val.substring(0, 30) + '…';
+                    html += `<td>${val}</td>`;
+                });
+                const photoUrl = row['PhotoLink'] || '';
+                html += `<td>${photoUrl ? `<img src="${photoUrl}" class="photo-thumb" alt="photo">` : '—'}</td>`;
+                html += `<td><button class="btn-print" onclick="printBiodata(${idx})">🖨️ Print PDF</button></td>`;
+                html += `</tr>`;
+            });
+
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  print a single biodata (exactly like the Word document)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function printBiodata(index) {
+            const row = allData[index];
+            if (!row) return;
+
+            const container = document.getElementById('printContainer');
+
+            const logoSrc = logoBase64 || LOGO_FILENAME;
+            const logoHtml =
+                `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
+
+            let photoHtml = '';
+            if (row['PhotoLink']) {
+                photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
+            } else {
+                photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
+            }
+
+            let formattedDate = '';
+            if (row['Timestamp']) {
+                try {
+                    const d = new Date(row['Timestamp']);
+                    formattedDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                } catch (_) { /* ignore */ }
+            }
+
+            const safe = (val) => val || '';
+
+            // ── extract all fields ──
+            const postCategory = safe(row['Post Category']);
+            const postApplied = safe(row['Post Applied']);
+            const name = safe(row['Name']);
+            const father = safe(row['Father/Husband']);
+            const dob = safe(row['DOB']);
+            const age = safe(row['Age']);
+            const bloodGroup = safe(row['Blood Group']);
+            const category = safe(row['Category']);
+            const religion = safe(row['Religion']);
+            const nationality = safe(row['Nationality']);
+            const gender = safe(row['Gender']);
+            const marital = safe(row['Marital Status']);
+            const hobbies = safe(row['Hobbies']);
+            const permAddr = safe(row['Permanent Address']);
+            const commAddr = safe(row['Communication Address']);
+            const mobile = safe(row['Mobile']);
+            const email = safe(row['Email']);
+            const aadhaar = safe(row['Aadhaar']);
+            const pan = safe(row['PAN']);
+
+            const secYr = safe(row['Secondary_Yr']);
+            const secSub = safe(row['Secondary_Subj']);
+            const secBoard = safe(row['Secondary_Board']);
+            const secMarks = safe(row['Secondary_Marks']);
+            const srSecYr = safe(row['SrSec_Yr']);
+            const srSecSub = safe(row['SrSec_Subj']);
+            const srSecBoard = safe(row['SrSec_Board']);
+            const srSecMarks = safe(row['SrSec_Marks']);
+            const gradYr = safe(row['Graduation_Yr']);
+            const gradSub = safe(row['Graduation_Subj']);
+            const gradBoard = safe(row['Graduation_Board']);
+            const gradMarks = safe(row['Graduation_Marks']);
+            const pgYr = safe(row['PostGrad_Yr']);
+            const pgSub = safe(row['PostGrad_Subj']);
+            const pgBoard = safe(row['PostGrad_Board']);
+            const pgMarks = safe(row['PostGrad_Marks']);
+            const bedYr = safe(row['BEd_Yr']);
+            const bedSub = safe(row['BEd_Subj']);
+            const bedBoard = safe(row['BEd_Board']);
+            const bedMarks = safe(row['BEd_Marks']);
+            const tetYr = safe(row['TET_Yr']);
+            const tetSub = safe(row['TET_Subj']);
+            const tetBoard = safe(row['TET_Board']);
+            const tetMarks = safe(row['TET_Marks']);
+
+            const extra1 = safe(row['Extra_Q1']);
+            const extra2 = safe(row['Extra_Q2']);
+            const extra3 = safe(row['Extra_Q3']);
+
+            const schools = (safe(row['WorkExp1']) || '').split(' || ');
+            const desigs = (safe(row['WorkExp2']) || '').split(' || ');
+            const detailsArr = (safe(row['WorkExp3']) || '').split(' || ');
+
+            const maxExp = 3;
+            const expRows = [];
+            for (let i = 0; i < maxExp; i++) {
+                expRows.push({
+                    school: schools[i] || '',
+                    desig: desigs[i] || '',
+                    details: detailsArr[i] || ''
+                });
+            }
+
+            const teach = safe(row['TotalTeaching']);
+            const admin = safe(row['TotalAdmin']);
+            const other = safe(row['TotalOther']);
+            const achievements = safe(row['Achievements']);
+            const currentSalary = safe(row['CurrentSalary']);
+            const salary = safe(row['ExpectedSalary']);
+            const joining = safe(row['JoiningTime']);
+            const transportation = safe(row['Transportation']);
+
+            let displayPost = postApplied;
+            if (postCategory) {
+                displayPost = postApplied + ' (' + postCategory + ')';
+            }
+
+            let workRowsHtml = '';
+            expRows.forEach(exp => {
+                workRowsHtml +=
+                    `<tr><td>${exp.school}</td><td>${exp.desig}</td><td></td><td></td><td></td><td></td></tr>`;
+            });
+
+            // ── build the HTML for the biodata ──
+            const html = `
+                <table class="header-table">
+                    <tr>
+                        <td class="logo-cell" rowspan="2">${logoHtml}</td>
+                        <td style="text-align:center;padding:4px 10px;">
+                            <div class="school-name">KT GLOBAL SCHOOL</div>
+                            <div class="school-details">
+                                Telephone No.: +91 90901 11177 &nbsp;|&nbsp; E-mail ID: info@ktglobalschool.org
+                            </div>
+                            <div class="school-details">
+                                Address: Plot No. F/12, IID Centre, Barunei, Khordha, Odisha - 752057
+                            </div>
+                        </td>
+                        <td class="photo-cell" rowspan="2">
+                            ${photoHtml}
+                            <div style="font-size:8pt;margin-top:2px;font-weight:600;">Affix Passport<br>size Photograph</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form-title">INTERVIEW BIODATA FORM</td>
+                    </tr>
+                </table>
+
+                <div class="post-applied">
+                    <strong>Post applied for:</strong> <span>${displayPost || '___________'}</span>
+                </div>
+
+                <div class="section-title">1. General Information: (TO BE FILLED IN CAPITAL LETTERS ONLY)</div>
+                <div class="field-row"><span class="field-label">Name of the Applicant:</span><span class="field-value">${name}</span></div>
+                <div class="field-row"><span class="field-label">Father or Husband Name:</span><span class="field-value">${father}</span></div>
+                <div class="field-row"><span class="field-label">D.O.B.:</span><span class="field-value">${dob}</span></div>
+                <div class="field-row"><span class="field-label">Age as on 1st Jan 2026:</span><span class="field-value">${age}</span></div>
+                <div class="field-row"><span class="field-label">Blood Group:</span><span class="field-value">${bloodGroup}</span></div>
+                <div class="field-row"><span class="field-label">Category:</span><span class="field-value">${category}</span></div>
+                <div class="field-row"><span class="field-label">Religion:</span><span class="field-value">${religion}</span></div>
+                <div class="field-row"><span class="field-label">Nationality:</span><span class="field-value">${nationality}</span></div>
+                <div class="field-row"><span class="field-label">Gender:</span><span class="field-value">${gender}</span></div>
+                <div class="field-row"><span class="field-label">Marital Status:</span><span class="field-value">${marital}</span></div>
+                <div class="field-row"><span class="field-label">Hobbies:</span><span class="field-value">${hobbies}</span></div>
+                <div class="field-row"><span class="field-label">Permanent Address:</span><span class="field-value">${permAddr}</span></div>
+                <div class="field-row"><span class="field-label">Address of Communication:</span><span class="field-value">${commAddr}</span></div>
+                <div class="field-row"><span class="field-label">Mobile No.:</span><span class="field-value">${mobile}</span></div>
+                <div class="field-row"><span class="field-label">E-mail ID:</span><span class="field-value">${email}</span></div>
+                <div class="field-row"><span class="field-label">Aadhaar No.:</span><span class="field-value">${aadhaar}</span></div>
+                <div class="field-row"><span class="field-label">PAN No.:</span><span class="field-value">${pan}</span></div>
+
+                <div class="section-title">2. Educational Qualifications:</div>
+                <table class="edu-table">
+                    <tr style="background:#d4e6f1;font-weight:700;">
+                        <th>Qualification</th>
+                        <th>Year of Passing</th>
+                        <th>Subjects Offered</th>
+                        <th>Name of Board or University</th>
+                        <th>Total Mark in Percentage/CGPA</th>
+                    </tr>
+                    <tr><td>Secondary</td><td>${secYr}</td><td>${secSub}</td><td>${secBoard}</td><td>${secMarks}</td></tr>
+                    <tr><td>Senior Secondary</td><td>${srSecYr}</td><td>${srSecSub}</td><td>${srSecBoard}</td><td>${srSecMarks}</td></tr>
+                    <tr><td>Graduation (Mention Hons. Subject)</td><td>${gradYr}</td><td>${gradSub}</td><td>${gradBoard}</td><td>${gradMarks}</td></tr>
+                    <tr><td>Post Graduation</td><td>${pgYr}</td><td>${pgSub}</td><td>${pgBoard}</td><td>${pgMarks}</td></tr>
+                    <tr><td>B.Ed., CT, NTT, B.P.Ed.</td><td>${bedYr}</td><td>${bedSub}</td><td>${bedBoard}</td><td>${bedMarks}</td></tr>
+                    <tr><td>OTET, CTET, OSTET</td><td>${tetYr}</td><td>${tetSub}</td><td>${tetBoard}</td><td>${tetMarks}</td></tr>
+                </table>
+
+                <div class="section-title">3. Extra Qualification (if any):</div>
+                <table class="extra-table">
+                    <tr style="background:#d4e6f1;font-weight:700;">
+                        <th>Qualification</th>
+                        <th>Specialization Subject</th>
+                        <th>Year of Passing</th>
+                        <th>University</th>
+                        <th>Total Mark in %/CGPA/Grade</th>
+                        <th>Any Other Information</th>
+                    </tr>
+                    <tr>
+                        <td>${extra1}</td>
+                        <td>${extra2}</td>
+                        <td>${extra3 ? extra3.split(',')[0]?.trim() || '' : ''}</td>
+                        <td>${extra3 ? extra3.split(',')[1]?.trim() || '' : ''}</td>
+                        <td>${extra3 ? extra3.split(',')[2]?.trim() || '' : ''}</td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <div class="section-title">4. Work Experience:</div>
+                <table class="work-table">
+                    <tr style="background:#d4e6f1;font-weight:700;">
+                        <th>Name of School / Institution</th>
+                        <th>Designation &amp; Assignment</th>
+                        <th>From (Month &amp; Year)</th>
+                        <th>To (Month &amp; Year)</th>
+                        <th>Subject / Class Taught</th>
+                        <th>Gross Salary Drawn</th>
+                    </tr>
+                    ${workRowsHtml}
+                </table>
+
+                <div class="total-exp">
+                    <strong>Total Work Experience in Year:</strong><br>
+                    Teaching: ${teach || '___'} &nbsp;&nbsp;|&nbsp;&nbsp;
+                    Administrative: ${admin || '___'} &nbsp;&nbsp;|&nbsp;&nbsp;
+                    Any Other: ${other || '___'}
+                </div>
+
+                <div class="section-title">5. Achievement if any:</div>
+                <table class="achieve-table">
+                    <tr style="background:#d4e6f1;font-weight:700;">
+                        <th>Sl. No.</th>
+                        <th>Particular</th>
+                        <th>Details Attached (Photo copy of certificates: State, National, International)</th>
+                    </tr>
+                    <tr><td>1</td><td>Literary Activity</td><td>${achievements && achievements.toLowerCase().includes('literary') ? '✓' : ''}</td></tr>
+                    <tr><td>2</td><td>Art &amp; Craft</td><td>${achievements && achievements.toLowerCase().includes('art') ? '✓' : ''}</td></tr>
+                    <tr><td>3</td><td>Sports</td><td>${achievements && achievements.toLowerCase().includes('sport') ? '✓' : ''}</td></tr>
+                    <tr><td>4</td><td>Cultural Activity, Music &amp; Dance</td><td>${achievements && (achievements.toLowerCase().includes('cultural') || achievements.toLowerCase().includes('music') || achievements.toLowerCase().includes('dance')) ? '✓' : ''}</td></tr>
+                    <tr><td colspan="3" style="font-weight:600;">Details: ${achievements}</td></tr>
+                </table>
+
+                <div class="section-title">6. Salary & Other Details</div>
+                <div class="field-row"><span class="field-label">Current Salary (Rs. per month):</span><span class="field-value">${currentSalary || '___________'}</span></div>
+                <div class="field-row"><span class="field-label">Minimum Salary Expected Rs.</span><span class="field-value">${salary || '___________'} (Per Month)</span></div>
+                <div class="field-row"><span class="field-label">If selected how much time would you need to join</span><span class="field-value">${joining || '___________'}</span></div>
+                <div class="field-row"><span class="field-label">Transportation or Own Arrangement:</span><span class="field-value">${transportation || '___________'}</span></div>
+
+                <div class="declaration">
+                    <p><strong>19. Declaration.</strong></p>
+                    <p>
+                        I hereby declare that all the information furnished above is true to the best of my knowledge and belief.
+                        I will do all my duties to the best of my ability and follow the code of conduct of the institution
+                        maintaining required level of discipline as set by the institution.
+                    </p>
+                    <div class="signature-row">
+                        <span><strong>Date:</strong> ${formattedDate || '___________'}</span>
+                        <span><strong>Place:</strong> Khordha</span>
+                        <span><strong>Full Signature of the Employee:</strong> _________________</span>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            // small delay to let the DOM settle, then open print dialog
+            setTimeout(() => window.print(), 300);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  export current data as CSV
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function exportCSV() {
+            if (!allData || allData.length === 0) {
+                alert('No data to export.');
+                return;
+            }
+
+            const headers = Object.keys(allData[0]);
+            let csv = headers.join(',') + '\n';
+
+            allData.forEach(row => {
+                const values = headers.map(h => {
+                    let val = (row[h] || '').toString();
+                    if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+                        val = '"' + val.replace(/"/g, '""') + '"';
+                    }
+                    return val;
+                });
+                csv += values.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `KT_Submissions_${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  initialise
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        (async function init() {
+            const base64 = await loadLogoAsBase64();
+            if (base64) {
+                logoBase64 = base64;
+                console.log('✅ Logo loaded');
+            } else {
+                console.warn('⚠️ Logo not loaded, using fallback');
+            }
+            fetchData();
+        })();
+    </script>
+
 </body>
 </html>
