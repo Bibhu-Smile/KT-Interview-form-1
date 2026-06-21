@@ -197,6 +197,8 @@
       margin-top: 8px;
       display: none;
       overflow-wrap: break-word;
+      max-height: 200px;
+      overflow-y: auto;
     }
     @media (max-width: 480px) {
       .row-2, .row-3 { grid-template-columns: 1fr; gap: 8px; }
@@ -591,10 +593,10 @@
   }
 
   // ================================================================
-  // SUBMIT HANDLER - WITH PROPER CORS AND ERROR LOGGING
+  // SUBMIT HANDLER
   // ================================================================
-  // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT URL
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwidrfEnHT6BSMLctOyZZm9KQ8KWFoSkIwP4p7-FZ6_-AcHsWCV3uJOijzDa7QnlbQd/exec";
+  // ⚠️ REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSXKW2z1ww8OJPLoCvOxJ0SyYnIZ1wcl9FAEj7cGwrCgu7Cgnm5rK5HIOKkzoFVBJi/exec";
 
   async function submitForm(e) {
     e.preventDefault();
@@ -612,7 +614,6 @@
     btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
 
     try {
-      // --- Get Post and Category from single dropdown ---
       const postSelect = document.getElementById('postApplied');
       const selectedOption = postSelect.options[postSelect.selectedIndex];
       const postValue = postSelect.value;
@@ -622,7 +623,6 @@
         throw new Error('Please select a valid Post (Academic or Non-Academic).');
       }
 
-      // Get Experience data
       const exp1_school = document.getElementById('exp1_school').value.trim();
       const exp1_desig = document.getElementById('exp1_desig').value.trim();
       const exp1_details = document.getElementById('exp1_details').value.trim();
@@ -637,7 +637,6 @@
       const desigs = [exp1_desig, exp2_desig, exp3_desig].filter(s => s);
       const detailsArr = [exp1_details, exp2_details, exp3_details].filter(s => s);
 
-      // Prepare form data
       const formData = {
         postApplied: postValue,
         postCategory: postCategory,
@@ -699,12 +698,10 @@
         photoBase64: ''
       };
 
-      // Validate required
       if (!formData.postApplied || !formData.name || !formData.father || !formData.dob || !formData.bloodGroup || !formData.category || !formData.gender || !formData.mobile || !formData.email || !formData.aadhaar || !formData.expectedSalary || !formData.transportation) {
         throw new Error('Please fill all required fields (marked with *).');
       }
 
-      // Handle Photo
       let photoBase64 = '';
       if (compressedPhotoDataUrl) {
         photoBase64 = compressedPhotoDataUrl.split(',')[1];
@@ -721,9 +718,6 @@
       }
       formData.photoBase64 = photoBase64;
 
-      // ============================================================
-      // SEND TO APPS SCRIPT - Using cors mode to get proper response
-      // ============================================================
       debugDiv.textContent = '⏳ Sending to: ' + APP_SCRIPT_URL;
       debugDiv.style.display = 'block';
 
@@ -760,8 +754,6 @@
       errDiv.textContent = '❌ ' + err.message;
       errDiv.style.display = 'block';
       console.error('Submission error:', err);
-      
-      // Show debug info
       debugDiv.textContent = '❌ Error: ' + err.message;
       debugDiv.style.display = 'block';
     } finally {
