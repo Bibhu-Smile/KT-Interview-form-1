@@ -70,6 +70,11 @@
     .btn-print:hover { background: #1a2a3a; }
     .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
+    @page {
+      size: A4 portrait;
+      margin: 0.7in 0.6in;
+    }
+
     @media print {
       body { background: white !important; padding: 0 !important; margin: 0 !important; }
       body * { display: none !important; }
@@ -305,8 +310,16 @@
 <div id="printContainer" class="print-biodata"></div>
 
 <script>
-  // ⚠️ REPLACE WITH YOUR ACTUAL APPS SCRIPT URL (WITH action=getData)
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwidrfEnHT6BSMLctOyZZm9KQ8KWFoSkIwP4p7-FZ6_-AcHsWCV3uJOijzDa7QnlbQd/exec?action=getData";
+  // ================================================================
+  // CONFIGURATION - REPLACE WITH YOUR ACTUAL SHEET ID
+  // ================================================================
+  // Your Google Sheet ID is the long string in the URL:
+  // https://docs.google.com/spreadsheets/d/1P_jztf1XStqxQRY5y0zv4ul8JDWxYQQB9QSdViJZPpE/edit
+  const SHEET_ID = "1P_jztf1XStqxQRY5y0zv4ul8JDWxYQQB9QSdViJZPpE"; // <-- REPLACE THIS!
+  
+  // The Google Sheets JSON feed URL (works with CORS)
+  const SHEET_JSON_URL = `https://docs.google.com/spreadsheets/d/1P_jztf1XStqxQRY5y0zv4ul8JDWxYQQB9QSdViJZPpE/gviz/tq?tqx=out:json`;
+
   const LOGO_FILENAME = "kt-logo.webp";
 
   let allData = [];
@@ -329,53 +342,77 @@
     }
   }
 
+  // ================================================================
+  // FETCH DATA FROM GOOGLE SHEETS JSON FEED
+  // ================================================================
   async function fetchData() {
-  const container = document.getElementById('tableContainer');
-  container.innerHTML = '<div class="loading">⏳ Loading...</div>';
-  try {
-    // Use no-cors mode to avoid CORS preflight
-    const response = await fetch(APP_SCRIPT_URL, {
-      method: 'GET',
-      mode: 'no-cors', // This bypasses CORS but gives an opaque response
-      headers: {
-        'Accept': 'application/json'
+    const container = document.getElementById('tableContainer');
+    container.innerHTML = '<div class="loading">⏳ Loading submissions...</div>';
+    
+    try {
+      console.log('Fetching data from:', SHEET_JSON_URL);
+      
+      const response = await fetch(SHEET_JSON_URL);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-    });
-    
-    // With no-cors, we can't read the response directly.
-    // We need to use a different approach - either use a <script> tag (JSONP)
-    // or use the Google Sheets JSON feed directly.
-    // Let's use the Google Sheets feed as a fallback.
-    const sheetId = "YOUR_SHEET_ID"; // Replace with your actual Sheet ID
-    const jsonUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-    
-    const jsonResponse = await fetch(jsonUrl);
-    const rawText = await jsonResponse.text();
-    const jsonText = rawText.substring(rawText.indexOf('(') + 1, rawText.lastIndexOf(')'));
-    const parsed = JSON.parse(jsonText);
-    const table = parsed.table;
-    const headers = table.cols.map(col => col.label);
-    const rows = table.rows.map(row => {
-      const obj = {};
-      headers.forEach((h, i) => {
-        obj[h] = row.c[i] ? row.c[i].v : '';
+      
+      const rawText = await response.text();
+      console.log('Raw response length:', rawText.length);
+      
+      // Extract the JSON from the Google Visualization wrapper
+      // The response looks like: /*O_o*/ google.visualization.Query.setResponse({...})
+      const jsonStart = rawText.indexOf('(');
+      const jsonEnd = rawText.lastIndexOf(')');
+      
+      if (jsonStart === -1 || jsonEnd === -1) {
+        throw new Error('Could not parse Google Sheets response');
+      }
+      
+      const jsonText = rawText.substring(jsonStart + 1, jsonEnd);
+      const parsed = JSON.parse(jsonText);
+      
+      if (!parsed.table || !parsed.table.rows) {
+        throw new Error('No data found in the sheet');
+      }
+      
+      const table = parsed.table;
+      const headers = table.cols.map(col => col.label);
+      const rows = table.rows.map(row => {
+        const obj = {};
+        headers.forEach((h, i) => {
+          obj[h] = row.c[i] ? row.c[i].v : '';
+        });
+        return obj;
       });
-      return obj;
-    });
-    allData = rows;
-    renderTable(rows);
-  } catch (e) {
-    console.error('Fetch error:', e);
-    container.innerHTML = `<div style="color:#c0392b;padding:20px;background:#fde8e8;border-radius:8px;border-left:4px solid #c0392b;">
-      ❌ Error: ${e.message}<br><br>
-      <strong>Please check:</strong><br>
-      1. The Apps Script URL is correct and ends with <code>?action=getData</code><br>
-      2. Apps Script is deployed with "Anyone" access<br>
-      3. Try opening this URL directly in your browser: <br>
-      <code style="font-size:11px;word-break:break-all;">${APP_SCRIPT_URL}</code>
-    </div>`;
+      
+      allData = rows;
+      
+      if (rows.length === 0) {
+        container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
+        return;
+      }
+      
+      console.log('✅ Data loaded. Rows:', rows.length);
+      renderTable(rows);
+      
+    } catch (e) {
+      console.error('Fetch error:', e);
+      container.innerHTML = `
+        <div style="color:#c0392b;padding:20px;background:#fde8e8;border-radius:8px;border-left:4px solid #c0392b;word-break:break-word;">
+          <strong>❌ Error: ${e.message}</strong><br><br>
+          <strong>Please fix:</strong><br>
+          1. <strong>Update the SHEET_ID</strong> in this file with your actual Google Sheet ID.<br>
+          2. <strong>Publish your sheet</strong>: File → Share → Publish to web → Click "Publish".<br>
+          3. The URL should be: <code style="font-size:11px;">https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:json</code><br><br>
+          <strong>Your Sheet ID:</strong> <code style="font-size:11px;background:#fff;padding:2px 6px;border-radius:4px;">${SHEET_ID}</code>
+          ${SHEET_ID === 'YOUR_SHEET_ID_HERE' ? ' ⚠️ (This is still the placeholder!)' : ''}
+        </div>
+      `;
+    }
   }
-}
+
   function renderTable(data) {
     const container = document.getElementById('tableContainer');
     if (!data || data.length === 0) {
