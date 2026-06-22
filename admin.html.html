@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard – KT Interview Submissions</title>
 
-    <!-- Papa Parse CDN for reliable CSV parsing -->
+    <!-- Papa Parse CDN for CSV parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/3.1.4/papaparse.min.js">
     </script>
 
@@ -229,16 +229,17 @@
             }
 
             .print-biodata .photo-cell img {
-                max-width: 100px !important;
-                max-height: 120px !important;
+                max-width: 110px !important;
+                max-height: 130px !important;
                 border: 2px solid #000 !important;
                 display: block !important;
                 margin: 0 auto !important;
+                object-fit: contain;
             }
 
             .print-biodata .photo-cell .photo-placeholder {
-                width: 100px !important;
-                height: 120px !important;
+                width: 110px !important;
+                height: 130px !important;
                 border: 2px solid #000 !important;
                 display: flex !important;
                 align-items: center !important;
@@ -444,7 +445,6 @@
             display: none;
         }
 
-        /* ── error / status ── */
         .error-box {
             color: #c0392b;
             padding: 20px;
@@ -526,8 +526,6 @@
                 }
 
                 const csvText = await response.text();
-
-                // Papa Parse: convert CSV → array of objects (first row = headers)
                 const result = Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
@@ -540,7 +538,6 @@
                 }
 
                 const rows = result.data.filter(row => {
-                    // remove completely empty rows
                     return Object.values(row).some(val => val && val.trim() !== '');
                 });
 
@@ -582,9 +579,7 @@
                 return;
             }
 
-            // build column list from the first row
             const headers = Object.keys(data[0]);
-            // hide very long/irrelevant columns from the dashboard table
             const hideCols = ['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink'];
             const displayHeaders = headers.filter(h => !hideCols.includes(h));
 
@@ -610,7 +605,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  print a single biodata (exactly like the Word document)
+        //  print a single biodata (with photo)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
             const row = allData[index];
@@ -618,13 +613,15 @@
 
             const container = document.getElementById('printContainer');
 
+            // Logo
             const logoSrc = logoBase64 || LOGO_FILENAME;
             const logoHtml =
                 `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
+            // Photo – with crossOrigin to avoid CORS issues and ensure loading
             let photoHtml = '';
             if (row['PhotoLink']) {
-                photoHtml = `<img src="${row['PhotoLink']}" alt="Photo">`;
+                photoHtml = `<img src="${row['PhotoLink']}" alt="Photo" crossorigin="anonymous">`;
             } else {
                 photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
             }
@@ -864,8 +861,8 @@
 
             container.innerHTML = html;
 
-            // small delay to let the DOM settle, then open print dialog
-            setTimeout(() => window.print(), 300);
+            // Wait a moment for images to start loading, then print
+            setTimeout(() => window.print(), 500);
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
