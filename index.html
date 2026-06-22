@@ -244,7 +244,6 @@
 <body>
 <div class="container" id="app">
   <div class="header">
-    <!-- Logo from your GitHub repository (raw URL) -->
     <img src="https://raw.githubusercontent.com/Bibhu-Smile/KT-Interview-form-1/main/kt-logo.webp" alt="KTGS Logo" id="schoolLogo" onerror="this.style.display='none'">
     <h1>KT GLOBAL SCHOOL <small>Interview Biodata Form</small></h1>
   </div>
@@ -253,7 +252,6 @@
     <!-- ========== 1. General Information ========== -->
     <div class="section-title">1. General Information <span style="font-weight:400;font-size:14px;">(Fill in CAPITAL LETTERS)</span></div>
 
-    <!-- POST APPLIED FOR -->
     <div class="form-group">
       <label>Post Applied For <span class="req">*</span></label>
       <select id="postApplied" required>
@@ -557,7 +555,7 @@
   </form>
 </div>
 
-<>
+<script>
   // ── today's date ──
   document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' });
 
@@ -571,7 +569,7 @@
     document.getElementById('age').value = age > 0 ? age : '';
   });
 
-  // ── photo compression (no upload here – will send base64 in the main POST) ──
+  // ── photo compression ──
   let compressedPhotoBase64 = null;
 
   function compressPhoto(file, maxWidth = 120, maxHeight = 120, quality = 0.6) {
@@ -611,7 +609,7 @@
     try {
       status.textContent = '⏳ Compressing photo...';
       const dataUrl = await compressPhoto(file);
-      compressedPhotoBase64 = dataUrl.split(',')[1]; // store base64 without data header
+      compressedPhotoBase64 = dataUrl.split(',')[1];
       preview.src = dataUrl;
       preview.style.display = 'block';
       status.textContent = '✅ Photo ready (will be submitted with form)';
@@ -621,9 +619,9 @@
     }
   }
 
-  // ── form submission via fetch to Apps  ──
+  // ── form submission via fetch ──
   // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT WEB APP URL
-  const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2n2a2iybNWKTIBl25I0divnWPFql3j6DDoso5BE2ZZ0rPEzhS131v_v3KEEpiFsNp/exec';
+  const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby88T0-rI10wvmDsJC48mjsXihsrEhUNPKbgVArlbosg_rg5MUH36J5C-Un8jJOMVUQ/exec';
 
   async function submitForm(e) {
     e.preventDefault();
@@ -637,7 +635,6 @@
     btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
 
     try {
-      // Gather all form data
       const postSelect = document.getElementById('postApplied');
       const selectedOption = postSelect.options[postSelect.selectedIndex];
       const postValue = postSelect.value;
@@ -647,7 +644,6 @@
         throw new Error('Please select a valid Post (Academic or Non-Academic).');
       }
 
-      // Collect experience
       const exp1_school = document.getElementById('exp1_school').value.trim();
       const exp1_desig = document.getElementById('exp1_desig').value.trim();
       const exp1_details = document.getElementById('exp1_details').value.trim();
@@ -662,7 +658,6 @@
       const desigs = [exp1_desig, exp2_desig, exp3_desig].filter(s => s);
       const detailsArr = [exp1_details, exp2_details, exp3_details].filter(s => s);
 
-      // Build data object (with photoBase64)
       const formData = {
         postApplied: postValue,
         postCategory: postCategory,
@@ -721,15 +716,13 @@
         expectedSalary: document.getElementById('expectedSalary').value.trim(),
         joiningTime: document.getElementById('joiningTime').value.trim(),
         transportation: document.getElementById('transportation').value,
-        photoBase64: compressedPhotoBase64 || ''   // ← this is the compressed photo
+        photoBase64: compressedPhotoBase64 || ''
       };
 
-      // Validate required
       if (!formData.postApplied || !formData.name || !formData.father || !formData.dob || !formData.bloodGroup || !formData.category || !formData.gender || !formData.mobile || !formData.email || !formData.aadhaar || !formData.expectedSalary || !formData.transportation) {
         throw new Error('Please fill all required fields (marked with *).');
       }
 
-      // Send via fetch
       const response = await fetch(APP_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
