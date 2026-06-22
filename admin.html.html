@@ -94,7 +94,7 @@
             border: 1px solid #dce4ec;
         }
 
-        /* ── PRINT STYLES ── */
+        /* ── PRINT STYLES (only applied when printing) ── */
         @page {
             size: A4 portrait;
             margin: 0.7in 0.6in;
@@ -145,9 +145,6 @@
                 text-align: left !important;
                 vertical-align: top !important;
                 word-wrap: break-word !important;
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-                white-space: normal !important;
             }
             .print-biodata table th {
                 background: #d4e6f1 !important;
@@ -156,7 +153,7 @@
                 print-color-adjust: exact !important;
             }
 
-            /* header table */
+            /* Header table */
             .print-biodata .header-table {
                 border: 2px solid #000 !important;
                 margin-bottom: 4px !important;
@@ -170,6 +167,7 @@
                 vertical-align: middle !important;
                 text-align: center !important;
             }
+
             .print-biodata .logo-cell {
                 width: 12% !important;
                 text-align: center !important;
@@ -181,12 +179,14 @@
                 display: block !important;
                 margin: 0 auto !important;
             }
+
             .print-biodata .center-cell {
                 width: 68% !important;
                 text-align: center !important;
                 vertical-align: middle !important;
                 padding: 6px 10px !important;
             }
+
             .print-biodata .photo-cell {
                 width: 20% !important;
                 text-align: center !important;
@@ -258,7 +258,7 @@
                 print-color-adjust: exact !important;
             }
 
-            /* field-row as table */
+            /* Field rows as table */
             .print-biodata .field-row {
                 display: table !important;
                 width: 100% !important;
@@ -272,9 +272,6 @@
                 display: table-cell !important;
                 padding: 3px 5px !important;
                 vertical-align: top !important;
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-                white-space: normal !important;
             }
             .print-biodata .field-label {
                 width: 35% !important;
@@ -306,6 +303,22 @@
             }
             .print-biodata .total-exp strong { font-weight: 700 !important; }
 
+            .print-biodata td,
+            .print-biodata th,
+            .print-biodata .field-value {
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+            }
+
+            tr, td, th {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .print-biodata table { page-break-inside: avoid; }
+            .print-biodata .section-title { page-break-after: avoid; }
+
+            /* Fixed column widths */
             .print-biodata .edu-table th:nth-child(1),
             .print-biodata .edu-table td:nth-child(1) { width: 22%; }
             .print-biodata .edu-table th:nth-child(2),
@@ -349,13 +362,6 @@
             .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
             .print-biodata .achieve-table th:nth-child(3),
             .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
-
-            tr, td, th {
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-            }
-            .print-biodata table { page-break-inside: avoid; }
-            .print-biodata .section-title { page-break-after: avoid; }
         }
 
         .print-biodata { display: none; }
@@ -367,6 +373,7 @@
             border-radius: 8px;
             border-left: 4px solid #c0392b;
             word-break: break-word;
+            margin: 20px 0;
         }
         .error-box code {
             background: #fff;
@@ -392,6 +399,8 @@
     <div id="printContainer" class="print-biodata"></div>
 
     <script>
+        console.log('✅ Admin page loaded');
+
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  CONFIGURATION
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -428,7 +437,7 @@
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function fetchData() {
             const container = document.getElementById('tableContainer');
-            container.innerHTML = '<div class="loading">⏳ Loading...</div>';
+            container.innerHTML = '<div class="loading">⏳ Loading submissions...</div>';
             try {
                 const response = await fetch(CSV_URL);
                 if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -495,22 +504,16 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PRINT BIODATA – with debugging
+        //  PRINT BIODATA
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
-            console.log('🖨️ printBiodata called for index:', index);
             const row = allData[index];
             if (!row) {
-                console.error('❌ No data found for index:', index);
                 alert('Data not found. Please refresh and try again.');
                 return;
             }
 
             const container = document.getElementById('printContainer');
-            if (!container) {
-                console.error('❌ printContainer element not found!');
-                return;
-            }
 
             // Logo
             const logoSrc = logoBase64 || LOGO_FILENAME;
@@ -742,13 +745,11 @@
             `;
 
             container.innerHTML = html;
-            console.log('✅ Print content set, length:', container.innerHTML.length);
 
-            // Wait 500ms for content to render, then print
+            // Wait for images to load before printing
             setTimeout(() => {
-                console.log('🖨️ Calling window.print()');
                 window.print();
-            }, 500);
+            }, 800);
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -780,6 +781,7 @@
         //  initialise
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         (async function init() {
+            console.log('⏳ Initialising...');
             const base64 = await loadLogoAsBase64();
             if (base64) {
                 logoBase64 = base64;
@@ -787,7 +789,8 @@
             } else {
                 console.warn('⚠️ Logo not loaded, using fallback');
             }
-            fetchData();
+            await fetchData();
+            console.log('✅ Initialisation complete');
         })();
     </script>
 
