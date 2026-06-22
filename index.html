@@ -621,7 +621,7 @@
 
   // ── form submission via fetch ──
   // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT WEB APP URL
-  const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby88T0-rI10wvmDsJC48mjsXihsrEhUNPKbgVArlbosg_rg5MUH36J5C-Un8jJOMVUQ/exec';
+  const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQVHSlFnWwDzx4WJgkEkP70018yiJnjD2u5aIb9yssn1YrkQKuNX8Zc9JI-xkN4J_K/execL';
 
   async function submitForm(e) {
     e.preventDefault();
@@ -723,9 +723,10 @@
         throw new Error('Please fill all required fields (marked with *).');
       }
 
+      // ── IMPORTANT: Use text/plain to avoid CORS preflight ──
       const response = await fetch(APP_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(formData)
       });
 
