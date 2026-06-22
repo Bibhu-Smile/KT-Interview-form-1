@@ -4,11 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard – KT Interview Submissions</title>
-
-    <!-- Papa Parse CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/3.1.4/papaparse.min.js">
-    </script>
-
     <style>
         /* ── Screen styles ── */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -94,14 +89,30 @@
             border: 1px solid #dce4ec;
         }
 
-        /* ── PRINT STYLES (only applied when printing) ── */
+        /* ── Error display ── */
+        .error-box {
+            color: #c0392b;
+            padding: 20px;
+            background: #fde8e8;
+            border-radius: 8px;
+            border-left: 4px solid #c0392b;
+            margin: 20px 0;
+            word-break: break-word;
+        }
+        .error-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* ── PRINT STYLES ── */
         @page {
             size: A4 portrait;
             margin: 0.7in 0.6in;
         }
 
         @media print {
-            /* Hide all screen content */
             body, body * { display: none !important; }
             body .print-biodata,
             body .print-biodata * { display: block !important; }
@@ -111,32 +122,19 @@
             body .print-biodata table td,
             body .print-biodata table th { display: table-cell !important; }
 
-            html, body {
-                width: 210mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
             .print-biodata {
                 display: block !important;
-                margin: 0 auto !important;
                 padding: 0 !important;
-                max-width: 100% !important;
-                background: white !important;
                 font-family: 'Times New Roman', Times, serif !important;
                 font-size: 11pt !important;
-                line-height: 1.3 !important;
+                background: white !important;
                 color: #000 !important;
             }
-
             .print-biodata table {
                 border-collapse: collapse !important;
                 width: 100% !important;
-                font-size: 10pt !important;
-                font-family: 'Times New Roman', Times, serif !important;
-                margin: 3px 0 5px 0 !important;
-                table-layout: fixed !important;
                 border: 1px solid #000 !important;
+                font-size: 10pt !important;
             }
             .print-biodata table td,
             .print-biodata table th {
@@ -144,22 +142,14 @@
                 padding: 3px 5px !important;
                 text-align: left !important;
                 vertical-align: top !important;
-                word-wrap: break-word !important;
             }
             .print-biodata table th {
                 background: #d4e6f1 !important;
                 font-weight: 700 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
             }
-
-            /* Header table */
             .print-biodata .header-table {
                 border: 2px solid #000 !important;
-                margin-bottom: 4px !important;
                 width: 100% !important;
-                table-layout: auto !important;
-                border-collapse: collapse !important;
             }
             .print-biodata .header-table td {
                 border: 1px solid #000 !important;
@@ -167,225 +157,30 @@
                 vertical-align: middle !important;
                 text-align: center !important;
             }
-
-            .print-biodata .logo-cell {
-                width: 12% !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
-            .print-biodata .logo-cell img {
-                max-width: 70px !important;
-                max-height: 70px !important;
-                display: block !important;
-                margin: 0 auto !important;
-            }
-
-            .print-biodata .center-cell {
-                width: 68% !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-                padding: 6px 10px !important;
-            }
-
-            .print-biodata .photo-cell {
-                width: 20% !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
-            .print-biodata .photo-cell img {
-                max-width: 100px !important;
-                max-height: 120px !important;
-                border: 2px solid #000 !important;
-                display: block !important;
-                margin: 0 auto !important;
-                object-fit: contain !important;
-            }
-            .print-biodata .photo-cell .photo-placeholder {
-                width: 100px !important;
-                height: 120px !important;
-                border: 2px solid #000 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                margin: 0 auto !important;
-                font-size: 9px !important;
-                color: #999 !important;
-                background: #f9f9f9 !important;
-            }
-
-            .print-biodata .school-name {
-                font-size: 18pt !important;
-                font-weight: 700 !important;
-                color: #1a5276 !important;
-                letter-spacing: 0.5px !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .school-details {
-                font-size: 9pt !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .form-title {
-                font-size: 14pt !important;
-                font-weight: 700 !important;
-                text-align: center !important;
-                background: #eaf2f8 !important;
-                padding: 4px 0 !important;
-                border: 1px solid #000 !important;
-                border-top: none !important;
-                font-family: 'Times New Roman', Times, serif !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            .print-biodata .post-applied {
-                font-size: 12pt !important;
-                font-weight: 600 !important;
-                margin: 4px 0 4px 0 !important;
-                padding: 2px 0 !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .post-applied span { font-weight: 400 !important; }
-
-            .print-biodata .section-title {
-                font-weight: 700 !important;
-                font-size: 12pt !important;
-                background: #d4e6f1 !important;
-                padding: 2px 6px !important;
-                border: 1px solid #000 !important;
-                margin-top: 6px !important;
-                font-family: 'Times New Roman', Times, serif !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            /* Field rows as table */
-            .print-biodata .field-row {
-                display: table !important;
-                width: 100% !important;
-                table-layout: fixed !important;
-                border-bottom: 1px solid #cfcfcf !important;
-                font-size: 10.5pt !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .field-label,
-            .print-biodata .field-value {
-                display: table-cell !important;
-                padding: 3px 5px !important;
-                vertical-align: top !important;
-            }
-            .print-biodata .field-label {
-                width: 35% !important;
-                font-weight: 700 !important;
-            }
-            .print-biodata .field-value {
-                width: 65% !important;
-            }
-
-            .print-biodata .declaration {
-                margin-top: 12px !important;
-                border-top: 2px solid #000 !important;
-                padding-top: 8px !important;
-                font-size: 10.5pt !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .declaration p { margin: 2px 0 !important; }
-            .print-biodata .signature-row {
-                display: flex !important;
-                justify-content: space-between !important;
-                margin-top: 14px !important;
-                font-size: 10.5pt !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .total-exp {
-                margin: 4px 0 0 0 !important;
-                font-size: 10pt !important;
-                font-family: 'Times New Roman', Times, serif !important;
-            }
-            .print-biodata .total-exp strong { font-weight: 700 !important; }
-
-            .print-biodata td,
-            .print-biodata th,
-            .print-biodata .field-value {
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-                white-space: normal !important;
-            }
-
-            tr, td, th {
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-            }
-            .print-biodata table { page-break-inside: avoid; }
-            .print-biodata .section-title { page-break-after: avoid; }
-
-            /* Fixed column widths */
-            .print-biodata .edu-table th:nth-child(1),
-            .print-biodata .edu-table td:nth-child(1) { width: 22%; }
-            .print-biodata .edu-table th:nth-child(2),
-            .print-biodata .edu-table td:nth-child(2) { width: 12%; }
-            .print-biodata .edu-table th:nth-child(3),
-            .print-biodata .edu-table td:nth-child(3) { width: 20%; }
-            .print-biodata .edu-table th:nth-child(4),
-            .print-biodata .edu-table td:nth-child(4) { width: 26%; }
-            .print-biodata .edu-table th:nth-child(5),
-            .print-biodata .edu-table td:nth-child(5) { width: 20%; }
-
-            .print-biodata .extra-table th:nth-child(1),
-            .print-biodata .extra-table td:nth-child(1) { width: 18%; }
-            .print-biodata .extra-table th:nth-child(2),
-            .print-biodata .extra-table td:nth-child(2) { width: 18%; }
-            .print-biodata .extra-table th:nth-child(3),
-            .print-biodata .extra-table td:nth-child(3) { width: 16%; }
-            .print-biodata .extra-table th:nth-child(4),
-            .print-biodata .extra-table td:nth-child(4) { width: 20%; }
-            .print-biodata .extra-table th:nth-child(5),
-            .print-biodata .extra-table td:nth-child(5) { width: 14%; }
-            .print-biodata .extra-table th:nth-child(6),
-            .print-biodata .extra-table td:nth-child(6) { width: 14%; }
-
-            .print-biodata .work-table th:nth-child(1),
-            .print-biodata .work-table td:nth-child(1) { width: 20%; }
-            .print-biodata .work-table th:nth-child(2),
-            .print-biodata .work-table td:nth-child(2) { width: 18%; }
-            .print-biodata .work-table th:nth-child(3),
-            .print-biodata .work-table td:nth-child(3) { width: 12%; }
-            .print-biodata .work-table th:nth-child(4),
-            .print-biodata .work-table td:nth-child(4) { width: 12%; }
-            .print-biodata .work-table th:nth-child(5),
-            .print-biodata .work-table td:nth-child(5) { width: 18%; }
-            .print-biodata .work-table th:nth-child(6),
-            .print-biodata .work-table td:nth-child(6) { width: 20%; }
-
-            .print-biodata .achieve-table th:nth-child(1),
-            .print-biodata .achieve-table td:nth-child(1) { width: 8%; }
-            .print-biodata .achieve-table th:nth-child(2),
-            .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
-            .print-biodata .achieve-table th:nth-child(3),
-            .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
+            .print-biodata .logo-cell { width: 12% !important; text-align: center !important; }
+            .print-biodata .logo-cell img { max-width: 70px !important; max-height: 70px !important; display: block !important; margin: 0 auto !important; }
+            .print-biodata .center-cell { width: 68% !important; text-align: center !important; }
+            .print-biodata .photo-cell { width: 20% !important; text-align: center !important; }
+            .print-biodata .photo-cell img { max-width: 100px !important; max-height: 120px !important; border: 2px solid #000 !important; display: block !important; margin: 0 auto !important; }
+            .print-biodata .school-name { font-size: 18pt !important; font-weight: 700 !important; color: #1a5276 !important; }
+            .print-biodata .school-details { font-size: 9pt !important; }
+            .print-biodata .form-title { font-size: 14pt !important; font-weight: 700 !important; text-align: center !important; background: #eaf2f8 !important; padding: 4px 0 !important; border: 1px solid #000 !important; border-top: none !important; }
+            .print-biodata .section-title { font-weight: 700 !important; font-size: 12pt !important; background: #d4e6f1 !important; padding: 2px 6px !important; border: 1px solid #000 !important; margin-top: 6px !important; }
+            .print-biodata .field-row { display: table !important; width: 100% !important; border-bottom: 1px solid #cfcfcf !important; }
+            .print-biodata .field-label, .print-biodata .field-value { display: table-cell !important; padding: 3px 5px !important; vertical-align: top !important; }
+            .print-biodata .field-label { width: 35% !important; font-weight: 700 !important; }
+            .print-biodata .field-value { width: 65% !important; }
+            .print-biodata .declaration { margin-top: 12px !important; border-top: 2px solid #000 !important; padding-top: 8px !important; }
+            .print-biodata .signature-row { display: flex !important; justify-content: space-between !important; margin-top: 14px !important; }
+            tr, td, th { page-break-inside: avoid !important; break-inside: avoid !important; }
         }
 
         .print-biodata { display: none; }
-
-        .error-box {
-            color: #c0392b;
-            padding: 20px;
-            background: #fde8e8;
-            border-radius: 8px;
-            border-left: 4px solid #c0392b;
-            word-break: break-word;
-            margin: 20px 0;
-        }
-        .error-box code {
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
+    <div class="dashboard" id="app">
         <h1>📋 KT Global School – Interview Submissions</h1>
         <div class="actions no-print">
             <button onclick="fetchData()">🔄 Refresh</button>
@@ -411,6 +206,18 @@
         let logoBase64 = '';
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  LOGGING HELPER
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function log(message) {
+            console.log(message);
+            // Optionally display on page
+            const debugDiv = document.getElementById('debugInfo');
+            if (debugDiv) {
+                debugDiv.innerHTML += message + '<br>';
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  load logo as base64
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function loadLogoAsBase64() {
@@ -431,34 +238,46 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  SIMPLE CSV PARSER (no external libraries)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) return [];
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                const obj = {};
+                headers.forEach((h, idx) => obj[h] = values[idx] || '');
+                data.push(obj);
+            }
+            return data;
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  fetch + parse CSV
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function fetchData() {
             const container = document.getElementById('tableContainer');
             container.innerHTML = '<div class="loading">⏳ Loading...</div>';
             try {
+                log('Fetching CSV...');
                 const response = await fetch(CSV_URL);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 const csvText = await response.text();
-                const rows = csvText.split('\n').filter(line => line.trim() !== '');
-                const headers = rows[0].split(',').map(h => h.trim());
-
-                const data = [];
-                for (let i = 1; i < rows.length; i++) {
-                    const values = rows[i].split(',').map(v => v.trim());
-                    const obj = {};
-                    headers.forEach((h, idx) => obj[h] = values[idx] || '');
-                    data.push(obj);
-                }
-
+                log('CSV loaded, length: ' + csvText.length);
+                const data = parseCSV(csvText);
                 allData = data;
+                log('Parsed ' + data.length + ' rows');
+
                 if (data.length === 0) {
                     container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
                     return;
                 }
                 renderTable(data);
             } catch (err) {
+                log('❌ Error: ' + err.message);
                 container.innerHTML = `
                     <div class="error-box">
                         <strong>❌ Error: ${err.message}</strong><br><br>
@@ -500,7 +319,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PRINT BIODATA (FIXED – always shows content)
+        //  PRINT BIODATA
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
             const row = allData[index];
@@ -701,8 +520,6 @@
             `;
 
             container.innerHTML = html;
-
-            // Wait a moment for the DOM to update, then print
             setTimeout(() => {
                 window.print();
             }, 500);
@@ -734,10 +551,26 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  initialise
+        //  INITIALISE
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        loadLogoAsBase64().then(base64 => { logoBase64 = base64; });
-        fetchData();
+        (async function init() {
+            console.log('✅ Admin page loading...');
+            try {
+                const base64 = await loadLogoAsBase64();
+                if (base64) logoBase64 = base64;
+                console.log('Logo loaded:', !!base64);
+                await fetchData();
+                console.log('✅ Initialisation complete');
+            } catch (err) {
+                console.error('❌ Initialisation error:', err);
+                document.getElementById('tableContainer').innerHTML = `
+                    <div class="error-box">
+                        <strong>❌ Fatal Error: ${err.message}</strong><br>
+                        <pre style="background:#fff;padding:10px;border-radius:4px;overflow:auto;font-size:12px;">${err.stack || ''}</pre>
+                    </div>
+                `;
+            }
+        })();
     </script>
 
 </body>
