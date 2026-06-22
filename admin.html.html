@@ -11,27 +11,20 @@
 
     <style>
         /* ── reset & base ── */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
             background: #eef2f7;
             padding: 24px;
         }
-
         .dashboard {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 28px;
             padding: 28px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06);
         }
-
         h1 {
             display: flex;
             align-items: center;
@@ -40,14 +33,12 @@
             font-size: 26px;
             margin-bottom: 20px;
         }
-
         .actions {
             display: flex;
             gap: 16px;
             flex-wrap: wrap;
             margin-bottom: 24px;
         }
-
         .actions button {
             background: #1a5276;
             color: white;
@@ -59,36 +50,17 @@
             transition: 0.2s;
             font-size: 14px;
         }
-
-        .actions button:hover {
-            background: #154360;
-        }
-
-        .actions .export {
-            background: #1e8449;
-        }
-
-        .actions .export:hover {
-            background: #196f3d;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #5d6d7e;
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-        }
-
+        .actions button:hover { background: #154360; }
+        .actions .export { background: #1e8449; }
+        .actions .export:hover { background: #196f3d; }
+        .loading { text-align: center; padding: 40px; color: #5d6d7e; }
+        .table-wrap { overflow-x: auto; }
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
             min-width: 1000px;
         }
-
         th {
             background: #1a5276;
             color: white;
@@ -98,17 +70,12 @@
             top: 0;
             z-index: 5;
         }
-
         td {
             padding: 10px;
             border-bottom: 1px solid #e5eaef;
             vertical-align: top;
         }
-
-        tr:hover {
-            background: #f4f8fc;
-        }
-
+        tr:hover { background: #f4f8fc; }
         .btn-print {
             background: #2c3e50;
             color: white;
@@ -118,11 +85,7 @@
             font-size: 12px;
             cursor: pointer;
         }
-
-        .btn-print:hover {
-            background: #1a2a3a;
-        }
-
+        .btn-print:hover { background: #1a2a3a; }
         .photo-thumb {
             width: 50px;
             height: 50px;
@@ -138,34 +101,15 @@
         }
 
         @media print {
-            body {
-                background: white !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-
-            body * {
-                display: none !important;
-            }
-
+            body { background: white !important; padding: 0 !important; margin: 0 !important; }
+            body * { display: none !important; }
             body .print-biodata,
-            body .print-biodata * {
-                display: block !important;
-            }
-
+            body .print-biodata * { display: block !important; }
             body .print-biodata table,
-            body .print-biodata table * {
-                display: table !important;
-            }
-
-            body .print-biodata table tr {
-                display: table-row !important;
-            }
-
+            body .print-biodata table * { display: table !important; }
+            body .print-biodata table tr { display: table-row !important; }
             body .print-biodata table td,
-            body .print-biodata table th {
-                display: table-cell !important;
-            }
+            body .print-biodata table th { display: table-cell !important; }
 
             .print-biodata {
                 display: block !important;
@@ -187,7 +131,6 @@
                 margin: 3px 0 5px 0 !important;
                 table-layout: fixed !important;
             }
-
             .print-biodata table td,
             .print-biodata table th {
                 border: 1px solid #000 !important;
@@ -203,7 +146,6 @@
                 width: 100% !important;
                 table-layout: fixed !important;
             }
-
             .print-biodata .header-table td {
                 border: 1px solid #000 !important;
                 padding: 4px 8px !important;
@@ -214,7 +156,6 @@
                 width: 15% !important;
                 text-align: center !important;
             }
-
             .print-biodata .logo-cell img {
                 max-width: 70px !important;
                 max-height: 70px !important;
@@ -227,7 +168,6 @@
                 text-align: center !important;
                 vertical-align: middle !important;
             }
-
             .print-biodata .photo-cell img {
                 max-width: 110px !important;
                 max-height: 130px !important;
@@ -236,7 +176,6 @@
                 margin: 0 auto !important;
                 object-fit: contain;
             }
-
             .print-biodata .photo-cell .photo-placeholder {
                 width: 110px !important;
                 height: 130px !important;
@@ -257,12 +196,10 @@
                 letter-spacing: 0.5px !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
             .print-biodata .school-details {
                 font-size: 9pt !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
             .print-biodata .form-title {
                 font-size: 14pt !important;
                 font-weight: 700 !important;
@@ -283,10 +220,7 @@
                 padding: 2px 0 !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
-            .print-biodata .post-applied span {
-                font-weight: 400 !important;
-            }
+            .print-biodata .post-applied span { font-weight: 400 !important; }
 
             .print-biodata .section-title {
                 font-weight: 700 !important;
@@ -307,13 +241,11 @@
                 font-size: 10.5pt !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
             .print-biodata .field-label {
                 width: 30% !important;
                 font-weight: 600 !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
             .print-biodata .field-value {
                 width: 70% !important;
                 font-family: 'Times New Roman', Times, serif !important;
@@ -326,11 +258,7 @@
                 font-size: 10.5pt !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
-            .print-biodata .declaration p {
-                margin: 2px 0 !important;
-            }
-
+            .print-biodata .declaration p { margin: 2px 0 !important; }
             .print-biodata .signature-row {
                 display: flex !important;
                 justify-content: space-between !important;
@@ -338,112 +266,63 @@
                 font-size: 10.5pt !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
-
             .print-biodata .total-exp {
                 margin: 4px 0 0 0 !important;
                 font-size: 10pt !important;
                 font-family: 'Times New Roman', Times, serif !important;
             }
+            .print-biodata .total-exp strong { font-weight: 700 !important; }
 
-            .print-biodata .total-exp strong {
-                font-weight: 700 !important;
-            }
-
+            /* Fixed column widths */
             .print-biodata .edu-table th:nth-child(1),
-            .print-biodata .edu-table td:nth-child(1) {
-                width: 22%;
-            }
+            .print-biodata .edu-table td:nth-child(1) { width: 22%; }
             .print-biodata .edu-table th:nth-child(2),
-            .print-biodata .edu-table td:nth-child(2) {
-                width: 12%;
-            }
+            .print-biodata .edu-table td:nth-child(2) { width: 12%; }
             .print-biodata .edu-table th:nth-child(3),
-            .print-biodata .edu-table td:nth-child(3) {
-                width: 20%;
-            }
+            .print-biodata .edu-table td:nth-child(3) { width: 20%; }
             .print-biodata .edu-table th:nth-child(4),
-            .print-biodata .edu-table td:nth-child(4) {
-                width: 26%;
-            }
+            .print-biodata .edu-table td:nth-child(4) { width: 26%; }
             .print-biodata .edu-table th:nth-child(5),
-            .print-biodata .edu-table td:nth-child(5) {
-                width: 20%;
-            }
+            .print-biodata .edu-table td:nth-child(5) { width: 20%; }
 
             .print-biodata .extra-table th:nth-child(1),
-            .print-biodata .extra-table td:nth-child(1) {
-                width: 18%;
-            }
+            .print-biodata .extra-table td:nth-child(1) { width: 18%; }
             .print-biodata .extra-table th:nth-child(2),
-            .print-biodata .extra-table td:nth-child(2) {
-                width: 18%;
-            }
+            .print-biodata .extra-table td:nth-child(2) { width: 18%; }
             .print-biodata .extra-table th:nth-child(3),
-            .print-biodata .extra-table td:nth-child(3) {
-                width: 16%;
-            }
+            .print-biodata .extra-table td:nth-child(3) { width: 16%; }
             .print-biodata .extra-table th:nth-child(4),
-            .print-biodata .extra-table td:nth-child(4) {
-                width: 20%;
-            }
+            .print-biodata .extra-table td:nth-child(4) { width: 20%; }
             .print-biodata .extra-table th:nth-child(5),
-            .print-biodata .extra-table td:nth-child(5) {
-                width: 14%;
-            }
+            .print-biodata .extra-table td:nth-child(5) { width: 14%; }
             .print-biodata .extra-table th:nth-child(6),
-            .print-biodata .extra-table td:nth-child(6) {
-                width: 14%;
-            }
+            .print-biodata .extra-table td:nth-child(6) { width: 14%; }
 
             .print-biodata .work-table th:nth-child(1),
-            .print-biodata .work-table td:nth-child(1) {
-                width: 20%;
-            }
+            .print-biodata .work-table td:nth-child(1) { width: 20%; }
             .print-biodata .work-table th:nth-child(2),
-            .print-biodata .work-table td:nth-child(2) {
-                width: 18%;
-            }
+            .print-biodata .work-table td:nth-child(2) { width: 18%; }
             .print-biodata .work-table th:nth-child(3),
-            .print-biodata .work-table td:nth-child(3) {
-                width: 12%;
-            }
+            .print-biodata .work-table td:nth-child(3) { width: 12%; }
             .print-biodata .work-table th:nth-child(4),
-            .print-biodata .work-table td:nth-child(4) {
-                width: 12%;
-            }
+            .print-biodata .work-table td:nth-child(4) { width: 12%; }
             .print-biodata .work-table th:nth-child(5),
-            .print-biodata .work-table td:nth-child(5) {
-                width: 18%;
-            }
+            .print-biodata .work-table td:nth-child(5) { width: 18%; }
             .print-biodata .work-table th:nth-child(6),
-            .print-biodata .work-table td:nth-child(6) {
-                width: 20%;
-            }
+            .print-biodata .work-table td:nth-child(6) { width: 20%; }
 
             .print-biodata .achieve-table th:nth-child(1),
-            .print-biodata .achieve-table td:nth-child(1) {
-                width: 8%;
-            }
+            .print-biodata .achieve-table td:nth-child(1) { width: 8%; }
             .print-biodata .achieve-table th:nth-child(2),
-            .print-biodata .achieve-table td:nth-child(2) {
-                width: 25%;
-            }
+            .print-biodata .achieve-table td:nth-child(2) { width: 25%; }
             .print-biodata .achieve-table th:nth-child(3),
-            .print-biodata .achieve-table td:nth-child(3) {
-                width: 67%;
-            }
+            .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
 
-            .print-biodata table {
-                page-break-inside: avoid;
-            }
-            .print-biodata .section-title {
-                page-break-after: avoid;
-            }
+            .print-biodata table { page-break-inside: avoid; }
+            .print-biodata .section-title { page-break-after: avoid; }
         }
 
-        .print-biodata {
-            display: none;
-        }
+        .print-biodata { display: none; }
 
         .error-box {
             color: #c0392b;
@@ -453,7 +332,6 @@
             border-left: 4px solid #c0392b;
             word-break: break-word;
         }
-
         .error-box code {
             background: #fff;
             padding: 2px 6px;
@@ -466,34 +344,31 @@
 
     <div class="dashboard">
         <h1>📋 KT Global School – Interview Submissions</h1>
-
         <div class="actions no-print">
             <button onclick="fetchData()">🔄 Refresh</button>
             <button class="export" onclick="exportCSV()">📥 Export CSV</button>
         </div>
-
         <div id="tableContainer">
             <div class="loading">⏳ Loading submissions...</div>
         </div>
     </div>
 
-    <!-- hidden container used for printing a single biodata -->
     <div id="printContainer" class="print-biodata"></div>
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIGURATION – replace with your own CSV URL if needed
+        //  CONFIGURATION – update with your own CSV URL if needed
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const CSV_URL =
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
 
-        const LOGO_FILENAME = 'kt-logo.webp'; // logo in the same folder
+        const LOGO_FILENAME = 'kt-logo.webp';
 
         let allData = [];
         let logoBase64 = '';
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  load logo as base64 (so it prints reliably)
+        //  load logo as base64
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function loadLogoAsBase64() {
             try {
@@ -513,18 +388,14 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  fetch + parse CSV with Papa Parse
+        //  fetch + parse CSV
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function fetchData() {
             const container = document.getElementById('tableContainer');
             container.innerHTML = '<div class="loading">⏳ Loading...</div>';
-
             try {
                 const response = await fetch(CSV_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
+                if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 const csvText = await response.text();
                 const result = Papa.parse(csvText, {
                     header: true,
@@ -532,26 +403,15 @@
                     trimHeaders: true,
                     transformHeader: (h) => h.trim(),
                 });
-
-                if (result.errors && result.errors.length) {
-                    console.warn('Parsing errors:', result.errors);
-                }
-
-                const rows = result.data.filter(row => {
-                    return Object.values(row).some(val => val && val.trim() !== '');
-                });
-
+                if (result.errors && result.errors.length) console.warn('Parsing errors:', result.errors);
+                const rows = result.data.filter(row => Object.values(row).some(val => val && val.trim() !== ''));
                 allData = rows;
-
                 if (rows.length === 0) {
-                    container.innerHTML =
-                        '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
+                    container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
                     return;
                 }
-
                 console.log('✅ Data loaded. Rows:', rows.length);
                 renderTable(rows);
-
             } catch (err) {
                 console.error('Fetch error:', err);
                 container.innerHTML = `
@@ -568,25 +428,20 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  render table (dashboard view)
+        //  render table
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
-
             if (!data || data.length === 0) {
-                container.innerHTML =
-                    '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
+                container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
                 return;
             }
-
             const headers = Object.keys(data[0]);
             const hideCols = ['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink'];
             const displayHeaders = headers.filter(h => !hideCols.includes(h));
-
             let html = '<div class="table-wrap"><table><thead><tr>';
             displayHeaders.forEach(h => html += `<th>${h}</th>`);
             html += `<th>Photo</th><th>Action</th></tr></thead><tbody>`;
-
             data.forEach((row, idx) => {
                 html += `<tr>`;
                 displayHeaders.forEach(h => {
@@ -599,7 +454,6 @@
                 html += `<td><button class="btn-print" onclick="printBiodata(${idx})">🖨️ Print PDF</button></td>`;
                 html += `</tr>`;
             });
-
             html += '</tbody></table></div>';
             container.innerHTML = html;
         }
@@ -618,10 +472,11 @@
             const logoHtml =
                 `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
-            // Photo – with crossOrigin to avoid CORS issues and ensure loading
+            // Photo – with better error handling
             let photoHtml = '';
             if (row['PhotoLink']) {
-                photoHtml = `<img src="${row['PhotoLink']}" alt="Photo" crossorigin="anonymous">`;
+                // Use a direct img with onerror to show a fallback if the image fails
+                photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" style="max-width:110px;max-height:130px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;" onerror="this.outerHTML='<div style=\\'width:110px;height:130px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;\\'>📷<br>Photo Not Available</div>'">`;
             } else {
                 photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
             }
@@ -860,23 +715,16 @@
             `;
 
             container.innerHTML = html;
-
-            // Wait a moment for images to start loading, then print
-            setTimeout(() => window.print(), 500);
+            setTimeout(() => window.print(), 600);
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  export current data as CSV
+        //  export CSV
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function exportCSV() {
-            if (!allData || allData.length === 0) {
-                alert('No data to export.');
-                return;
-            }
-
+            if (!allData || allData.length === 0) { alert('No data to export.'); return; }
             const headers = Object.keys(allData[0]);
             let csv = headers.join(',') + '\n';
-
             allData.forEach(row => {
                 const values = headers.map(h => {
                     let val = (row[h] || '').toString();
@@ -887,11 +735,10 @@
                 });
                 csv += values.join(',') + '\n';
             });
-
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `KT_Submissions_${new Date().toISOString().slice(0, 10)}.csv`;
+            link.download = `KT_Submissions_${new Date().toISOString().slice(0,10)}.csv`;
             link.click();
             URL.revokeObjectURL(link.href);
         }
