@@ -61,10 +61,7 @@
         }
 
         @media print {
-            /* Hide screen elements */
             .dashboard, .actions, .no-print { display: none !important; }
-
-            /* Show only the print container */
             .print-biodata {
                 display: block !important;
                 margin: 0 !important;
@@ -76,8 +73,6 @@
                 line-height: 1.3 !important;
                 color: #000 !important;
             }
-
-            /* ── ALL TABLES ── */
             .print-biodata table {
                 border-collapse: collapse !important;
                 width: 100% !important;
@@ -101,8 +96,6 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-
-            /* ── HEADER TABLE ── */
             .print-biodata .header-table {
                 border: 2px solid #000 !important;
                 width: 100% !important;
@@ -115,131 +108,28 @@
                 vertical-align: middle !important;
                 text-align: center !important;
             }
-            .print-biodata .logo-cell {
-                width: 12% !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
-            .print-biodata .logo-cell img {
-                max-width: 70px !important;
-                max-height: 70px !important;
-                display: block !important;
-                margin: 0 auto !important;
-            }
-            .print-biodata .center-cell {
-                width: 68% !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-                padding: 6px 10px !important;
-            }
-            .print-biodata .photo-cell {
-                width: 20% !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
-            .print-biodata .photo-cell img {
-                max-width: 100px !important;
-                max-height: 120px !important;
-                border: 2px solid #000 !important;
-                display: block !important;
-                margin: 0 auto !important;
-                object-fit: contain !important;
-            }
-            .print-biodata .photo-cell .photo-placeholder {
-                width: 100px !important;
-                height: 120px !important;
-                border: 2px solid #000 !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                margin: 0 auto !important;
-                font-size: 9px !important;
-                color: #999 !important;
-                background: #f9f9f9 !important;
-            }
-
-            .print-biodata .school-name {
-                font-size: 18pt !important;
-                font-weight: 700 !important;
-                color: #1a5276 !important;
-            }
-            .print-biodata .school-details {
-                font-size: 9pt !important;
-            }
-            .print-biodata .form-title {
-                font-size: 14pt !important;
-                font-weight: 700 !important;
-                text-align: center !important;
-                background: #eaf2f8 !important;
-                padding: 4px 0 !important;
-                border: 1px solid #000 !important;
-                border-top: none !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            /* ── SECTION TITLES ── */
-            .print-biodata .post-applied {
-                font-size: 12pt !important;
-                font-weight: 600 !important;
-                margin: 4px 0 4px 0 !important;
-                padding: 2px 0 !important;
-            }
+            .print-biodata .logo-cell { width: 12% !important; text-align: center !important; vertical-align: middle !important; }
+            .print-biodata .logo-cell img { max-width: 70px !important; max-height: 70px !important; display: block !important; margin: 0 auto !important; }
+            .print-biodata .center-cell { width: 68% !important; text-align: center !important; vertical-align: middle !important; padding: 6px 10px !important; }
+            .print-biodata .photo-cell { width: 20% !important; text-align: center !important; vertical-align: middle !important; }
+            .print-biodata .photo-cell img { max-width: 100px !important; max-height: 120px !important; border: 2px solid #000 !important; display: block !important; margin: 0 auto !important; object-fit: contain !important; }
+            .print-biodata .photo-cell .photo-placeholder { width: 100px !important; height: 120px !important; border: 2px solid #000 !important; display: flex !important; align-items: center !important; justify-content: center !important; margin: 0 auto !important; font-size: 9px !important; color: #999 !important; background: #f9f9f9 !important; }
+            .print-biodata .school-name { font-size: 18pt !important; font-weight: 700 !important; color: #1a5276 !important; }
+            .print-biodata .school-details { font-size: 9pt !important; }
+            .print-biodata .form-title { font-size: 14pt !important; font-weight: 700 !important; text-align: center !important; background: #eaf2f8 !important; padding: 4px 0 !important; border: 1px solid #000 !important; border-top: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .print-biodata .post-applied { font-size: 12pt !important; font-weight: 600 !important; margin: 4px 0 4px 0 !important; padding: 2px 0 !important; }
             .print-biodata .post-applied span { font-weight: 400 !important; }
-            .print-biodata .section-title {
-                font-weight: 700 !important;
-                font-size: 12pt !important;
-                background: #d4e6f1 !important;
-                padding: 2px 6px !important;
-                border: 1px solid #000 !important;
-                margin-top: 6px !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            /* ── FIELD ROWS (General Information) ── */
-            .print-biodata .field-row {
-                display: table !important;
-                width: 100% !important;
-                table-layout: fixed !important;
-                border-bottom: 1px solid #cfcfcf !important;
-                font-size: 10.5pt !important;
-            }
-            .print-biodata .field-label,
-            .print-biodata .field-value {
-                display: table-cell !important;
-                padding: 3px 5px !important;
-                vertical-align: top !important;
-            }
-            .print-biodata .field-label {
-                width: 35% !important;
-                font-weight: 700 !important;
-            }
-            .print-biodata .field-value {
-                width: 65% !important;
-            }
-
-            /* ── DECLARATION ── */
-            .print-biodata .declaration {
-                margin-top: 12px !important;
-                border-top: 2px solid #000 !important;
-                padding-top: 8px !important;
-                font-size: 10.5pt !important;
-            }
+            .print-biodata .section-title { font-weight: 700 !important; font-size: 12pt !important; background: #d4e6f1 !important; padding: 2px 6px !important; border: 1px solid #000 !important; margin-top: 6px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .print-biodata .field-row { display: table !important; width: 100% !important; table-layout: fixed !important; border-bottom: 1px solid #cfcfcf !important; font-size: 10.5pt !important; }
+            .print-biodata .field-label, .print-biodata .field-value { display: table-cell !important; padding: 3px 5px !important; vertical-align: top !important; }
+            .print-biodata .field-label { width: 35% !important; font-weight: 700 !important; }
+            .print-biodata .field-value { width: 65% !important; }
+            .print-biodata .declaration { margin-top: 12px !important; border-top: 2px solid #000 !important; padding-top: 8px !important; font-size: 10.5pt !important; }
             .print-biodata .declaration p { margin: 2px 0 !important; }
-            .print-biodata .signature-row {
-                display: flex !important;
-                justify-content: space-between !important;
-                margin-top: 14px !important;
-                font-size: 10.5pt !important;
-            }
-            .print-biodata .total-exp {
-                margin: 4px 0 0 0 !important;
-                font-size: 10pt !important;
-            }
+            .print-biodata .signature-row { display: flex !important; justify-content: space-between !important; margin-top: 14px !important; font-size: 10.5pt !important; }
+            .print-biodata .total-exp { margin: 4px 0 0 0 !important; font-size: 10pt !important; }
             .print-biodata .total-exp strong { font-weight: 700 !important; }
 
-            /* ── FIXED COLUMN WIDTHS ── */
             .print-biodata .edu-table th:nth-child(1),
             .print-biodata .edu-table td:nth-child(1) { width: 22%; }
             .print-biodata .edu-table th:nth-child(2),
@@ -284,15 +174,9 @@
             .print-biodata .achieve-table th:nth-child(3),
             .print-biodata .achieve-table td:nth-child(3) { width: 67%; }
 
-            /* ── PAGE BREAKS ── */
-            tr, td, th {
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-            }
+            tr, td, th { page-break-inside: avoid !important; break-inside: avoid !important; }
             .print-biodata table { page-break-inside: avoid; }
             .print-biodata .section-title { page-break-after: avoid; }
-
-            /* ── WORD BREAK ── */
             .print-biodata td,
             .print-biodata th,
             .print-biodata .field-value {
@@ -327,14 +211,13 @@
         const CSV_URL =
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
 
-        // Logo – use a direct URL or base64. This assumes kt-logo.webp is in the same folder.
         const LOGO_URL = 'kt-logo.webp';
 
         let allData = [];
         let logoBase64 = '';
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  load logo as base64 (ensures it prints)
+        //  load logo as base64
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function loadLogoAsBase64() {
             try {
@@ -354,7 +237,27 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CSV PARSER (no external libraries)
+        //  fetch image as base64 (for photo)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        async function fetchImageAsBase64(url) {
+            try {
+                const response = await fetch(url, { mode: 'cors' });
+                if (!response.ok) throw new Error('Failed to fetch image');
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                console.warn('Could not fetch image:', e);
+                return null;
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  CSV PARSER
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function parseCSV(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim() !== '');
@@ -396,7 +299,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  RENDER TABLE (Dashboard)
+        //  RENDER TABLE
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
@@ -423,9 +326,9 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PRINT BIODATA
+        //  PRINT BIODATA (with photo as base64)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function printBiodata(index) {
+        async function printBiodata(index) {
             const row = allData[index];
             if (!row) { alert('Data not found. Please refresh.'); return; }
 
@@ -436,14 +339,21 @@
             const logoHtml =
                 `<img src="${logoSrc}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
-            // ── Photo ──
+            // ── Photo: fetch and convert to base64 ──
+            let photoBase64 = null;
             let photoHtml = '';
             if (row['PhotoLink']) {
-                photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" 
-                                style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;"
-                                crossorigin="anonymous" 
-                                referrerpolicy="no-referrer"
-                                onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
+                photoBase64 = await fetchImageAsBase64(row['PhotoLink']);
+                if (photoBase64) {
+                    photoHtml = `<img src="${photoBase64}" alt="Passport Photo" style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;">`;
+                } else {
+                    // fallback: try using the URL directly (with crossorigin)
+                    photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" 
+                                    style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;"
+                                    crossorigin="anonymous" 
+                                    referrerpolicy="no-referrer"
+                                    onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
+                }
             } else {
                 photoHtml = `<div style="width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;">📷<br>No Photo</div>`;
             }
@@ -629,16 +539,15 @@
                 </div>
             `;
 
-            // Put the HTML into the print container
             container.innerHTML = html;
 
-            // Force a reflow
+            // Force reflow and wait a moment for images to render
             container.offsetHeight;
 
-            // Wait for images to load, then print
+            // Print after a short delay
             setTimeout(() => {
                 window.print();
-            }, 1500);
+            }, 800);
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
