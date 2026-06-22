@@ -9,7 +9,7 @@
     body {
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
       background: #f0f4f8;
-      padding: 16px;
+      padding: 12px;
       color: #1a2a3a;
     }
     .container {
@@ -17,31 +17,32 @@
       margin: 0 auto;
       background: #ffffff;
       border-radius: 24px;
-      padding: 24px 20px;
+      padding: 20px 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
     .header {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       border-bottom: 3px solid #1a5276;
-      padding-bottom: 16px;
-      margin-bottom: 22px;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
     }
     .header img {
-      width: 64px;
+      width: 56px;
       height: auto;
       border-radius: 10px;
       object-fit: contain;
+      flex-shrink: 0;
     }
     .header h1 {
-      font-size: 20px;
+      font-size: 18px;
       color: #1a5276;
       line-height: 1.2;
     }
     .header h1 small {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: normal;
       color: #2c3e50;
       margin-top: 2px;
@@ -68,13 +69,15 @@
     label .req { color: #c0392b; margin-left: 2px; }
     input, select, textarea {
       width: 100%;
-      padding: 12px 14px;
+      padding: 14px 16px;
       border: 1.5px solid #dce4ec;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 16px;
       background: #fafcfd;
       transition: 0.2s;
       font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
@@ -82,7 +85,11 @@
       background: #ffffff;
       box-shadow: 0 0 0 3px rgba(26,82,118,0.15);
     }
-    textarea { resize: vertical; min-height: 60px; }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+      padding: 12px 16px;
+    }
     .row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -95,7 +102,7 @@
     }
     .photo-upload {
       border: 2px dashed #b0c4d9;
-      padding: 20px;
+      padding: 24px 20px;
       text-align: center;
       border-radius: 16px;
       background: #f8fafc;
@@ -112,12 +119,17 @@
       border: 2px solid #dce4ec;
       object-fit: cover;
     }
+    .photo-upload-status {
+      font-size: 13px;
+      color: #5d6d7e;
+      margin-top: 6px;
+    }
     .btn-submit {
       width: 100%;
       background: #1a5276;
       color: white;
       border: none;
-      padding: 16px;
+      padding: 18px;
       font-size: 18px;
       font-weight: 700;
       border-radius: 50px;
@@ -125,6 +137,7 @@
       cursor: pointer;
       transition: 0.2s;
       box-shadow: 0 4px 12px rgba(26,82,118,0.3);
+      -webkit-tap-highlight-color: transparent;
     }
     .btn-submit:active { transform: scale(0.97); background: #154360; }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -152,12 +165,15 @@
     .table-mini {
       background: #f8fafc;
       border-radius: 12px;
-      padding: 10px;
+      padding: 12px;
       margin-top: 6px;
     }
     .table-mini .row-3 { margin-bottom: 8px; }
-    .helper-text { font-size: 12px; color: #5d6d7e; margin-top: 2px; }
-    hr { margin: 20px 0; border: none; border-top: 1.5px solid #e5eaef; }
+    .helper-text {
+      font-size: 12px;
+      color: #5d6d7e;
+      margin-top: 2px;
+    }
     .exp-block {
       background: #f8fafc;
       border-radius: 12px;
@@ -171,6 +187,22 @@
       color: #1a5276;
       margin-bottom: 6px;
     }
+    .declaration-box {
+      font-size: 14px;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 12px;
+    }
+    .declaration-box .signature-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #2c3e50;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    hr { margin: 20px 0; border: none; border-top: 1.5px solid #e5eaef; }
     .loading-spinner {
       display: inline-block;
       width: 20px;
@@ -188,28 +220,32 @@
     }
     optgroup { font-weight: 700; color: #1a5276; }
     optgroup option { font-weight: 400; color: #1a2a3a; }
-    .debug-info {
-      background: #f0f0f0;
-      padding: 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-family: monospace;
-      margin-top: 8px;
-      display: none;
-      overflow-wrap: break-word;
-      max-height: 200px;
-      overflow-y: auto;
-    }
     @media (max-width: 480px) {
-      .row-2, .row-3 { grid-template-columns: 1fr; gap: 8px; }
-      .header h1 { font-size: 17px; }
+      body { padding: 8px; }
+      .container { padding: 16px 12px; border-radius: 18px; }
+      .header img { width: 44px; }
+      .header h1 { font-size: 16px; }
+      .header h1 small { font-size: 11px; }
+      .row-2, .row-3 { grid-template-columns: 1fr; gap: 10px; }
+      .section-title { font-size: 15px; padding: 6px 10px; }
+      input, select, textarea { font-size: 15px; padding: 12px 14px; }
+      .btn-submit { font-size: 17px; padding: 16px; }
+      .photo-upload { padding: 18px; }
+      .photo-preview { max-width: 100px; max-height: 100px; }
+      .declaration-box { font-size: 13px; }
+    }
+    @media (max-width: 360px) {
+      .header h1 { font-size: 14px; }
+      .header img { width: 38px; }
+      .btn-submit { font-size: 15px; padding: 14px; }
     }
   </style>
 </head>
 <body>
 <div class="container" id="app">
   <div class="header">
-    <img src="kt-logo.webp" alt="KTGS Logo" id="schoolLogo" onerror="this.style.display='none'">
+    <!-- Logo from your GitHub repository (raw URL) -->
+    <img src="https://raw.githubusercontent.com/Bibhu-Smile/KT-Interview-form-1/main/kt-logo.webp" alt="KTGS Logo" id="schoolLogo" onerror="this.style.display='none'">
     <h1>KT GLOBAL SCHOOL <small>Interview Biodata Form</small></h1>
   </div>
 
@@ -217,7 +253,7 @@
     <!-- ========== 1. General Information ========== -->
     <div class="section-title">1. General Information <span style="font-weight:400;font-size:14px;">(Fill in CAPITAL LETTERS)</span></div>
 
-    <!-- POST APPLIED FOR - SINGLE DROPDOWN WITH OPTGROUPS -->
+    <!-- POST APPLIED FOR -->
     <div class="form-group">
       <label>Post Applied For <span class="req">*</span></label>
       <select id="postApplied" required>
@@ -501,31 +537,31 @@
       <div>📸 Tap to upload / take photo</div>
       <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="previewPhoto(event)">
       <img id="photoPreview" class="photo-preview" style="display:none;">
-      <div id="photoSizeWarning" style="font-size:12px;color:#e67e22;display:none;margin-top:4px;">
-        ⚠️ Photo compressed to fit (max 800px)
-      </div>
+      <div id="photoStatus" class="photo-upload-status"></div>
     </div>
 
     <!-- ========== DECLARATION ========== -->
     <hr>
-    <div style="font-size:14px; background:#f8fafc; padding:14px; border-radius:12px;">
+    <div class="declaration-box">
       <p><strong>Declaration:</strong> I hereby declare that all the information furnished above is true to the best of my knowledge and belief. I will do all my duties to the best of my ability and follow the code of conduct of the institution.</p>
-      <div style="margin-top:10px; display:flex; justify-content:space-between; font-size:13px; color:#2c3e50;">
+      <div class="signature-row">
         <span>Date: <span id="todayDate"></span></span>
         <span>Place: Khordha</span>
+        <span style="font-weight:600;">Signature</span>
       </div>
     </div>
 
     <button type="submit" class="btn-submit" id="submitBtn">📩 Submit Application</button>
     <div id="errorMsg" class="error-msg"></div>
     <div id="successMsg" class="success-msg">✅ Form submitted successfully! We will contact you soon.</div>
-    <div id="debugInfo" class="debug-info"></div>
   </form>
 </div>
 
 <script>
+  // ── today's date ──
   document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' });
 
+  // ── calculate age on 1st Jan 2026 ──
   document.getElementById('dob').addEventListener('change', function() {
     const dob = new Date(this.value);
     const today = new Date(2026, 0, 1);
@@ -535,10 +571,10 @@
     document.getElementById('age').value = age > 0 ? age : '';
   });
 
-  // ================================================================
-  // PHOTO COMPRESSION
-  // ================================================================
-  function compressPhoto(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+  // ── photo compression (no upload here – will send base64 in the main POST) ──
+  let compressedPhotoBase64 = null;
+
+  function compressPhoto(file, maxWidth = 120, maxHeight = 120, quality = 0.6) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -567,53 +603,41 @@
     });
   }
 
-  let compressedPhotoDataUrl = null;
-
   async function previewPhoto(e) {
     const file = e.target.files[0];
     if (!file) return;
     const preview = document.getElementById('photoPreview');
-    const warning = document.getElementById('photoSizeWarning');
+    const status = document.getElementById('photoStatus');
     try {
+      status.textContent = '⏳ Compressing photo...';
       const dataUrl = await compressPhoto(file);
-      compressedPhotoDataUrl = dataUrl;
+      compressedPhotoBase64 = dataUrl.split(',')[1]; // store base64 without data header
       preview.src = dataUrl;
       preview.style.display = 'block';
-      if (file.size > 200 * 1024) warning.style.display = 'block';
-      else warning.style.display = 'none';
+      status.textContent = '✅ Photo ready (will be submitted with form)';
     } catch (err) {
       console.error('Photo compression failed:', err);
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        preview.src = ev.target.result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+      status.textContent = '❌ Compression failed';
     }
   }
 
-  // ================================================================
-  // SUBMIT HANDLER
-  // ================================================================
-  // ⚠️ REPLACE WITH YOUR ACTUAL APPS SCRIPT URL
-  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQWLArBjISIPraxz-iDqUSM3x7IJ3O5ubRtW2bO_k0hDONcQFdJyDsL3ajqKl0JYu2/exec";
+  // ── form submission via fetch to Apps Script ──
+  // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT WEB APP URL
+  const APP_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
 
   async function submitForm(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     const errDiv = document.getElementById('errorMsg');
     const successDiv = document.getElementById('successMsg');
-    const debugDiv = document.getElementById('debugInfo');
 
     errDiv.style.display = 'none';
     successDiv.style.display = 'none';
-    debugDiv.style.display = 'none';
-    debugDiv.textContent = '';
-
     btn.disabled = true;
     btn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
 
     try {
+      // Gather all form data
       const postSelect = document.getElementById('postApplied');
       const selectedOption = postSelect.options[postSelect.selectedIndex];
       const postValue = postSelect.value;
@@ -623,6 +647,7 @@
         throw new Error('Please select a valid Post (Academic or Non-Academic).');
       }
 
+      // Collect experience
       const exp1_school = document.getElementById('exp1_school').value.trim();
       const exp1_desig = document.getElementById('exp1_desig').value.trim();
       const exp1_details = document.getElementById('exp1_details').value.trim();
@@ -637,6 +662,7 @@
       const desigs = [exp1_desig, exp2_desig, exp3_desig].filter(s => s);
       const detailsArr = [exp1_details, exp2_details, exp3_details].filter(s => s);
 
+      // Build data object (with photoBase64)
       const formData = {
         postApplied: postValue,
         postCategory: postCategory,
@@ -695,56 +721,30 @@
         expectedSalary: document.getElementById('expectedSalary').value.trim(),
         joiningTime: document.getElementById('joiningTime').value.trim(),
         transportation: document.getElementById('transportation').value,
-        photoBase64: ''
+        photoBase64: compressedPhotoBase64 || ''   // ← this is the compressed photo
       };
 
+      // Validate required
       if (!formData.postApplied || !formData.name || !formData.father || !formData.dob || !formData.bloodGroup || !formData.category || !formData.gender || !formData.mobile || !formData.email || !formData.aadhaar || !formData.expectedSalary || !formData.transportation) {
         throw new Error('Please fill all required fields (marked with *).');
       }
 
-      let photoBase64 = '';
-      if (compressedPhotoDataUrl) {
-        photoBase64 = compressedPhotoDataUrl.split(',')[1];
-      } else {
-        const photoFile = document.getElementById('photoInput').files[0];
-        if (photoFile) {
-          const base64 = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result.split(',')[1]);
-            reader.readAsDataURL(photoFile);
-          });
-          photoBase64 = base64;
-        }
-      }
-      formData.photoBase64 = photoBase64;
-
-      debugDiv.textContent = '⏳ Sending to: ' + APP_SCRIPT_URL;
-      debugDiv.style.display = 'block';
-
+      // Send via fetch
       const response = await fetch(APP_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
-      debugDiv.textContent = '📥 Response status: ' + response.status;
-      debugDiv.style.display = 'block';
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error('HTTP ' + response.status + ': ' + errorText);
-      }
-
       const result = await response.json();
-      debugDiv.textContent = '📦 Response: ' + JSON.stringify(result, null, 2);
-      debugDiv.style.display = 'block';
 
-      if (result.success) {
+      if (result && result.success) {
         successDiv.style.display = 'block';
         document.getElementById('interviewForm').reset();
         document.getElementById('photoPreview').style.display = 'none';
         document.getElementById('age').value = '';
-        compressedPhotoDataUrl = null;
+        compressedPhotoBase64 = null;
+        document.getElementById('photoStatus').textContent = '';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         throw new Error(result.error || 'Submission failed. Please try again.');
@@ -754,8 +754,6 @@
       errDiv.textContent = '❌ ' + err.message;
       errDiv.style.display = 'block';
       console.error('Submission error:', err);
-      debugDiv.textContent = '❌ Error: ' + err.message;
-      debugDiv.style.display = 'block';
     } finally {
       btn.disabled = false;
       btn.innerHTML = '📩 Submit Application';
