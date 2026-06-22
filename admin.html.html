@@ -140,21 +140,26 @@
                 word-wrap: break-word !important;
             }
 
+            /* ── HEADER TABLE (FIXED ALIGNMENT) ── */
             .print-biodata .header-table {
                 border: 2px solid #000 !important;
                 margin-bottom: 4px !important;
                 width: 100% !important;
                 table-layout: fixed !important;
+                border-collapse: collapse !important;
             }
             .print-biodata .header-table td {
                 border: 1px solid #000 !important;
-                padding: 4px 8px !important;
+                padding: 6px 10px !important;
                 vertical-align: middle !important;
+                text-align: center !important;
             }
 
+            /* Logo cell – left side */
             .print-biodata .logo-cell {
                 width: 15% !important;
                 text-align: center !important;
+                vertical-align: middle !important;
             }
             .print-biodata .logo-cell img {
                 max-width: 70px !important;
@@ -163,22 +168,30 @@
                 margin: 0 auto !important;
             }
 
+            /* Center cell – school name & details */
+            .print-biodata .center-cell {
+                text-align: center !important;
+                vertical-align: middle !important;
+                padding: 6px 10px !important;
+            }
+
+            /* Photo cell – right side */
             .print-biodata .photo-cell {
                 width: 20% !important;
                 text-align: center !important;
                 vertical-align: middle !important;
             }
             .print-biodata .photo-cell img {
-                max-width: 110px !important;
-                max-height: 130px !important;
+                max-width: 100px !important;
+                max-height: 120px !important;
                 border: 2px solid #000 !important;
                 display: block !important;
                 margin: 0 auto !important;
-                object-fit: contain;
+                object-fit: contain !important;
             }
             .print-biodata .photo-cell .photo-placeholder {
-                width: 110px !important;
-                height: 130px !important;
+                width: 100px !important;
+                height: 120px !important;
                 border: 2px solid #000 !important;
                 display: flex !important;
                 align-items: center !important;
@@ -357,7 +370,7 @@
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIGURATION – update with your own CSV URL if needed
+        //  CONFIGURATION
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const CSV_URL =
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
@@ -459,7 +472,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  print a single biodata (with photo)
+        //  print a single biodata
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
             const row = allData[index];
@@ -475,8 +488,7 @@
             // Photo – with better error handling
             let photoHtml = '';
             if (row['PhotoLink']) {
-                // Use a direct img with onerror to show a fallback if the image fails
-                photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" style="max-width:110px;max-height:130px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;" onerror="this.outerHTML='<div style=\\'width:110px;height:130px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;\\'>📷<br>Photo Not Available</div>'">`;
+                photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
             } else {
                 photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
             }
@@ -580,7 +592,7 @@
                 <table class="header-table">
                     <tr>
                         <td class="logo-cell" rowspan="2">${logoHtml}</td>
-                        <td style="text-align:center;padding:4px 10px;">
+                        <td class="center-cell" style="text-align:center;vertical-align:middle;padding:6px 10px;">
                             <div class="school-name">KT GLOBAL SCHOOL</div>
                             <div class="school-details">
                                 Telephone No.: +91 90901 11177 &nbsp;|&nbsp; E-mail ID: info@ktglobalschool.org
@@ -595,7 +607,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="form-title">INTERVIEW BIODATA FORM</td>
+                        <td class="form-title" colspan="1" style="font-size:14pt;font-weight:700;text-align:center;background:#eaf2f8;padding:4px 0;border:1px solid #000;border-top:none;">INTERVIEW BIODATA FORM</td>
                     </tr>
                 </table>
 
