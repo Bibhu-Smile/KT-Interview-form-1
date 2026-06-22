@@ -157,31 +157,21 @@
         let logoBase64 = '';
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  Helper: Extract Google Drive File ID from any Drive URL
+        //  Helper: Extract Google Drive File ID
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function extractDriveFileId(url) {
             if (!url) return null;
-            // pattern for /file/d/ or /uc?id= or /open?id=
             const match = url.match(/[-\w]{25,}/);
             return match ? match[0] : null;
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  Fetch image as base64 using direct download URL
+        //  Fetch image as base64 (will fail if CORS)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function fetchImageAsBase64(url) {
             try {
-                // If it's a Google Drive link, convert to direct download
-                let imageUrl = url;
-                const fileId = extractDriveFileId(url);
-                if (fileId) {
-                    imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-                    console.log('🔍 Converted Drive URL to direct download:', imageUrl);
-                }
-                const response = await fetch(imageUrl, { mode: 'cors' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-                }
+                const response = await fetch(url, { mode: 'cors' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const blob = await response.blob();
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
@@ -285,7 +275,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PRINT BIODATA (with photo as base64)
+        //  PRINT BIODATA (fixed photo loading)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function printBiodata(index) {
             const row = allData[index];
@@ -298,20 +288,24 @@
             const logoHtml =
                 `<img src="${logoSrc}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
-            // ── Photo: fetch and convert to base64 ──
+            // ── Photo: try base64 first, fallback to direct URL ──
             let photoHtml = '';
-            if (row['PhotoLink']) {
-                console.log('📸 Attempting to load photo from:', row['PhotoLink']);
-                const base64 = await fetchImageAsBase64(row['PhotoLink']);
+            const originalPhotoUrl = row['PhotoLink'];
+            if (originalPhotoUrl) {
+                console.log('📸 Attempting to load photo from:', originalPhotoUrl);
+                const fileId = extractDriveFileId(originalPhotoUrl);
+                const directUrl = fileId ? `https://drive.google.com/uc?export=view&id=${fileId}` : originalPhotoUrl;
+
+                // 1) Try to fetch as base64
+                const base64 = await fetchImageAsBase64(directUrl);
                 if (base64) {
                     photoHtml = `<img src="${base64}" alt="Passport Photo" style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;">`;
                     console.log('✅ Photo loaded as base64');
                 } else {
-                    // fallback: use the original URL with crossorigin
-                    console.warn('⚠️ Using fallback URL for photo');
-                    photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" 
+                    // 2) Fallback: use direct URL as img src (no fetch, no crossorigin)
+                    console.warn('⚠️ Using direct URL for photo (fallback)');
+                    photoHtml = `<img src="${directUrl}" alt="Passport Photo" 
                                     style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;"
-                                    crossorigin="anonymous" 
                                     referrerpolicy="no-referrer"
                                     onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
                 }
@@ -322,7 +316,7 @@
             // ── Helper ──
             const safe = (val) => val || '';
 
-            // ── Extract all fields (same as before) ──
+            // ── Extract all fields ──
             const name = safe(row['Name']);
             const father = safe(row['Father/Husband']);
             const dob = safe(row['DOB']);
@@ -496,7 +490,7 @@
             container.innerHTML = html;
             container.offsetHeight; // force reflow
 
-            // Print after a delay to ensure the base64 image is rendered
+            // Print after a delay to ensure images render
             setTimeout(() => {
                 window.print();
             }, 1200);
