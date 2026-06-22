@@ -10,7 +10,7 @@
     </script>
 
     <style>
-        /* ── reset & base ── */
+        /* ── Screen styles ── */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
@@ -94,15 +94,15 @@
             border: 1px solid #dce4ec;
         }
 
-        /* ── PRINT STYLES (A4, perfect alignment) ── */
+        /* ── PRINT STYLES ── */
         @page {
             size: A4 portrait;
             margin: 0.7in 0.6in;
         }
 
         @media print {
-            body { background: white !important; padding: 0 !important; margin: 0 !important; }
-            body * { display: none !important; }
+            /* Hide all screen content */
+            body, body * { display: none !important; }
             body .print-biodata,
             body .print-biodata * { display: block !important; }
             body .print-biodata table,
@@ -130,6 +130,7 @@
                 font-family: 'Times New Roman', Times, serif !important;
                 margin: 3px 0 5px 0 !important;
                 table-layout: fixed !important;
+                border: 1px solid #000 !important;
             }
             .print-biodata table td,
             .print-biodata table th {
@@ -139,8 +140,14 @@
                 vertical-align: top !important;
                 word-wrap: break-word !important;
             }
+            .print-biodata table th {
+                background: #d4e6f1 !important;
+                font-weight: 700 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
 
-            /* ── HEADER TABLE ── */
+            /* Header table (no border in the center cells) */
             .print-biodata .header-table {
                 border: 2px solid #000 !important;
                 margin-bottom: 4px !important;
@@ -154,7 +161,6 @@
                 vertical-align: middle !important;
                 text-align: center !important;
             }
-
             .print-biodata .logo-cell {
                 width: 15% !important;
                 text-align: center !important;
@@ -166,13 +172,11 @@
                 display: block !important;
                 margin: 0 auto !important;
             }
-
             .print-biodata .center-cell {
                 text-align: center !important;
                 vertical-align: middle !important;
                 padding: 6px 10px !important;
             }
-
             .print-biodata .photo-cell {
                 width: 20% !important;
                 text-align: center !important;
@@ -283,7 +287,7 @@
             }
             .print-biodata .total-exp strong { font-weight: 700 !important; }
 
-            /* Fixed column widths */
+            /* Fixed column widths for tables */
             .print-biodata .edu-table th:nth-child(1),
             .print-biodata .edu-table td:nth-child(1) { width: 22%; }
             .print-biodata .edu-table th:nth-child(2),
@@ -367,7 +371,7 @@
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIGURATION – update with your own CSV URL if needed
+        //  CONFIGURATION
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const CSV_URL =
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
@@ -438,7 +442,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  render table
+        //  render table (dashboard view)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
@@ -469,7 +473,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PRINT BIODATA – perfect alignment + photo fix
+        //  PRINT BIODATA – fully formatted
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
             const row = allData[index];
@@ -482,7 +486,7 @@
             const logoHtml =
                 `<img src="${logoSrc}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
-            // Photo – with crossorigin and referrerpolicy to avoid CORS issues
+            // Photo – with proper fallback
             let photoHtml = '';
             if (row['PhotoLink']) {
                 photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" 
@@ -491,9 +495,10 @@
                                 referrerpolicy="no-referrer"
                                 onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
             } else {
-                photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
+                photoHtml = `<div style="width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;">📷<br>No Photo</div>`;
             }
 
+            // Format date
             let formattedDate = '';
             if (row['Timestamp']) {
                 try {
@@ -525,6 +530,7 @@
             const aadhaar = safe(row['Aadhaar']);
             const pan = safe(row['PAN']);
 
+            // Education
             const secYr = safe(row['Secondary_Yr']);
             const secSub = safe(row['Secondary_Subj']);
             const secBoard = safe(row['Secondary_Board']);
@@ -550,10 +556,12 @@
             const tetBoard = safe(row['TET_Board']);
             const tetMarks = safe(row['TET_Marks']);
 
+            // Extra
             const extra1 = safe(row['Extra_Q1']);
             const extra2 = safe(row['Extra_Q2']);
             const extra3 = safe(row['Extra_Q3']);
 
+            // Work Experience
             const schools = (safe(row['WorkExp1']) || '').split(' || ');
             const desigs = (safe(row['WorkExp2']) || '').split(' || ');
             const detailsArr = (safe(row['WorkExp3']) || '').split(' || ');
@@ -582,11 +590,16 @@
                 displayPost = postApplied + ' (' + postCategory + ')';
             }
 
+            // Build work experience rows
             let workRowsHtml = '';
             expRows.forEach(exp => {
                 workRowsHtml +=
                     `<tr><td>${exp.school}</td><td>${exp.desig}</td><td></td><td></td><td></td><td></td></tr>`;
             });
+            // Add two empty rows if needed
+            while (workRowsHtml.split('</tr>').length - 1 < 3) {
+                workRowsHtml += `<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+            }
 
             // ── build the HTML for the biodata ──
             const html = `
@@ -637,13 +650,7 @@
 
                 <div class="section-title">2. Educational Qualifications:</div>
                 <table class="edu-table">
-                    <tr style="background:#d4e6f1;font-weight:700;">
-                        <th>Qualification</th>
-                        <th>Year of Passing</th>
-                        <th>Subjects Offered</th>
-                        <th>Name of Board or University</th>
-                        <th>Total Mark in Percentage/CGPA</th>
-                    </tr>
+                    <tr><th>Qualification</th><th>Year of Passing</th><th>Subjects Offered</th><th>Name of Board or University</th><th>Total Mark in Percentage/CGPA</th></tr>
                     <tr><td>Secondary</td><td>${secYr}</td><td>${secSub}</td><td>${secBoard}</td><td>${secMarks}</td></tr>
                     <tr><td>Senior Secondary</td><td>${srSecYr}</td><td>${srSecSub}</td><td>${srSecBoard}</td><td>${srSecMarks}</td></tr>
                     <tr><td>Graduation (Mention Hons. Subject)</td><td>${gradYr}</td><td>${gradSub}</td><td>${gradBoard}</td><td>${gradMarks}</td></tr>
@@ -654,14 +661,7 @@
 
                 <div class="section-title">3. Extra Qualification (if any):</div>
                 <table class="extra-table">
-                    <tr style="background:#d4e6f1;font-weight:700;">
-                        <th>Qualification</th>
-                        <th>Specialization Subject</th>
-                        <th>Year of Passing</th>
-                        <th>University</th>
-                        <th>Total Mark in %/CGPA/Grade</th>
-                        <th>Any Other Information</th>
-                    </tr>
+                    <tr><th>Qualification</th><th>Specialization Subject</th><th>Year of Passing</th><th>University</th><th>Total Mark in %/CGPA/Grade</th><th>Any Other Information</th></tr>
                     <tr>
                         <td>${extra1}</td>
                         <td>${extra2}</td>
@@ -674,14 +674,7 @@
 
                 <div class="section-title">4. Work Experience:</div>
                 <table class="work-table">
-                    <tr style="background:#d4e6f1;font-weight:700;">
-                        <th>Name of School / Institution</th>
-                        <th>Designation &amp; Assignment</th>
-                        <th>From (Month &amp; Year)</th>
-                        <th>To (Month &amp; Year)</th>
-                        <th>Subject / Class Taught</th>
-                        <th>Gross Salary Drawn</th>
-                    </tr>
+                    <tr><th>Name of School / Institution</th><th>Designation &amp; Assignment</th><th>From (Month &amp; Year)</th><th>To (Month &amp; Year)</th><th>Subject / Class Taught</th><th>Gross Salary Drawn</th></tr>
                     ${workRowsHtml}
                 </table>
 
@@ -694,11 +687,7 @@
 
                 <div class="section-title">5. Achievement if any:</div>
                 <table class="achieve-table">
-                    <tr style="background:#d4e6f1;font-weight:700;">
-                        <th>Sl. No.</th>
-                        <th>Particular</th>
-                        <th>Details Attached (Photo copy of certificates: State, National, International)</th>
-                    </tr>
+                    <tr><th>Sl. No.</th><th>Particular</th><th>Details Attached (Photo copy of certificates: State, National, International)</th></tr>
                     <tr><td>1</td><td>Literary Activity</td><td>${achievements && achievements.toLowerCase().includes('literary') ? '✓' : ''}</td></tr>
                     <tr><td>2</td><td>Art &amp; Craft</td><td>${achievements && achievements.toLowerCase().includes('art') ? '✓' : ''}</td></tr>
                     <tr><td>3</td><td>Sports</td><td>${achievements && achievements.toLowerCase().includes('sport') ? '✓' : ''}</td></tr>
