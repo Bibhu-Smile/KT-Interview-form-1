@@ -557,7 +557,7 @@
   </form>
 </div>
 
-<script>
+<>
   // ── today's date ──
   document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' });
 
@@ -621,9 +621,9 @@
     }
   }
 
-  // ── form submission via fetch to Apps Script ──
+  // ── form submission via fetch to Apps  ──
   // ⚠️ REPLACE THIS URL WITH YOUR ACTUAL APPS SCRIPT WEB APP URL
-  const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynkGWK5En_1M0OE8iuwVhuyQIhaNL0xVva3Cwud9c8s6EZuG4_4wBhwLJYmVe0XFuC/execL';
+  const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2n2a2iybNWKTIBl25I0divnWPFql3j6DDoso5BE2ZZ0rPEzhS131v_v3KEEpiFsNp/exec';
 
   async function submitForm(e) {
     e.preventDefault();
