@@ -94,7 +94,7 @@
             border: 1px solid #dce4ec;
         }
 
-        /* ── print styles (biodata) ── */
+        /* ── PRINT STYLES (A4, perfect alignment) ── */
         @page {
             size: A4 portrait;
             margin: 0.7in 0.6in;
@@ -140,7 +140,7 @@
                 word-wrap: break-word !important;
             }
 
-            /* ── HEADER TABLE (FIXED ALIGNMENT) ── */
+            /* ── HEADER TABLE ── */
             .print-biodata .header-table {
                 border: 2px solid #000 !important;
                 margin-bottom: 4px !important;
@@ -155,7 +155,6 @@
                 text-align: center !important;
             }
 
-            /* Logo cell – left side */
             .print-biodata .logo-cell {
                 width: 15% !important;
                 text-align: center !important;
@@ -168,14 +167,12 @@
                 margin: 0 auto !important;
             }
 
-            /* Center cell – school name & details */
             .print-biodata .center-cell {
                 text-align: center !important;
                 vertical-align: middle !important;
                 padding: 6px 10px !important;
             }
 
-            /* Photo cell – right side */
             .print-biodata .photo-cell {
                 width: 20% !important;
                 text-align: center !important;
@@ -370,7 +367,7 @@
 
     <script>
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  CONFIGURATION
+        //  CONFIGURATION – update with your own CSV URL if needed
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         const CSV_URL =
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
@@ -472,7 +469,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  print a single biodata
+        //  PRINT BIODATA – perfect alignment + photo fix
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
             const row = allData[index];
@@ -483,12 +480,16 @@
             // Logo
             const logoSrc = logoBase64 || LOGO_FILENAME;
             const logoHtml =
-                `<img src="${logoSrc}" alt="KTGS Logo" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
+                `<img src="${logoSrc}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
-            // Photo – with better error handling
+            // Photo – with crossorigin and referrerpolicy to avoid CORS issues
             let photoHtml = '';
             if (row['PhotoLink']) {
-                photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
+                photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" 
+                                style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;"
+                                crossorigin="anonymous" 
+                                referrerpolicy="no-referrer"
+                                onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
             } else {
                 photoHtml = `<div class="photo-placeholder">📷<br>No Photo</div>`;
             }
@@ -727,7 +728,11 @@
             `;
 
             container.innerHTML = html;
-            setTimeout(() => window.print(), 600);
+
+            // Wait for images to load before printing
+            setTimeout(() => {
+                window.print();
+            }, 800);
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
