@@ -20,20 +20,8 @@
             padding: 28px;
             box-shadow: 0 12px 40px rgba(0,0,0,0.06);
         }
-        h1 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #1a5276;
-            font-size: 26px;
-            margin-bottom: 20px;
-        }
-        .actions {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-        }
+        h1 { display: flex; align-items: center; gap: 12px; color: #1a5276; font-size: 26px; margin-bottom: 20px; }
+        .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
         .actions button {
             background: #1a5276;
             color: white;
@@ -42,7 +30,6 @@
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
             font-size: 14px;
         }
         .actions button:hover { background: #154360; }
@@ -56,61 +43,22 @@
             font-size: 13px;
             min-width: 1000px;
         }
-        th {
-            background: #1a5276;
-            color: white;
-            padding: 12px 10px;
-            text-align: left;
-            position: sticky;
-            top: 0;
-            z-index: 5;
-        }
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #e5eaef;
-            vertical-align: top;
-        }
+        th { background: #1a5276; color: white; padding: 12px 10px; text-align: left; position: sticky; top: 0; z-index: 5; }
+        td { padding: 10px; border-bottom: 1px solid #e5eaef; vertical-align: top; }
         tr:hover { background: #f4f8fc; }
-        .btn-print {
-            background: #2c3e50;
-            color: white;
-            border: none;
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+        .btn-print { background: #2c3e50; color: white; border: none; padding: 5px 14px; border-radius: 30px; font-size: 12px; cursor: pointer; }
         .btn-print:hover { background: #1a2a3a; }
-        .photo-thumb {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #dce4ec;
-        }
+        .photo-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #dce4ec; }
 
-        /* ── Error display ── */
-        .error-box {
-            color: #c0392b;
-            padding: 20px;
-            background: #fde8e8;
-            border-radius: 8px;
-            border-left: 4px solid #c0392b;
-            margin: 20px 0;
-            word-break: break-word;
-        }
-        .error-box code {
-            background: #fff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
+        /* ── Error box ── */
+        .error-box { color: #c0392b; padding: 20px; background: #fde8e8; border-radius: 8px; border-left: 4px solid #c0392b; margin: 20px 0; }
+        .error-box code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+        /* ── Debug preview (visible only when debugging) ── */
+        .debug-preview { background: #f0f0f0; padding: 20px; margin: 20px 0; border: 2px dashed #666; overflow: auto; max-height: 500px; display: none; }
 
         /* ── PRINT STYLES ── */
-        @page {
-            size: A4 portrait;
-            margin: 0.7in 0.6in;
-        }
+        @page { size: A4 portrait; margin: 0.7in 0.6in; }
 
         @media print {
             body, body * { display: none !important; }
@@ -143,20 +91,9 @@
                 text-align: left !important;
                 vertical-align: top !important;
             }
-            .print-biodata table th {
-                background: #d4e6f1 !important;
-                font-weight: 700 !important;
-            }
-            .print-biodata .header-table {
-                border: 2px solid #000 !important;
-                width: 100% !important;
-            }
-            .print-biodata .header-table td {
-                border: 1px solid #000 !important;
-                padding: 6px 10px !important;
-                vertical-align: middle !important;
-                text-align: center !important;
-            }
+            .print-biodata table th { background: #d4e6f1 !important; font-weight: 700 !important; }
+            .print-biodata .header-table { border: 2px solid #000 !important; width: 100% !important; }
+            .print-biodata .header-table td { border: 1px solid #000 !important; padding: 6px 10px !important; vertical-align: middle !important; text-align: center !important; }
             .print-biodata .logo-cell { width: 12% !important; text-align: center !important; }
             .print-biodata .logo-cell img { max-width: 70px !important; max-height: 70px !important; display: block !important; margin: 0 auto !important; }
             .print-biodata .center-cell { width: 68% !important; text-align: center !important; }
@@ -189,6 +126,7 @@
         <div id="tableContainer">
             <div class="loading">⏳ Loading submissions...</div>
         </div>
+        <div id="debugPreview" class="debug-preview"></div>
     </div>
 
     <div id="printContainer" class="print-biodata"></div>
@@ -206,19 +144,12 @@
         let logoBase64 = '';
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  LOGGING HELPER
+        //  LOGGING
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        function log(message) {
-            console.log(message);
-            // Optionally display on page
-            const debugDiv = document.getElementById('debugInfo');
-            if (debugDiv) {
-                debugDiv.innerHTML += message + '<br>';
-            }
-        }
+        function log(msg) { console.log(msg); }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  load logo as base64
+        //  load logo
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function loadLogoAsBase64() {
             try {
@@ -238,7 +169,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  SIMPLE CSV PARSER (no external libraries)
+        //  CSV PARSER
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function parseCSV(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim() !== '');
@@ -255,7 +186,7 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  fetch + parse CSV
+        //  FETCH DATA
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         async function fetchData() {
             const container = document.getElementById('tableContainer');
@@ -264,43 +195,32 @@
                 log('Fetching CSV...');
                 const response = await fetch(CSV_URL);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
                 const csvText = await response.text();
-                log('CSV loaded, length: ' + csvText.length);
                 const data = parseCSV(csvText);
                 allData = data;
                 log('Parsed ' + data.length + ' rows');
-
                 if (data.length === 0) {
                     container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
                     return;
                 }
                 renderTable(data);
             } catch (err) {
-                log('❌ Error: ' + err.message);
-                container.innerHTML = `
-                    <div class="error-box">
-                        <strong>❌ Error: ${err.message}</strong><br><br>
-                        <strong>Try opening this URL directly:</strong><br>
-                        <code style="font-size:11px;word-break:break-all;">${CSV_URL}</code>
-                    </div>
-                `;
+                log('Error: ' + err.message);
+                container.innerHTML = `<div class="error-box"><strong>❌ Error: ${err.message}</strong><br><code>${CSV_URL}</code></div>`;
             }
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  render table
+        //  RENDER TABLE
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
             const headers = Object.keys(data[0]);
             const hideCols = ['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink'];
             const displayHeaders = headers.filter(h => !hideCols.includes(h));
-
             let html = '<div class="table-wrap"><table><thead><tr>';
             displayHeaders.forEach(h => html += `<th>${h}</th>`);
             html += `<th>Photo</th><th>Action</th></tr></thead><tbody>`;
-
             data.forEach((row, idx) => {
                 html += `<tr>`;
                 displayHeaders.forEach(h => {
@@ -313,26 +233,25 @@
                 html += `<td><button class="btn-print" onclick="printBiodata(${idx})">🖨️ Print PDF</button></td>`;
                 html += `</tr>`;
             });
-
             html += '</tbody></table></div>';
             container.innerHTML = html;
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  PRINT BIODATA
+        //  PRINT BIODATA (with debugging)
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function printBiodata(index) {
             const row = allData[index];
             if (!row) { alert('Data not found'); return; }
 
             const container = document.getElementById('printContainer');
+            const debugDiv = document.getElementById('debugPreview');
 
-            // Logo
+            // Build the HTML (same as before)
             const logoSrc = logoBase64 || LOGO_FILENAME;
             const logoHtml =
                 `<img src="${logoSrc}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;" onerror="this.outerHTML='<span style=\\'font-size:32px;font-weight:700;color:#1a5276;\\'>KTGS</span>'">`;
 
-            // Photo
             let photoHtml = '';
             if (row['PhotoLink']) {
                 photoHtml = `<img src="${row['PhotoLink']}" alt="Passport Photo" 
@@ -362,7 +281,6 @@
             const email = safe(row['Email']);
             const aadhaar = safe(row['Aadhaar']);
             const pan = safe(row['PAN']);
-
             const postCategory = safe(row['Post Category']);
             const postApplied = safe(row['Post Applied']);
             let displayPost = postApplied;
@@ -392,19 +310,15 @@
             const tetSub = safe(row['TET_Subj']);
             const tetBoard = safe(row['TET_Board']);
             const tetMarks = safe(row['TET_Marks']);
-
             const extra1 = safe(row['Extra_Q1']);
             const extra2 = safe(row['Extra_Q2']);
             const extra3 = safe(row['Extra_Q3']);
-
             const schools = (safe(row['WorkExp1']) || '').split(' || ');
             const desigs = (safe(row['WorkExp2']) || '').split(' || ');
-
             let workRowsHtml = '';
             for (let i = 0; i < 3; i++) {
                 workRowsHtml += `<tr><td>${schools[i] || ''}</td><td>${desigs[i] || ''}</td><td></td><td></td><td></td><td></td></tr>`;
             }
-
             const teach = safe(row['TotalTeaching']);
             const admin = safe(row['TotalAdmin']);
             const other = safe(row['TotalOther']);
@@ -413,13 +327,12 @@
             const salary = safe(row['ExpectedSalary']);
             const joining = safe(row['JoiningTime']);
             const transportation = safe(row['Transportation']);
-
             let formattedDate = '';
             if (row['Timestamp']) {
                 try {
                     const d = new Date(row['Timestamp']);
                     formattedDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                } catch (_) { /* ignore */ }
+                } catch (_) {}
             }
 
             const html = `
@@ -519,14 +432,26 @@
                 </div>
             `;
 
+            // 1. Show the HTML in the debug preview (so you can see it on screen)
+            debugDiv.innerHTML = html;
+            debugDiv.style.display = 'block';
+            debugDiv.scrollIntoView({ behavior: 'smooth' });
+
+            // 2. Also put it in the print container
             container.innerHTML = html;
+
+            // 3. Force reflow and wait for images
+            const reflow = container.offsetHeight;
+
+            // 4. Print after a generous delay (2 seconds)
             setTimeout(() => {
                 window.print();
-            }, 500);
+                // After printing, you can hide the debug preview if desired
+            }, 2000);
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  export CSV
+        //  EXPORT CSV
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         function exportCSV() {
             if (!allData || allData.length === 0) { alert('No data to export.'); return; }
@@ -551,24 +476,18 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  INITIALISE
+        //  INIT
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         (async function init() {
             console.log('✅ Admin page loading...');
             try {
                 const base64 = await loadLogoAsBase64();
                 if (base64) logoBase64 = base64;
-                console.log('Logo loaded:', !!base64);
                 await fetchData();
                 console.log('✅ Initialisation complete');
             } catch (err) {
-                console.error('❌ Initialisation error:', err);
                 document.getElementById('tableContainer').innerHTML = `
-                    <div class="error-box">
-                        <strong>❌ Fatal Error: ${err.message}</strong><br>
-                        <pre style="background:#fff;padding:10px;border-radius:4px;overflow:auto;font-size:12px;">${err.stack || ''}</pre>
-                    </div>
-                `;
+                    <div class="error-box"><strong>❌ Fatal Error: ${err.message}</strong><pre>${err.stack || ''}</pre></div>`;
             }
         })();
     </script>
