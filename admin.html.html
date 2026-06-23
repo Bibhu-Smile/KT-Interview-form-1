@@ -254,8 +254,8 @@
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
             const headers = Object.keys(data[0]);
-            // Keep all columns for display, but we can hide long ones if needed
-            const hideCols = ['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink', 'ResumeLink'];
+            // Hide long content columns from the table, but keep PhotoLink and ResumeLink as separate columns
+            const hideCols = ['Permanent Address', 'Communication Address', 'Achievements'];
             const displayHeaders = headers.filter(h => !hideCols.includes(h));
 
             let html = '<div class="table-wrap"><table><thead><tr>';
@@ -478,7 +478,7 @@
             setTimeout(() => window.print(), 800);
         }
 
-        // ── EXPORT CSV (includes ResumeLink column) ──
+        // ── EXPORT CSV ──
         function exportCSV() {
             if (!allData || allData.length === 0) { alert('No data to export.'); return; }
             const headers = Object.keys(allData[0]);
