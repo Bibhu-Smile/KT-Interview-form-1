@@ -241,12 +241,14 @@
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
                 allData = data;
+                console.log('✅ Data loaded:', data.length, 'rows');
                 if (data.length === 0) {
                     container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
                     return;
                 }
                 renderTable(data);
             } catch (err) {
+                console.error('Fetch error:', err);
                 container.innerHTML = `<div class="error-box"><strong>❌ Error: ${err.message}</strong><br><code>${CSV_URL}</code></div>`;
             }
         }
@@ -254,7 +256,6 @@
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
             const headers = Object.keys(data[0]);
-            // Hide long content columns from the table, but keep PhotoLink and ResumeLink as separate columns
             const hideCols = ['Permanent Address', 'Communication Address', 'Achievements'];
             const displayHeaders = headers.filter(h => !hideCols.includes(h));
 
@@ -269,10 +270,8 @@
                     if (val.length > 30) val = val.substring(0, 30) + '…';
                     html += `<td>${val}</td>`;
                 });
-                // Photo
                 const photoUrl = row['PhotoLink'] || '';
                 html += `<td>${photoUrl ? `<img src="${photoUrl}" class="photo-thumb" alt="photo" crossorigin="anonymous" referrerpolicy="no-referrer">` : '—'}</td>`;
-                // Resume
                 const resumeUrl = row['ResumeLink'] || '';
                 html += `<td>${resumeUrl ? `<a href="${resumeUrl}" target="_blank" class="resume-link">📄 View</a>` : '—'}</td>`;
                 html += `<td><button class="btn-print" onclick="printBiodata(${idx})">🖨️ Print PDF</button></td>`;
@@ -282,11 +281,21 @@
             container.innerHTML = html;
         }
 
-        // ── PRINT BIODATA (shows photo) ──
+        // ── PRINT BIODATA (with robust data check) ──
         function printBiodata(index) {
+            console.log('🔍 printBiodata called with index:', index);
             const row = allData[index];
-            if (!row) { alert('Data not found.'); return; }
+            if (!row) {
+                alert('Data not found. Please refresh the table.');
+                return;
+            }
+            console.log('📄 Row data:', row);
+
             const container = document.getElementById('printContainer');
+            if (!container) {
+                console.error('❌ printContainer not found');
+                return;
+            }
 
             // Logo
             const logoSrc = logoBase64 || LOGO_URL;
@@ -475,7 +484,14 @@
             `;
 
             container.innerHTML = html;
-            setTimeout(() => window.print(), 800);
+            console.log('✅ Print content set. Length:', container.innerHTML.length);
+
+            // Force reflow and then print
+            container.offsetHeight;
+            setTimeout(() => {
+                console.log('🖨️ Opening print dialog...');
+                window.print();
+            }, 600);
         }
 
         // ── EXPORT CSV ──
@@ -503,6 +519,7 @@
 
         // ── INIT ──
         (async function init() {
+            console.log('🚀 Admin page loading...');
             const base64 = await loadLogoAsBase64();
             if (base64) {
                 logoBase64 = base64;
@@ -510,7 +527,8 @@
             } else {
                 console.warn('⚠️ Logo not loaded');
             }
-            fetchData();
+            await fetchData();
+            console.log('✅ Initialisation complete');
         })();
     </script>
 </body>
