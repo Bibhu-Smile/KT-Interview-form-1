@@ -79,6 +79,19 @@
         .resume-link:hover { text-decoration: underline; }
         .error-box { color: #c0392b; padding: 20px; background: #fde8e8; border-radius: 8px; border-left: 4px solid #c0392b; margin: 20px 0; }
         .error-box code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+        /* Debug header info */
+        .debug-info {
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -91,14 +104,17 @@
         <div id="tableContainer">
             <div class="loading">⏳ Loading submissions...</div>
         </div>
+        <div id="debugInfo" class="debug-info" style="display:none;"></div>
     </div>
 
     <script>
         // ── CONFIGURATION ──
+        // Use the raw GitHub URL for the logo to avoid 404
+        const LOGO_URL = 'https://raw.githubusercontent.com/Bibhu-Smile/KT-Interview-form-1/main/kt-logo.webp';
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
-        const LOGO_URL = 'kt-logo.webp';
 
         let allData = [];
+        let headers = []; // will hold the actual CSV headers
         let logoBase64 = '';
 
         // ── Load logo as base64 ──
@@ -116,16 +132,17 @@
             } catch (_) { return null; }
         }
 
-        // ── CSV Parser ──
+        // ── CSV Parser (keeps headers) ──
         function parseCSV(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim() !== '');
             if (lines.length === 0) return [];
-            const headers = lines[0].split(',').map(h => h.trim());
+            const headerRow = lines[0].split(',').map(h => h.trim());
+            headers = headerRow; // store globally
             const data = [];
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',').map(v => v.trim());
                 const obj = {};
-                headers.forEach((h, idx) => obj[h] = values[idx] || '');
+                headerRow.forEach((h, idx) => obj[h] = values[idx] || '');
                 data.push(obj);
             }
             return data;
@@ -141,7 +158,14 @@
                 const csvText = await response.text();
                 const data = parseCSV(csvText);
                 allData = data;
-                console.log('✅ Data loaded:', data.length, 'rows');
+                console.log('✅ Data loaded. Headers:', headers);
+                console.log('✅ Sample row:', data.length > 0 ? data[0] : 'No data');
+
+                // Show headers in debug panel
+                const debugDiv = document.getElementById('debugInfo');
+                debugDiv.textContent = '📋 CSV Headers:\n' + JSON.stringify(headers, null, 2);
+                debugDiv.style.display = 'block';
+
                 if (data.length === 0) {
                     container.innerHTML = '<div style="padding:30px;text-align:center;color:#5d6d7e;">📭 No submissions yet.</div>';
                     return;
@@ -156,9 +180,8 @@
         // ── Render table ──
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
-            const headers = Object.keys(data[0]);
-            const hideCols = ['Permanent Address', 'Communication Address', 'Achievements'];
-            const displayHeaders = headers.filter(h => !hideCols.includes(h));
+            // Use the stored headers (the first row of CSV) for the table columns
+            const displayHeaders = headers.filter(h => !['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink', 'ResumeLink'].includes(h));
 
             let html = '<div class="table-wrap"><table><thead><tr>';
             displayHeaders.forEach(h => html += `<th>${h}</th>`);
@@ -182,20 +205,28 @@
             container.innerHTML = html;
         }
 
-        // ── NEW PRINT METHOD: open new window ──
+        // ── Helper: get value from row using a list of possible keys ──
+        function getField(row, possibleKeys) {
+            for (let key of possibleKeys) {
+                if (row[key] !== undefined && row[key] !== null && row[key] !== '') {
+                    return row[key];
+                }
+            }
+            return '';
+        }
+
+        // ── PRINT BIODATA (now dynamic) ──
         function printBiodata(index) {
-            console.log('🔍 printBiodata called with index:', index);
             const row = allData[index];
             if (!row) {
                 alert('Data not found. Please refresh the table.');
                 return;
             }
-            console.log('📄 Row data:', row);
 
-            // Build the HTML for the biodata (same as before)
-            const safe = (val) => val || '';
+            // Helper to get field with fallback keys
+            const field = (keys) => getField(row, Array.isArray(keys) ? keys : [keys]);
 
-            // Logo: use base64 if available, else text fallback
+            // Logo
             let logoHtml = '';
             if (logoBase64) {
                 logoHtml = `<img src="${logoBase64}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;">`;
@@ -205,89 +236,103 @@
 
             // Photo
             let photoHtml = '';
-            const photoUrl = row['PhotoLink'] || '';
+            const photoUrl = field(['PhotoLink', 'Photo Url', 'Photo URL']);
             if (photoUrl) {
                 photoHtml = `<img src="${photoUrl}" alt="Passport Photo" style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;" onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
             } else {
                 photoHtml = `<div style="width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;">📷<br>No Photo</div>`;
             }
 
-            const name = safe(row['Name']);
-            const father = safe(row['Father/Husband']);
-            const dob = safe(row['DOB']);
-            const age = safe(row['Age']);
-            const bloodGroup = safe(row['Blood Group']);
-            const category = safe(row['Category']);
-            const religion = safe(row['Religion']);
-            const nationality = safe(row['Nationality']);
-            const gender = safe(row['Gender']);
-            const marital = safe(row['Marital Status']);
-            const hobbies = safe(row['Hobbies']);
-            const permAddr = safe(row['Permanent Address']);
-            const commAddr = safe(row['Communication Address']);
-            const mobile = safe(row['Mobile']);
-            const email = safe(row['Email']);
-            const aadhaar = safe(row['Aadhaar']);
-            const pan = safe(row['PAN']);
+            // All fields with fallback keys (add more if needed)
+            const name = field(['Name', 'Name of Applicant', 'Applicant Name']);
+            const father = field(['Father/Husband', 'Father Name', 'Husband Name']);
+            const dob = field(['DOB', 'Date of Birth', 'D.O.B.']);
+            const age = field(['Age', 'Age as on 1st Jan 2026']);
+            const bloodGroup = field(['Blood Group', 'Blood Group']);
+            const category = field(['Category']);
+            const religion = field(['Religion']);
+            const nationality = field(['Nationality']);
+            const gender = field(['Gender']);
+            const marital = field(['Marital Status', 'Marital Status']);
+            const hobbies = field(['Hobbies']);
+            const permAddr = field(['Permanent Address', 'Permanent Address']);
+            const commAddr = field(['Communication Address', 'Address of Communication']);
+            const mobile = field(['Mobile', 'Mobile No.', 'Mobile Number']);
+            const email = field(['Email', 'E-mail ID', 'Email ID']);
+            const aadhaar = field(['Aadhaar', 'Aadhaar No.']);
+            const pan = field(['PAN', 'PAN No.']);
 
-            const postCategory = safe(row['Post Category']);
-            const postApplied = safe(row['Post Applied']);
-            let displayPost = postApplied;
-            if (postCategory) displayPost = postApplied + ' (' + postCategory + ')';
+            // Education - using possible key variations
+            const secYr = field(['Secondary_Yr', 'Secondary Year', 'Secondary Year of Passing']);
+            const secSub = field(['Secondary_Subj', 'Secondary Subjects']);
+            const secBoard = field(['Secondary_Board', 'Secondary Board']);
+            const secMarks = field(['Secondary_Marks', 'Secondary Marks']);
+            const srSecYr = field(['SrSec_Yr', 'Senior Secondary Year', 'SrSec Year']);
+            const srSecSub = field(['SrSec_Subj', 'Senior Secondary Subjects']);
+            const srSecBoard = field(['SrSec_Board', 'Senior Secondary Board']);
+            const srSecMarks = field(['SrSec_Marks', 'Senior Secondary Marks']);
+            const gradYr = field(['Graduation_Yr', 'Graduation Year']);
+            const gradSub = field(['Graduation_Subj', 'Graduation Subjects', 'Graduation Subject']);
+            const gradBoard = field(['Graduation_Board', 'Graduation Board', 'University']);
+            const gradMarks = field(['Graduation_Marks', 'Graduation Marks']);
+            const pgYr = field(['PostGrad_Yr', 'Post Graduation Year']);
+            const pgSub = field(['PostGrad_Subj', 'Post Graduation Subjects']);
+            const pgBoard = field(['PostGrad_Board', 'Post Graduation Board']);
+            const pgMarks = field(['PostGrad_Marks', 'Post Graduation Marks']);
+            const bedYr = field(['BEd_Yr', 'B.Ed Year']);
+            const bedSub = field(['BEd_Subj', 'B.Ed Subjects']);
+            const bedBoard = field(['BEd_Board', 'B.Ed Board']);
+            const bedMarks = field(['BEd_Marks', 'B.Ed Marks']);
+            const tetYr = field(['TET_Yr', 'TET Year']);
+            const tetSub = field(['TET_Subj', 'TET Subjects']);
+            const tetBoard = field(['TET_Board', 'TET Board']);
+            const tetMarks = field(['TET_Marks', 'TET Marks']);
 
-            const secYr = safe(row['Secondary_Yr']);
-            const secSub = safe(row['Secondary_Subj']);
-            const secBoard = safe(row['Secondary_Board']);
-            const secMarks = safe(row['Secondary_Marks']);
-            const srSecYr = safe(row['SrSec_Yr']);
-            const srSecSub = safe(row['SrSec_Subj']);
-            const srSecBoard = safe(row['SrSec_Board']);
-            const srSecMarks = safe(row['SrSec_Marks']);
-            const gradYr = safe(row['Graduation_Yr']);
-            const gradSub = safe(row['Graduation_Subj']);
-            const gradBoard = safe(row['Graduation_Board']);
-            const gradMarks = safe(row['Graduation_Marks']);
-            const pgYr = safe(row['PostGrad_Yr']);
-            const pgSub = safe(row['PostGrad_Subj']);
-            const pgBoard = safe(row['PostGrad_Board']);
-            const pgMarks = safe(row['PostGrad_Marks']);
-            const bedYr = safe(row['BEd_Yr']);
-            const bedSub = safe(row['BEd_Subj']);
-            const bedBoard = safe(row['BEd_Board']);
-            const bedMarks = safe(row['BEd_Marks']);
-            const tetYr = safe(row['TET_Yr']);
-            const tetSub = safe(row['TET_Subj']);
-            const tetBoard = safe(row['TET_Board']);
-            const tetMarks = safe(row['TET_Marks']);
+            // Extra
+            const extra1 = field(['Extra_Q1', 'Extra Qualification 1']);
+            const extra2 = field(['Extra_Q2', 'Extra Qualification 2']);
+            const extra3 = field(['Extra_Q3', 'Extra Qualification 3']);
 
-            const extra1 = safe(row['Extra_Q1']);
-            const extra2 = safe(row['Extra_Q2']);
-            const extra3 = safe(row['Extra_Q3']);
+            // Work Experience
+            const work1 = field(['WorkExp1', 'Work Experience 1']);
+            const work2 = field(['WorkExp2', 'Work Experience 2']);
+            const work3 = field(['WorkExp3', 'Work Experience 3']);
 
-            const schools = (safe(row['WorkExp1']) || '').split(' || ');
-            const desigs = (safe(row['WorkExp2']) || '').split(' || ');
+            // Parse work experience into arrays
+            const schools = (work1 || '').split(' || ').filter(s => s);
+            const desigs = (work2 || '').split(' || ').filter(s => s);
+            // We'll use the first 3 entries
             let workRowsHtml = '';
             for (let i = 0; i < 3; i++) {
                 workRowsHtml += `<tr><td>${schools[i] || ''}</td><td>${desigs[i] || ''}</td><td></td><td></td><td></td><td></td></tr>`;
             }
-            const teach = safe(row['TotalTeaching']);
-            const admin = safe(row['TotalAdmin']);
-            const other = safe(row['TotalOther']);
-            const achievements = safe(row['Achievements']);
-            const currentSalary = safe(row['CurrentSalary']);
-            const salary = safe(row['ExpectedSalary']);
-            const joining = safe(row['JoiningTime']);
-            const transportation = safe(row['Transportation']);
 
+            const teach = field(['TotalTeaching', 'Teaching Experience']);
+            const admin = field(['TotalAdmin', 'Admin Experience']);
+            const other = field(['TotalOther', 'Other Experience']);
+            const achievements = field(['Achievements', 'Achievement if any']);
+            const currentSalary = field(['CurrentSalary', 'Current Salary']);
+            const salary = field(['ExpectedSalary', 'Expected Salary', 'Minimum Salary Expected']);
+            const joining = field(['JoiningTime', 'Time needed to join', 'Joining Time']);
+            const transportation = field(['Transportation']);
+
+            // Post Applied
+            const postCategory = field(['Post Category']);
+            const postApplied = field(['Post Applied', 'Post Applied For']);
+            let displayPost = postApplied;
+            if (postCategory) displayPost = postApplied + ' (' + postCategory + ')';
+
+            // Timestamp
             let formattedDate = '';
-            if (row['Timestamp']) {
+            const ts = row['Timestamp'] || row['Date'] || '';
+            if (ts) {
                 try {
-                    const d = new Date(row['Timestamp']);
+                    const d = new Date(ts);
                     formattedDate = d.toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' });
                 } catch (_) {}
             }
 
-            // Build the complete HTML for the print window
+            // Build the print HTML (same as before but now with these variables)
             const printContent = `
             <!DOCTYPE html>
             <html>
@@ -451,7 +496,7 @@
             </html>
             `;
 
-            // Open a new window and write the content
+            // Open new window and print
             const printWindow = window.open('', '_blank', 'width=800,height=600');
             if (!printWindow) {
                 alert('Please allow pop-ups to print the biodata.');
@@ -459,7 +504,6 @@
             }
             printWindow.document.write(printContent);
             printWindow.document.close();
-            // Wait for images to load then print
             setTimeout(() => {
                 printWindow.focus();
                 printWindow.print();
@@ -469,10 +513,10 @@
         // ── Export CSV ──
         function exportCSV() {
             if (!allData || allData.length === 0) { alert('No data to export.'); return; }
-            const headers = Object.keys(allData[0]);
-            let csv = headers.join(',') + '\n';
+            const hdr = headers.length ? headers : Object.keys(allData[0]);
+            let csv = hdr.join(',') + '\n';
             allData.forEach(row => {
-                const values = headers.map(h => {
+                const values = hdr.map(h => {
                     let val = (row[h] || '').toString();
                     if (val.includes(',') || val.includes('"') || val.includes('\n')) {
                         val = '"' + val.replace(/"/g, '""') + '"';
