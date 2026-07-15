@@ -80,7 +80,6 @@
         .error-box { color: #c0392b; padding: 20px; background: #fde8e8; border-radius: 8px; border-left: 4px solid #c0392b; margin: 20px 0; }
         .error-box code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
 
-        /* Debug header info */
         .debug-info {
             background: #f0f0f0;
             padding: 12px;
@@ -109,12 +108,12 @@
 
     <script>
         // ── CONFIGURATION ──
-        // Use the raw GitHub URL for the logo to avoid 404
-        const LOGO_URL = 'https://raw.githubusercontent.com/Bibhu-Smile/KT-Interview-form-1/main/kt-logo.webp';
+        // Updated CSV URL - from your screenshot
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYGbGLv_LorKD3-SYVo4WhuZVT1L5yrrddirKk5mGcH6FeUlGrGVRbVPpKlcQ53O-4kkZhBRicMiN9/pub?output=csv';
+        const LOGO_URL = 'https://raw.githubusercontent.com/Bibhu-Smile/KT-Interview-form-1/main/kt-logo.webp';
 
         let allData = [];
-        let headers = []; // will hold the actual CSV headers
+        let headers = [];
         let logoBase64 = '';
 
         // ── Load logo as base64 ──
@@ -132,12 +131,12 @@
             } catch (_) { return null; }
         }
 
-        // ── CSV Parser (keeps headers) ──
+        // ── CSV Parser ──
         function parseCSV(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim() !== '');
             if (lines.length === 0) return [];
             const headerRow = lines[0].split(',').map(h => h.trim());
-            headers = headerRow; // store globally
+            headers = headerRow;
             const data = [];
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',').map(v => v.trim());
@@ -153,15 +152,18 @@
             const container = document.getElementById('tableContainer');
             container.innerHTML = '<div class="loading">⏳ Loading...</div>';
             try {
+                console.log('📥 Fetching CSV from:', CSV_URL);
                 const response = await fetch(CSV_URL);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 const csvText = await response.text();
+                console.log('📄 CSV length:', csvText.length);
                 const data = parseCSV(csvText);
                 allData = data;
                 console.log('✅ Data loaded. Headers:', headers);
                 console.log('✅ Sample row:', data.length > 0 ? data[0] : 'No data');
 
-                // Show headers in debug panel
                 const debugDiv = document.getElementById('debugInfo');
                 debugDiv.textContent = '📋 CSV Headers:\n' + JSON.stringify(headers, null, 2);
                 debugDiv.style.display = 'block';
@@ -172,15 +174,23 @@
                 }
                 renderTable(data);
             } catch (err) {
-                console.error('Fetch error:', err);
-                container.innerHTML = `<div class="error-box"><strong>❌ Error: ${err.message}</strong><br><code>${CSV_URL}</code></div>`;
+                console.error('❌ Fetch error:', err);
+                container.innerHTML = `
+                    <div class="error-box">
+                        <strong>❌ Error: ${err.message}</strong><br><br>
+                        <strong>Please check:</strong><br>
+                        1. The CSV URL is correct and accessible.<br>
+                        2. Your sheet is published: <strong>File → Share → Publish to web</strong>.<br>
+                        3. Try opening this URL directly in your browser:<br>
+                        <code style="font-size:11px;word-break:break-all;">${CSV_URL}</code>
+                    </div>
+                `;
             }
         }
 
         // ── Render table ──
         function renderTable(data) {
             const container = document.getElementById('tableContainer');
-            // Use the stored headers (the first row of CSV) for the table columns
             const displayHeaders = headers.filter(h => !['Permanent Address', 'Communication Address', 'Achievements', 'PhotoLink', 'ResumeLink'].includes(h));
 
             let html = '<div class="table-wrap"><table><thead><tr>';
@@ -205,103 +215,90 @@
             container.innerHTML = html;
         }
 
-        // ── Helper: get value from row using a list of possible keys ──
-        function getField(row, possibleKeys) {
-            for (let key of possibleKeys) {
-                if (row[key] !== undefined && row[key] !== null && row[key] !== '') {
-                    return row[key];
-                }
+        // ── Helper: get field ──
+        function getField(row, keys) {
+            for (let key of keys) {
+                if (row[key] !== undefined && row[key] !== null && row[key] !== '') return row[key];
             }
             return '';
         }
 
-        // ── PRINT BIODATA (now dynamic) ──
+        // ── Print Biodata ──
         function printBiodata(index) {
             const row = allData[index];
-            if (!row) {
-                alert('Data not found. Please refresh the table.');
-                return;
-            }
+            if (!row) { alert('Data not found.'); return; }
 
-            // Helper to get field with fallback keys
             const field = (keys) => getField(row, Array.isArray(keys) ? keys : [keys]);
 
             // Logo
-            let logoHtml = '';
-            if (logoBase64) {
-                logoHtml = `<img src="${logoBase64}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;">`;
-            } else {
-                logoHtml = `<span style="font-size:32px;font-weight:700;color:#1a5276;">KTGS</span>`;
-            }
+            let logoHtml = logoBase64
+                ? `<img src="${logoBase64}" alt="KTGS Logo" style="max-width:70px;max-height:70px;display:block;margin:0 auto;">`
+                : `<span style="font-size:32px;font-weight:700;color:#1a5276;">KTGS</span>`;
 
             // Photo
             let photoHtml = '';
             const photoUrl = field(['PhotoLink', 'Photo Url', 'Photo URL']);
-            if (photoUrl) {
-                photoHtml = `<img src="${photoUrl}" alt="Passport Photo" style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;" onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`;
-            } else {
-                photoHtml = `<div style="width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;">📷<br>No Photo</div>`;
-            }
+            photoHtml = photoUrl
+                ? `<img src="${photoUrl}" alt="Passport Photo" style="max-width:100px;max-height:120px;border:2px solid #000;display:block;margin:0 auto;object-fit:contain;" onerror="this.outerHTML='<div style=\\'width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;\\'>📷<br>No Photo</div>'">`
+                : `<div style="width:100px;height:120px;border:2px solid #000;display:flex;align-items:center;justify-content:center;font-size:10px;color:#999;background:#f9f9f9;margin:0 auto;">📷<br>No Photo</div>`;
 
-            // All fields with fallback keys (add more if needed)
+            // ── All fields with fallback keys ──
             const name = field(['Name', 'Name of Applicant', 'Applicant Name']);
             const father = field(['Father/Husband', 'Father Name', 'Husband Name']);
             const dob = field(['DOB', 'Date of Birth', 'D.O.B.']);
             const age = field(['Age', 'Age as on 1st Jan 2026']);
-            const bloodGroup = field(['Blood Group', 'Blood Group']);
+            const bloodGroup = field(['Blood Group']);
             const category = field(['Category']);
             const religion = field(['Religion']);
             const nationality = field(['Nationality']);
             const gender = field(['Gender']);
-            const marital = field(['Marital Status', 'Marital Status']);
+            const marital = field(['Marital Status']);
             const hobbies = field(['Hobbies']);
-            const permAddr = field(['Permanent Address', 'Permanent Address']);
+            const permAddr = field(['Permanent Address']);
             const commAddr = field(['Communication Address', 'Address of Communication']);
             const mobile = field(['Mobile', 'Mobile No.', 'Mobile Number']);
             const email = field(['Email', 'E-mail ID', 'Email ID']);
             const aadhaar = field(['Aadhaar', 'Aadhaar No.']);
             const pan = field(['PAN', 'PAN No.']);
+            const postApplied = field(['Post Applied', 'Post Applied For']);
+            const postCategory = field(['Post Category']);
 
-            // Education - using possible key variations
-            const secYr = field(['Secondary_Yr', 'Secondary Year', 'Secondary Year of Passing']);
+            // Education
+            const secYr = field(['Secondary_Yr', 'Secondary Year']);
             const secSub = field(['Secondary_Subj', 'Secondary Subjects']);
             const secBoard = field(['Secondary_Board', 'Secondary Board']);
             const secMarks = field(['Secondary_Marks', 'Secondary Marks']);
-            const srSecYr = field(['SrSec_Yr', 'Senior Secondary Year', 'SrSec Year']);
-            const srSecSub = field(['SrSec_Subj', 'Senior Secondary Subjects']);
-            const srSecBoard = field(['SrSec_Board', 'Senior Secondary Board']);
-            const srSecMarks = field(['SrSec_Marks', 'Senior Secondary Marks']);
+            const srSecYr = field(['SrSec_Yr', 'SrSec Year', 'Senior Secondary Year']);
+            const srSecSub = field(['SrSec_Subj', 'SrSec Subjects']);
+            const srSecBoard = field(['SrSec_Board', 'SrSec Board']);
+            const srSecMarks = field(['SrSec_Marks', 'SrSec Marks']);
             const gradYr = field(['Graduation_Yr', 'Graduation Year']);
-            const gradSub = field(['Graduation_Subj', 'Graduation Subjects', 'Graduation Subject']);
-            const gradBoard = field(['Graduation_Board', 'Graduation Board', 'University']);
+            const gradSub = field(['Graduation_Subj', 'Graduation Subjects']);
+            const gradBoard = field(['Graduation_Board', 'Graduation Board']);
             const gradMarks = field(['Graduation_Marks', 'Graduation Marks']);
-            const pgYr = field(['PostGrad_Yr', 'Post Graduation Year']);
-            const pgSub = field(['PostGrad_Subj', 'Post Graduation Subjects']);
-            const pgBoard = field(['PostGrad_Board', 'Post Graduation Board']);
-            const pgMarks = field(['PostGrad_Marks', 'Post Graduation Marks']);
-            const bedYr = field(['BEd_Yr', 'B.Ed Year']);
-            const bedSub = field(['BEd_Subj', 'B.Ed Subjects']);
-            const bedBoard = field(['BEd_Board', 'B.Ed Board']);
-            const bedMarks = field(['BEd_Marks', 'B.Ed Marks']);
+            const pgYr = field(['PostGrad_Yr', 'PostGrad Year', 'Post Graduation Year']);
+            const pgSub = field(['PostGrad_Subj', 'PostGrad Subjects']);
+            const pgBoard = field(['PostGrad_Board', 'PostGrad Board']);
+            const pgMarks = field(['PostGrad_Marks', 'PostGrad Marks']);
+            const bedYr = field(['BEd_Yr', 'BEd Year', 'B.Ed Year']);
+            const bedSub = field(['BEd_Subj', 'BEd Subjects']);
+            const bedBoard = field(['BEd_Board', 'BEd Board']);
+            const bedMarks = field(['BEd_Marks', 'BEd Marks']);
             const tetYr = field(['TET_Yr', 'TET Year']);
             const tetSub = field(['TET_Subj', 'TET Subjects']);
             const tetBoard = field(['TET_Board', 'TET Board']);
             const tetMarks = field(['TET_Marks', 'TET Marks']);
 
-            // Extra
             const extra1 = field(['Extra_Q1', 'Extra Qualification 1']);
             const extra2 = field(['Extra_Q2', 'Extra Qualification 2']);
             const extra3 = field(['Extra_Q3', 'Extra Qualification 3']);
 
-            // Work Experience
             const work1 = field(['WorkExp1', 'Work Experience 1']);
             const work2 = field(['WorkExp2', 'Work Experience 2']);
             const work3 = field(['WorkExp3', 'Work Experience 3']);
 
-            // Parse work experience into arrays
             const schools = (work1 || '').split(' || ').filter(s => s);
             const desigs = (work2 || '').split(' || ').filter(s => s);
-            // We'll use the first 3 entries
             let workRowsHtml = '';
             for (let i = 0; i < 3; i++) {
                 workRowsHtml += `<tr><td>${schools[i] || ''}</td><td>${desigs[i] || ''}</td><td></td><td></td><td></td><td></td></tr>`;
@@ -310,29 +307,21 @@
             const teach = field(['TotalTeaching', 'Teaching Experience']);
             const admin = field(['TotalAdmin', 'Admin Experience']);
             const other = field(['TotalOther', 'Other Experience']);
-            const achievements = field(['Achievements', 'Achievement if any']);
+            const achievements = field(['Achievements']);
             const currentSalary = field(['CurrentSalary', 'Current Salary']);
             const salary = field(['ExpectedSalary', 'Expected Salary', 'Minimum Salary Expected']);
-            const joining = field(['JoiningTime', 'Time needed to join', 'Joining Time']);
+            const joining = field(['JoiningTime', 'Time needed to join']);
             const transportation = field(['Transportation']);
 
-            // Post Applied
-            const postCategory = field(['Post Category']);
-            const postApplied = field(['Post Applied', 'Post Applied For']);
             let displayPost = postApplied;
             if (postCategory) displayPost = postApplied + ' (' + postCategory + ')';
 
-            // Timestamp
             let formattedDate = '';
             const ts = row['Timestamp'] || row['Date'] || '';
             if (ts) {
-                try {
-                    const d = new Date(ts);
-                    formattedDate = d.toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' });
-                } catch (_) {}
+                try { const d = new Date(ts); formattedDate = d.toLocaleDateString('en-IN', { day:'2-digit', month:'2-digit', year:'numeric' }); } catch (_) {}
             }
 
-            // Build the print HTML (same as before but now with these variables)
             const printContent = `
             <!DOCTYPE html>
             <html>
@@ -496,18 +485,11 @@
             </html>
             `;
 
-            // Open new window and print
             const printWindow = window.open('', '_blank', 'width=800,height=600');
-            if (!printWindow) {
-                alert('Please allow pop-ups to print the biodata.');
-                return;
-            }
+            if (!printWindow) { alert('Please allow pop-ups.'); return; }
             printWindow.document.write(printContent);
             printWindow.document.close();
-            setTimeout(() => {
-                printWindow.focus();
-                printWindow.print();
-            }, 800);
+            setTimeout(() => { printWindow.focus(); printWindow.print(); }, 800);
         }
 
         // ── Export CSV ──
